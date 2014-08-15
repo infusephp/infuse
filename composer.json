@@ -3,7 +3,7 @@
 	"version": "1.0",
 	"description": "Essential libraries for rapid PHP development",
 	"type": "library",
-	"keywords": ["infuse","libs"],
+	"keywords": ["idealist","bootstrap","framework"],
 	"homepage": "http://infuse.jaredtking.com",
 	"license": "MIT",
 	"authors": [
