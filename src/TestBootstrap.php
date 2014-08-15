@@ -27,7 +27,9 @@ class TestBootstrap implements PHPUnit_Framework_TestListener
 	public function __construct( $verbose )
 	{
 		$config = @include 'config.php';
-
+		if( !$config )
+			$config = [];
+		
 		$this->app = new App( $config );
 		self::$staticApp = $this->app;
 
