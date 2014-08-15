@@ -1,0 +1,28 @@
+{
+	"name": "idealistsoft/framework-bootstrap",
+	"version": "0.1.24",
+	"description": "Essential libraries for rapid PHP development",
+	"type": "library",
+	"keywords": ["infuse","libs"],
+	"homepage": "http://infuse.jaredtking.com",
+	"license": "MIT",
+	"authors": [
+		{
+			"name": "jaredtking",
+			"email": "j@jaredtking.com",
+			"homepage": "http://jaredtking.com"
+		}
+	],
+	"support": {
+		"issues": "https://github.com/idealistsoft/framework-bootstrap/issues",
+		"source": "https://github.com/idealistsoft/framework-bootstrap"
+	},
+    "autoload": {
+        "psr-0": {"\\": "src/"}
+    },
+	"require": {
+		"php": ">=5.4.0",
+		"infuse/libs": "dev-master",
+		"pimple/pimple": "v2.1.0"
+	}
+}
