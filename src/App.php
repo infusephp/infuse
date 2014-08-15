@@ -108,7 +108,7 @@ class App extends Container
 
 		/* Database */
 
-		$dbSettings = $config->get( 'database' );
+		$dbSettings = (array)$config->get( 'database' );
 		$dbSettings[ 'productionLevel' ] = $config->get( 'site.production-level' );
 		Database::configure( $dbSettings );
 		Database::inject( $this );
@@ -170,7 +170,7 @@ class App extends Container
 		/* Models */
 
 		Model::inject( $this );
-		Model::configure( $config->get( 'models' ) );
+		Model::configure( (array)$config->get( 'models' ) );
 
 		/* Error Stack */
 

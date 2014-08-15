@@ -41,29 +41,32 @@ class TestBootstrap implements PHPUnit_Framework_TestListener
 
 		self::$userEmail = 'test' . Util::guid() . '@exmaple.com';
 
-		$user = new User;
-		$success = $user->create( [
-			'user_email' => self::$userEmail,
-			'user_password' => [ self::$userPassword, self::$userPassword ],
-			'first_name' => 'Bob',
-			'ip' => '127.0.0.1' ] );
-
-		if( $this->verbose )
+		if( class_exists( '\\app\\users\\models\\User' ) )
 		{
-			if( $success )
-				echo "User #" . $user->id() . " created.\n";
-			else
-				echo "Could not create test user.\n";
-		}
+			$user = new User;
+			$success = $user->create( [
+				'user_email' => self::$userEmail,
+				'user_password' => [ self::$userPassword, self::$userPassword ],
+				'first_name' => 'Bob',
+				'ip' => '127.0.0.1' ] );
 
-		$loggedIn = $this->app[ 'auth' ]->login( self::$userEmail, self::$userPassword );
-		
-		if( $this->verbose )
-		{
-			if( $loggedIn )
-				echo "User #" . $this->app[ 'user' ]->id() . " logged in.\n";
-			else
-				echo " Could not log test user in.\n";
+			if( $this->verbose )
+			{
+				if( $success )
+					echo "User #" . $user->id() . " created.\n";
+				else
+					echo "Could not create test user.\n";
+			}
+
+			$loggedIn = $this->app[ 'auth' ]->login( self::$userEmail, self::$userPassword );
+			
+			if( $this->verbose )
+			{
+				if( $loggedIn )
+					echo "User #" . $this->app[ 'user' ]->id() . " logged in.\n";
+				else
+					echo " Could not log test user in.\n";
+			}
 		}
 
 		// CUSTOM
@@ -74,16 +77,19 @@ class TestBootstrap implements PHPUnit_Framework_TestListener
 
 	public function __destruct()
 	{
-		$user = $this->app[ 'user' ];
-		$user->grantAllPermissions();
-		$deleted = $user->delete();
-
-		if( $this->verbose )
+		if( class_exists( '\\app\\users\\models\\User' ) )
 		{
-			if( $deleted )
-				echo "User #" . $user->id() . " deleted.\n";
-			else
-				echo "User #" . $user->id() . " NOT deleted.\n";				
+			$user = $this->app[ 'user' ];
+			$user->grantAllPermissions();
+			$deleted = $user->delete();
+
+			if( $this->verbose )
+			{
+				if( $deleted )
+					echo "User #" . $user->id() . " deleted.\n";
+				else
+					echo "User #" . $user->id() . " NOT deleted.\n";				
+			}
 		}
 	}
 
