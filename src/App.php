@@ -21,8 +21,6 @@ use Monolog\Processor\WebProcessor;
 use Monolog\Logger;
 use Pimple\Container;
 
-require_once 'vendor/autoload.php';
-
 /* site configuration */
 if( !defined( 'INFUSE_BASE_DIR' ) )
 	define( 'INFUSE_BASE_DIR', dirname( __DIR__ ) );
