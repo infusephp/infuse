@@ -2,7 +2,6 @@
 
 require_once 'App.php';
 
-use infuse\ErrorStack;
 use infuse\Util;
 
 use app\search\libs\SearchableModel;
@@ -110,6 +109,12 @@ class TestBootstrap implements PHPUnit_Framework_TestListener
 		if( $this->verbose )
 			printf( "Test '%s' is incomplete.\n", $test->getName() );
 	}
+
+    public function addRiskyTest(PHPUnit_Framework_Test $test, Exception $e, $time)
+    {
+    	if( $this->verbose )
+	        printf( "Test '%s' is deemed risky.\n", $test->getName() );
+    }
 
 	public function addSkippedTest(PHPUnit_Framework_Test $test, Exception $e, $time)
 	{
