@@ -200,7 +200,7 @@ class App extends Container
 
 		/* Session */
 
-		if( !$req->isApi() )
+		if( !$req->isApi() && !$req->isCli() )
 		{
 			// initialize sessions
 			ini_set( 'session.use_trans_sid', false );
