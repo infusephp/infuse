@@ -122,7 +122,10 @@ class TestBootstrap implements PHPUnit_Framework_TestListener
 		if( $this->verbose )
 			printf( "Test '%s' started.\n", $test->getName() );
 
-		$this->app[ 'user' ]->disableSU();
+		if( class_exists( '\\app\\users\\models\\User' ) )
+		{
+			$this->app[ 'user' ]->disableSU();
+		}
 	}
 
 	public function endTest(PHPUnit_Framework_Test $test, $time)
