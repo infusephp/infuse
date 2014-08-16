@@ -396,11 +396,11 @@ class App extends Container
 			echo "-- Installing schema...\n";
 
 		// database sessions
-		if( $this->app[ 'config' ]->get( 'session.adapter' ) == 'database' )
+		if( $this[ 'config' ]->get( 'session.adapter' ) == 'database' )
 			$success = DatabaseSession::install() && $success;
 
 		// models
-		foreach( $this->app[ 'config' ]->get( 'modules.all' ) as $module )
+		foreach( $this[ 'config' ]->get( 'modules.all' ) as $module )
 		{
 			$controller = '\\app\\' . $module . '\\Controller';
 
@@ -420,7 +420,7 @@ class App extends Container
 					echo ($result) ? "ok\n" : "not ok\n";
 
 				if( !$result )
-					print_r( $this->app[ 'errors' ]->errors() );
+					print_r( $this[ 'errors' ]->errors() );
 
 				$success = $result && $success;
 			}
