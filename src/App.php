@@ -13,6 +13,7 @@ use infuse\Validate;
 use infuse\ViewEngine;
 use infuse\Queue;
 use infuse\Session;
+use infuse\Session\Database as DatabaseSession;
 use Monolog\ErrorHandler;
 use Monolog\Handler\ErrorLogHandler;
 use Monolog\Handler\FirePHPHandler;
@@ -375,5 +376,64 @@ class App extends Container
 
 		// send the response
 		$res->send( $req );
+	}
+
+	/**
+	 * Installs the schema in the database for everything needed
+	 * by the framework, including all model schema. This function
+	 * does not overwrite any existing data.
+	 *
+	 * @param boolean $echoOutput
+	 * @param boolean $cleanup when true, cleans up schema
+	 *
+	 * @return boolean success
+	 */
+	function installSchema( $echoOutput = false, $cleanup = false )
+	{
+		$success = true;
+
+		if( $echoOutput )
+			echo "-- Installing schema...\n";
+
+		// database sessions
+		if( $this->app[ 'config' ]->get( 'session.adapter' ) == 'database' )
+			$success = DatabaseSession::install() && $success;
+
+		// models
+		foreach( $this->app[ 'config' ]->get( 'modules.all' ) as $module )
+		{
+			$controller = '\\app\\' . $module . '\\Controller';
+
+			if( !class_exists( $controller ) || !isset( $controller::$properties ) )
+				continue;
+
+			foreach( (array)Util::array_value( $controller::$properties, 'models' ) as $model )
+			{
+				$modelClass = '\\app\\' . $module . '\\models\\' . $model;
+
+				if( $echoOutput )
+					echo "Updating $model...";
+
+				$result = $modelClass::updateSchema( $cleanup );
+
+				if( $echoOutput )
+					echo ($result) ? "ok\n" : "not ok\n";
+
+				if( !$result )
+					print_r( $this->app[ 'errors' ]->errors() );
+
+				$success = $result && $success;
+			}
+		}
+
+		if( $echoOutput )
+		{
+			if( $success )
+				echo "-- Schema installed successfully\n";
+			else
+				echo "-- Problem installing schema\n";
+		}
+
+		return $success;
 	}
 }
