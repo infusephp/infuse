@@ -156,7 +156,7 @@ class App extends Container
 
 			Queue::inject( $app );
 
-			return new Queue( $config->get( 'queue.type' ), $config->get( 'queue.listeners' ) );
+			return new Queue( $config->get( 'queue.type' ), (array)$config->get( 'queue.listeners' ) );
 		};
 
 		/* Ironmq */

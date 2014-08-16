@@ -4,3 +4,4 @@ Desktop.ini
 /composer.phar
 /vendor
 ._.DS_Store
+/build
