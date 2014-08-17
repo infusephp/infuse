@@ -13,7 +13,6 @@ use infuse\Validate;
 use infuse\ViewEngine;
 use infuse\Queue;
 use infuse\Session;
-use infuse\Session\Database as DatabaseSession;
 use Monolog\ErrorHandler;
 use Monolog\Handler\ErrorLogHandler;
 use Monolog\Handler\FirePHPHandler;
@@ -200,7 +199,7 @@ class App extends Container
 
 		/* Session */
 
-		if( !$req->isApi() && !$req->isCli() )
+		if( !$req->isApi() && $config->get( 'session.adapter' ) )
 		{
 			// initialize sessions
 			ini_set( 'session.use_trans_sid', false );
@@ -397,7 +396,7 @@ class App extends Container
 
 		// database sessions
 		if( $this[ 'config' ]->get( 'session.adapter' ) == 'database' )
-			$success = DatabaseSession::install() && $success;
+			$success = Session\Database::install() && $success;
 
 		// models
 		foreach( $this[ 'config' ]->get( 'modules.all' ) as $module )
