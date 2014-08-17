@@ -381,7 +381,7 @@ class App extends Container
 	 * @param string $route path pattern
 	 * @param callable $handler route handler
 	 */
-	function use( $method, $route, callable $handler )
+	function match( $method, $route, callable $handler )
 	{
 		$config = $this[ 'config' ];
 		$routes = $config->get( 'routes' );
