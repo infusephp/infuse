@@ -199,7 +199,8 @@ class App extends Container
 
 		/* Session */
 
-		if( !$req->isApi() && $config->get( 'session.adapter' ) )
+		$sessionAdapter = $config->get( 'session.adapter' );
+		if( !$req->isApi() && $sessionAdapter )
 		{
 			// initialize sessions
 			ini_set( 'session.use_trans_sid', false );
@@ -221,12 +222,9 @@ class App extends Container
 			    true // http only
 			);
 
-			// setup the desired session adapter
-			$adapter = $config->get( 'session.adapter' );
-
-			if( $adapter == 'redis' )
+			if( $sessionAdapter == 'redis' )
 				Session\Redis::start( $app, $config->get( 'session.prefix' ) );
-			else if( $adapter == 'database' )
+			else if( $sessionAdapter == 'database' )
 				Session\Database::start();
 			else
 				session_start();
@@ -282,6 +280,7 @@ class App extends Container
 			2) module routes (i.e. /users/:id/friends)
 			   i) static routes
 			   ii) dynamic routes
+			// TODO try to remove this
 			3) module admin routes
 			4) view without a controller (i.e. /contact-us displays views/contact-us.tpl)
 			5) not found
