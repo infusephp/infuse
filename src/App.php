@@ -269,6 +269,10 @@ class App extends Container
 		}
 	}
 
+	////////////////////////
+	// ROUTING
+	////////////////////////
+
 	function go()
 	{
 		$config = $this[ 'config' ];
@@ -376,6 +380,91 @@ class App extends Container
 		// send the response
 		$res->send( $req );
 	}
+
+	/**
+	 * Adds a handler to the routing table for a given GET route
+	 *
+	 * @param string $route path pattern
+	 * @param callable $handler route handler
+	 */
+	function get( $route, callable $handler )
+	{
+		$this->use( 'get', $route, $handler );
+	}
+
+	/**
+	 * Adds a handler to the routing table for a given POST route
+	 *
+	 * @param string $route path pattern
+	 * @param callable $handler route handler
+	 */
+	function post( $route, callable $handler )
+	{
+		$this->use( 'post', $route, $handler );
+	}
+
+	/**
+	 * Adds a handler to the routing table for a given PUT route
+	 *
+	 * @param string $route path pattern
+	 * @param callable $handler route handler
+	 */
+	function put( $route, callable $handler )
+	{
+		$this->use( 'put', $route, $handler );
+	}
+
+	/**
+	 * Adds a handler to the routing table for a given DELETE route
+	 *
+	 * @param string $route path pattern
+	 * @param callable $handler route handler
+	 */
+	function delete( $route, callable $handler )
+	{
+		$this->use( 'delete', $route, $handler );
+	}
+
+	/**
+	 * Adds a handler to the routing table for a given PATCH route
+	 *
+	 * @param string $route path pattern
+	 * @param callable $handler route handler
+	 */
+	function patch( $route, callable $handler )
+	{
+		$this->use( 'patch', $route, $handler );
+	}
+
+	/**
+	 * Adds a handler to the routing table for a given OPTIONS route
+	 *
+	 * @param string $route path pattern
+	 * @param callable $handler route handler
+	 */
+	function options( $route, callable $handler )
+	{
+		$this->use( 'options', $route, $handler );
+	}
+
+	/**
+	 * Adds a handler to the routing table for a given route
+	 *
+	 * @param string $method HTTP method
+	 * @param string $route path pattern
+	 * @param callable $handler route handler
+	 */
+	function use( $method, $route, callable $handler )
+	{
+		$config = $this[ 'config' ];
+		$routes = $config->get( 'routes' );
+		$routes[ $method . ' ' . $route ] = $handler;
+		$config->set( 'routes', $config->get( 'routes' ) );
+	}
+
+	////////////////////////
+	// DATABASE SCHEMA
+	////////////////////////
 
 	/**
 	 * Installs the schema in the database for everything needed
