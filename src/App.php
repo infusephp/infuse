@@ -275,109 +275,36 @@ class App extends Container
 
 	function go()
 	{
-		$config = $this[ 'config' ];
+		$routed = false;
+
 		$req = $this[ 'req' ];
 		$res = $this[ 'res' ];
 
-		/*
-			Routing Steps:
-			1) routes from Config
-			2) module routes (i.e. /users/:id/friends)
-			   i) static routes
-			   ii) dynamic routes
-			// TODO try to remove this
-			3) module admin routes
-			4) view without a controller (i.e. /contact-us displays views/contact-us.tpl)
-			5) not found
-		*/
+		/* 1. Global Routes */
+		$routed = Router::route( $this[ 'config' ]->get( 'routes' ), $this, $req, $res );
 
-		$routed = false;
-		$routeStep = 1;
-
-		while( !$routed )
+		/* 2. Module Routes */
+		if( !$routed )
 		{
-			if( $routeStep == 1 )
-			{
-				/* main routes */
-				$routed = Router::route( $config->get( 'routes' ), $this, $req, $res );
-			}
-			else if( $routeStep == 2 )
-			{
-				/* module routes */
+			// check if the first part of the path is a controller
+			$module = $req->paths( 0 );
+
+			$controller = '\\app\\' . $module . '\\Controller';
 			
-				// check if the first part of the path is a controller
-				$module = $req->paths( 0 );
-
-				$controller = '\\app\\' . $module . '\\Controller';
-				
-				if( class_exists( $controller ) )
-				{
-					$moduleRoutes = Util::array_value( $controller::$properties, 'routes' );
-					
-					$req->setParams( [ 'controller' => $module . '\\Controller' ] );
-					
-					$routed = Router::route( $moduleRoutes, $this, $req, $res );
-				}
-			}
-			else if( $routeStep == 3 )
+			if( class_exists( $controller ) )
 			{
-				/* module admin routes */
+				$moduleRoutes = Util::array_value( $controller::$properties, 'routes' );
 				
-				if( $req->paths( 0 ) == 'admin' )
-				{
-					$module = $req->paths( 1 );
-					
-					$controller = '\\app\\' . $module . '\\Controller';
-
-					if( class_exists( $controller ) )
-					{
-						$moduleInfo = $controller::$properties;
-
-						$moduleRoutes = Util::array_value( $moduleInfo, 'routes' );
-
-						$req->setParams( [ 'controller' => $module . '\\Controller' ] );
-
-						$adminViewParams = [
-							'selectedModule' => $module,
-							'title' => Util::array_value( $moduleInfo, 'title' ) ];
-
-						$adminLib = '\\app\\admin\\libs\\Admin';
-						if( class_exists( $adminLib ) )
-							$adminViewParams[ 'modulesWithAdmin' ] = $adminLib::adminModules();
-						
-						$this[ 'view_engine' ]->assignData( $adminViewParams );
-						
-						$routed = Router::route( $moduleRoutes, $this, $req, $res );
-					}
-				}
-			}
-			else if( $routeStep == 4 )
-			{
-				/* view without a controller */
-				$basePath = $req->path();
+				$req->setParams( [ 'controller' => $module . '\\Controller' ] );
 				
-				// make sure the route does not touch any special files
-				if( strpos( $basePath, '/emails/' ) !== 0 && !in_array( $basePath, [ '/error', '/parent' ] ) )
-				{
-					$view = substr_replace( $basePath, '', 0, 1 );
-
-					if( file_exists( INFUSE_VIEWS_DIR . '/' . $view . '.tpl' ) )
-						$routed = $res->render( $view );
-				}
+				$routed = Router::route( $moduleRoutes, $this, $req, $res );
 			}
-			else
-			{
-				/* not found */
-				$res->setCode( 404 );
-				
-				$routed = true;
-			}
-			
-			// move on to the next step
-			$routeStep++;
 		}
 
-		// send the response
+		/* 3. Not Found */
+		if( !$routed )
+			$res->setCode( 404 );
+
 		$res->send( $req );
 	}
 
