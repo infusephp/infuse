@@ -21,9 +21,10 @@ use Monolog\Processor\WebProcessor;
 use Monolog\Logger;
 use Pimple\Container;
 
-/* site configuration */
 if( !defined( 'INFUSE_BASE_DIR' ) )
-	define( 'INFUSE_BASE_DIR', dirname( __DIR__ ) );
+	die( 'INFUSE_BASE_DIR has not been defined!' );
+
+/* app constants */
 if( !defined( 'INFUSE_APP_DIR' ) )
 	define( 'INFUSE_APP_DIR', INFUSE_BASE_DIR . '/app' );
 if( !defined( 'INFUSE_ASSETS_DIR' ) )
