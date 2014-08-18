@@ -17,7 +17,7 @@ use Monolog\ErrorHandler;
 use Monolog\Handler\ErrorLogHandler;
 use Monolog\Handler\FirePHPHandler;
 use Monolog\Processor\IntrospectionProcessor;
-use Monolog\Processor\WebProcessor;
+use Monolog\Processor\ExtraFieldProcessor;
 use Monolog\Logger;
 use Pimple\Container;
 
@@ -73,7 +73,7 @@ class App extends Container
 				'user_agent' => 'HTTP_USER_AGENT' ];
 
 			$processors = [
-				new WebProcessor( null, $extraFields ),
+				new ExtraFieldProcessor( null, $extraFields ),
 				new IntrospectionProcessor ];
 			
 			$handlers = [ new ErrorLogHandler ];
