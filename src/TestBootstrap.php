@@ -23,7 +23,7 @@ class TestBootstrap implements PHPUnit_Framework_TestListener
 			return self::$staticApp;
 	}
 
-	public function __construct( $verbose )
+	public function __construct( $verbose, $installSchema = false )
 	{
 		$config = @include 'config.php';
 		if( !$config )
@@ -34,14 +34,17 @@ class TestBootstrap implements PHPUnit_Framework_TestListener
 
 		$this->verbose = $verbose;
 
-		// create a test user and login
-		if( $this->verbose )
-			echo "Logging in a test user to run the test suite.\n";
-
-		self::$userEmail = 'test' . Util::guid() . '@exmaple.com';
+		if( $installSchema )
+			$this->app->installSchema( true );
 
 		if( class_exists( '\\app\\users\\models\\User' ) )
 		{
+			// create a test user and login
+			if( $this->verbose )
+				echo "Logging in a test user to run the test suite.\n";
+
+			self::$userEmail = 'test' . Util::guid() . '@exmaple.com';
+
 			$user = new User;
 			$success = $user->create( [
 				'user_email' => self::$userEmail,
