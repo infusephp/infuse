@@ -324,7 +324,7 @@ class App extends Container
 	 */
 	function get( $route, callable $handler )
 	{
-		$this->use( 'get', $route, $handler );
+		$this->match( 'get', $route, $handler );
 	}
 
 	/**
@@ -335,7 +335,7 @@ class App extends Container
 	 */
 	function post( $route, callable $handler )
 	{
-		$this->use( 'post', $route, $handler );
+		$this->match( 'post', $route, $handler );
 	}
 
 	/**
@@ -346,7 +346,7 @@ class App extends Container
 	 */
 	function put( $route, callable $handler )
 	{
-		$this->use( 'put', $route, $handler );
+		$this->match( 'put', $route, $handler );
 	}
 
 	/**
@@ -357,7 +357,7 @@ class App extends Container
 	 */
 	function delete( $route, callable $handler )
 	{
-		$this->use( 'delete', $route, $handler );
+		$this->match( 'delete', $route, $handler );
 	}
 
 	/**
@@ -368,7 +368,7 @@ class App extends Container
 	 */
 	function patch( $route, callable $handler )
 	{
-		$this->use( 'patch', $route, $handler );
+		$this->match( 'patch', $route, $handler );
 	}
 
 	/**
@@ -379,7 +379,7 @@ class App extends Container
 	 */
 	function options( $route, callable $handler )
 	{
-		$this->use( 'options', $route, $handler );
+		$this->match( 'options', $route, $handler );
 	}
 
 	/**
