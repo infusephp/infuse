@@ -21,7 +21,7 @@
     },
 	"require": {
 		"php": ">=5.4.0",
-		"infuse/libs": "0.1.25",
+		"infuse/libs": "dev-master",
 		"pimple/pimple": "v2.1.0",
 		"monolog/monolog": "1.7.0",
 		"smarty/smarty": "v3.1.19",
