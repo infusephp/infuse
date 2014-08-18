@@ -420,7 +420,17 @@ class App extends Container
 
 		// database sessions
 		if( $this[ 'config' ]->get( 'sessions.adapter' ) == 'database' )
-			$success = Session\Database::install() && $success;
+		{
+			if( $echoOutput )
+				echo "Updating Database Sessions...";
+
+			$result = Session\Database::install();
+
+			if( $echoOutput )
+				echo ($result) ? "ok\n" : "not ok\n";
+
+			$success = $result && $success;
+		}
 
 		// models
 		foreach( $this[ 'config' ]->get( 'modules.all' ) as $module )
