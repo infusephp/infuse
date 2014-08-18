@@ -208,14 +208,13 @@ class App extends Container
 
 		/* Session */
 
-		$sessionAdapter = $config->get( 'session.adapter' );
-		if( !$req->isApi() && $sessionAdapter )
+		if( !$req->isApi() && $config->get( 'sessions.enabled' ) )
 		{
 			// initialize sessions
 			ini_set( 'session.use_trans_sid', false );
 			ini_set( 'session.use_only_cookies', true ); 
 			ini_set( 'url_rewriter.tags', '' );
-			ini_set( 'session.gc_maxlifetime', $config->get( 'session.lifetime' ) );
+			ini_set( 'session.gc_maxlifetime', $config->get( 'sessions.lifetime' ) );
 
 			// set the session name
 			$sessionTitle = $config->get( 'site.title' ) . '-' . $req->host();
@@ -224,15 +223,16 @@ class App extends Container
 			
 			// set the session cookie parameters
 			session_set_cookie_params(
-			    $config->get( 'session.lifetime' ), // lifetime
+			    $config->get( 'sessions.lifetime' ), // lifetime
 			    '/', // path
 			    '.' . $req->host(), // domain
 			    $req->isSecure(), // secure
 			    true // http only
 			);
 
+			$sessionAdapter = $config->get( 'sessions.adapter' );
 			if( $sessionAdapter == 'redis' )
-				Session\Redis::start( $app, $config->get( 'session.prefix' ) );
+				Session\Redis::start( $app, $config->get( 'sessions.prefix' ) );
 			else if( $sessionAdapter == 'database' )
 				Session\Database::start();
 			else
@@ -242,7 +242,7 @@ class App extends Container
 			Util::set_cookie_fix_domain(
 				session_name(),
 				session_id(),
-				time() + $config->get( 'session.lifetime' ),
+				time() + $config->get( 'sessions.lifetime' ),
 				'/',
 				$req->host(),
 				$req->isSecure(),
@@ -419,7 +419,7 @@ class App extends Container
 			echo "-- Installing schema...\n";
 
 		// database sessions
-		if( $this[ 'config' ]->get( 'session.adapter' ) == 'database' )
+		if( $this[ 'config' ]->get( 'sessions.adapter' ) == 'database' )
 			$success = Session\Database::install() && $success;
 
 		// models
