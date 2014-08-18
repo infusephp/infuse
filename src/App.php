@@ -64,10 +64,18 @@ class App extends Container
 		/* Logging */
 
 		$this[ 'logger' ] = function() use ( $app, $config ) {
-			$processors = [
-				new WebProcessor,
-				new IntrospectionProcessor ];
+			$extraFields = [
+				'url' => 'REQUEST_URI',
+				'ip' => 'REMOTE_ADDR',
+				'http_method' => 'REQUEST_METHOD',
+				'server' => 'SERVER_NAME',
+				'referrer' => 'HTTP_REFERER',
+				'user_agent' => 'HTTP_USER_AGENT' ];
 
+			$processors = [
+				new WebProcessor( null, $extraFields ),
+				new IntrospectionProcessor ];
+			
 			$handlers = [ new ErrorLogHandler ];
 
 			// firephp
