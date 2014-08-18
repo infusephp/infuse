@@ -394,7 +394,7 @@ class App extends Container
 		$config = $this[ 'config' ];
 		$routes = $config->get( 'routes' );
 		$routes[ $method . ' ' . $route ] = $handler;
-		$config->set( 'routes', $config->get( 'routes' ) );
+		$config->set( 'routes', $routes );
 	}
 
 	////////////////////////
