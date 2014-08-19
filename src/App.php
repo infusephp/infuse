@@ -14,6 +14,7 @@ use infuse\ViewEngine;
 use infuse\Queue;
 use infuse\Session;
 use Monolog\ErrorHandler;
+use Monolog\Handler\NullHandler;
 use Monolog\Handler\ErrorLogHandler;
 use Monolog\Handler\FirePHPHandler;
 use Monolog\Processor\IntrospectionProcessor;
@@ -69,23 +70,31 @@ class App extends Container
 		/* Logging */
 
 		$this[ 'logger' ] = function() use ( $app, $config ) {
-			$extraFields = [
-				'url' => 'REQUEST_URI',
-				'ip' => 'REMOTE_ADDR',
-				'http_method' => 'REQUEST_METHOD',
-				'server' => 'SERVER_NAME',
-				'referrer' => 'HTTP_REFERER',
-				'user_agent' => 'HTTP_USER_AGENT' ];
+			if( $config->get( 'logger.enabled' ) )
+			{
+				$extraFields = [
+					'url' => 'REQUEST_URI',
+					'ip' => 'REMOTE_ADDR',
+					'http_method' => 'REQUEST_METHOD',
+					'server' => 'SERVER_NAME',
+					'referrer' => 'HTTP_REFERER',
+					'user_agent' => 'HTTP_USER_AGENT' ];
 
-			$processors = [
-				new ExtraFieldProcessor( null, $extraFields ),
-				new IntrospectionProcessor ];
-			
-			$handlers = [ new ErrorLogHandler ];
+				$processors = [
+					new ExtraFieldProcessor( null, $extraFields ),
+					new IntrospectionProcessor ];
+				
+				$handlers = [ new ErrorLogHandler ];
 
-			// firephp
-			if( !$config->get( 'site.production-level' ) )
-				$handlers[] = new FirePHPHandler;
+				// firephp
+				if( !$config->get( 'site.production-level' ) )
+					$handlers[] = new FirePHPHandler;
+			}
+			else
+			{
+				$processors = [];
+				$handlers = [ new NullHandler ];
+			}
 
 			return new Logger( $config->get( 'site.host-name' ), $handlers, $processors );
 		};
