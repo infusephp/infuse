@@ -314,10 +314,10 @@ class App extends Container
 				$module = $req->paths( 0 );
 
 			$controller = '\\app\\' . $module . '\\Controller';
-						
+			
 			if( class_exists( $controller ) )
 			{
-				$moduleRoutes = Util::array_value( $controller::$properties, 'routes' );
+				$moduleRoutes = (array)Util::array_value( $controller::$properties, 'routes' );
 				
 				$req->setParams( [ 'controller' => $module . '\\Controller' ] );
 				
