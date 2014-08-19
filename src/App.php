@@ -309,13 +309,12 @@ class App extends Container
 		if( !$routed )
 		{
 			// check if the first part of the path is a controller
-			$module = $req->paths( 0 );
-			$controller = '\\app\\' . $module . '\\Controller';
+			$module = $req->params( 'module' );
+			if( !$module )
+				$module = $req->paths( 0 );
 
-			// check the request params
-			if( !class_exists( $controller ) && $module = $req->params( 'module' ) )
-				$controller = '\\app\\' . $module . '\\Controller';
-			
+			$controller = '\\app\\' . $module . '\\Controller';
+						
 			if( class_exists( $controller ) )
 			{
 				$moduleRoutes = Util::array_value( $controller::$properties, 'routes' );
