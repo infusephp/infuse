@@ -25,6 +25,17 @@ class TestBootstrap implements PHPUnit_Framework_TestListener
 
 	public function __construct( $verbose, $installSchema = false )
 	{
+		/* Install DB Schema */
+		if( $installSchema )
+		{
+			$config = @include 'config.php';
+			$config[ 'modules' ][ 'middleware' ] = [];
+			$config[ 'sessions' ][ 'enabled' ] = false;
+			$app = new App( $config );
+
+			$app->installSchema( $verbose );
+		}
+
 		$config = @include 'config.php';
 		if( !$config )
 			$config = [];
@@ -34,12 +45,9 @@ class TestBootstrap implements PHPUnit_Framework_TestListener
 
 		$this->verbose = $verbose;
 
-		if( $installSchema )
-			$this->app->installSchema( true );
-
+		/* Create a test user and sign in */
 		if( class_exists( '\\app\\users\\models\\User' ) )
 		{
-			// create a test user and login
 			if( $this->verbose )
 				echo "Logging in a test user to run the test suite.\n";
 
