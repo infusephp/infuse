@@ -310,8 +310,11 @@ class App extends Container
 		{
 			// check if the first part of the path is a controller
 			$module = $req->paths( 0 );
-
 			$controller = '\\app\\' . $module . '\\Controller';
+
+			// check the request params
+			if( !class_exists( $controller ) && $module = $req->params( 'module' ) )
+				$controller = '\\app\\' . $module . '\\Controller';
 			
 			if( class_exists( $controller ) )
 			{
