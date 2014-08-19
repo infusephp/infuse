@@ -37,13 +37,18 @@ if( !defined( 'INFUSE_VIEWS_DIR' ) )
 	define( 'INFUSE_VIEWS_DIR', INFUSE_BASE_DIR . '/views' );
 
 /* error codes */
-define( 'ERROR_NO_PERMISSION', 'no_permission' );
-define( 'VALIDATION_FAILED', 'validation_failed' );
-define( 'VALIDATION_REQUIRED_FIELD_MISSING', 'required_field_missing' );
-define( 'VALIDATION_NOT_UNIQUE', 'not_unique' );
+if( !defined( 'ERROR_NO_PERMISSION' ) )
+	define( 'ERROR_NO_PERMISSION', 'no_permission' );
+if( !defined( 'VALIDATION_FAILED' ) )
+	define( 'VALIDATION_FAILED', 'validation_failed' );
+if( !defined( 'VALIDATION_REQUIRED_FIELD_MISSING' ) )
+	define( 'VALIDATION_REQUIRED_FIELD_MISSING', 'required_field_missing' );
+if( !defined( 'VALIDATION_NOT_UNIQUE' ) )
+	define( 'VALIDATION_NOT_UNIQUE', 'not_unique' );
 
 /* useful constants */
-define( 'SKIP_ROUTE', -1 );
+if( !defined( 'SKIP_ROUTE' ) )
+	define( 'SKIP_ROUTE', -1 );
 
 class App extends Container
 {
