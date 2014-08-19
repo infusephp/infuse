@@ -1,7 +1,5 @@
 <?php
 
-require_once 'App.php';
-
 use infuse\Util;
 
 use app\search\libs\SearchableModel;
