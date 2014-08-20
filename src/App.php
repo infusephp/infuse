@@ -182,14 +182,6 @@ class App extends Container
 			return new Queue( $config->get( 'queue.type' ), (array)$config->get( 'queue.listeners' ) );
 		};
 
-		/* Ironmq */
-
-		$this[ 'ironmq' ] = function() use ( $app, $config ) {
-			return new IronMQ( [
-				'token' => $config->get( 'queue.token' ),
-				'project_id' => $config->get( 'queue.project' ) ] );
-		};
-
 		/* Models */
 
 		Model::inject( $this );
