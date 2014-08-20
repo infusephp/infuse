@@ -49,7 +49,7 @@ class TestBootstrap implements PHPUnit_Framework_TestListener
 			if( $this->verbose )
 				echo "Logging in a test user to run the test suite.\n";
 
-			self::$userEmail = 'test' . Util::guid() . '@exmaple.com';
+			self::$userEmail = 'test@exmaple.com';
 
 			$user = new User;
 			if( property_exists( $user, 'testUser' ) )
