@@ -52,11 +52,24 @@ class TestBootstrap implements PHPUnit_Framework_TestListener
 			self::$userEmail = 'test' . Util::guid() . '@exmaple.com';
 
 			$user = new User;
-			$success = $user->create( [
-				'user_email' => self::$userEmail,
-				'user_password' => [ self::$userPassword, self::$userPassword ],
-				'first_name' => 'Bob',
-				'ip' => '127.0.0.1' ] );
+			if( property_exists( $user, 'testUser' ) )
+				$testInfo = $user::$testUser;
+			else
+				$testInfo = [
+					'first_name' => 'Bob',
+					'ip' => '127.0.0.1' ];
+
+			$testInfo[ 'user_email' ] = self::$userEmail;
+			$testInfo[ 'user_password' ] = [ self::$userPassword, self::$userPassword ];
+
+			$existingUser = User::findOne( [ 'where' => [ 'user_email' => $testInfo[ 'user_email' ] ] ] );
+			if( $existingUser )
+			{
+				$existingUser->grantAllPermissions();
+				$existingUser->delete();
+			}
+
+			$success = $user->create( $testInfo );
 
 			if( $this->verbose )
 			{
