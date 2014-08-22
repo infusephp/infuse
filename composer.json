@@ -1,6 +1,5 @@
 {
 	"name": "idealistsoft/framework-bootstrap",
-	"version": "1.0",
 	"description": "Bootstrap for Idealist Framework",
 	"type": "library",
 	"keywords": ["idealist","framework","bootstrap"],
@@ -22,10 +21,9 @@
 	"require": {
 		"php": ">=5.4.0",
 		"infuse/libs": "dev-master",
-		"pimple/pimple": "v2.1.0",
-		"monolog/monolog": "1.7.0",
-		"smarty/smarty": "v3.1.19",
-		"predis/predis": "v0.8.4",
-		"iron-io/iron_mq": "1.4.5"
+		"pimple/pimple": ">=v2.1.0",
+		"monolog/monolog": "1.*",
+		"smarty/smarty": ">=v3.1.19",
+		"predis/predis": ">=v1.0.0"
 	}
 }
