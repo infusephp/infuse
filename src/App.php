@@ -415,64 +415,68 @@ class App extends Container
 	 * does not overwrite any existing data.
 	 *
 	 * @param boolean $echoOutput
-	 * @param boolean $cleanup when true, cleans up schema
 	 *
 	 * @return boolean success
 	 */
-	function installSchema( $echoOutput = false, $cleanup = false )
+	function installSchema( $module = '', $echoOutput = false )
 	{
 		$success = true;
 
 		if( $echoOutput )
-			echo "-- Installing schema...\n";
+			echo "-- Running migrations\n";
 
 		// database sessions
 		if( $this[ 'config' ]->get( 'sessions.adapter' ) == 'database' )
 		{
 			if( $echoOutput )
-				echo "Updating Database Sessions...";
+				echo "Migrating Database Sessions\n";
 
 			$result = Session\Database::install();
 
 			if( $echoOutput )
-				echo ($result) ? "ok\n" : "not ok\n";
+				echo ($result) ? "Database Sessions Installed\n" : "Could not install Database Sessions\n";
 
 			$success = $result && $success;
 		}
 
-		// models
-		foreach( $this[ 'config' ]->get( 'modules.all' ) as $module )
+		// module migrations
+		$modules = (empty($module)) ? $this[ 'config' ]->get( 'modules.all' ) : [ $module ];
+
+		foreach( $modules as $mod )
 		{
-			$controller = '\\app\\' . $module . '\\Controller';
+			if( $echoOutput )
+				echo "-- Migrating $mod\n";
 
-			if( !class_exists( $controller ) || !isset( $controller::$properties ) )
-				continue;
+			putenv( "PHINX_APP_MODULE=$mod" );
+			ob_start();
+			system( 'php vendor/robmorgan/phinx/bin/phinx migrate' );
+			$output = ob_get_contents();
+			ob_end_clean();
 
-			foreach( (array)Util::array_value( $controller::$properties, 'models' ) as $model )
+			if( $echoOutput )
 			{
-				$modelClass = '\\app\\' . $module . '\\models\\' . $model;
+				$lines = explode( "\n", $output );
 
-				if( $echoOutput )
-					echo "Updating $model...";
+				// clean up the output
+				$cleanOutput = [];
+				foreach( $lines as $line )
+				{
+					if( !empty( $line ) && substr( $line, 0, 3 ) == ' ==' )
+						$cleanOutput[] = $line;
+				}
 
-				$result = $modelClass::updateSchema( $cleanup );
+				echo implode( "\n", $cleanOutput );
 
-				if( $echoOutput )
-					echo ($result) ? "ok\n" : "not ok\n";
-
-				if( !$result )
-					print_r( $this[ 'errors' ]->errors() );
-
-				$success = $result && $success;
+				if( count( $cleanOutput ) > 0 ) echo "\n";
 			}
 		}
 
 		if( $echoOutput )
 		{
 			if( $success )
-				echo "-- Schema installed successfully\n";
+				echo "-- Success!\n";
 			else
-				echo "-- Problem installing schema\n";
+				echo "-- Error running migrations\n";
 		}
 
 		return $success;
