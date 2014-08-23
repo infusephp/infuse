@@ -406,19 +406,18 @@ class App extends Container
 	}
 
 	////////////////////////
-	// DATABASE SCHEMA
+	// MIGRATIONS
 	////////////////////////
 
 	/**
-	 * Installs the schema in the database for everything needed
-	 * by the framework, including all model schema. This function
-	 * does not overwrite any existing data.
+	 * Runs migrations for all app modules or a specified module.
+	 * Also, will setup database sessions if enabled
 	 *
 	 * @param boolean $echoOutput
 	 *
 	 * @return boolean success
 	 */
-	function installSchema( $module = '', $echoOutput = false )
+	function migrate( $module = '', $echoOutput = false )
 	{
 		$success = true;
 
