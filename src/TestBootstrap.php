@@ -21,19 +21,8 @@ class TestBootstrap implements PHPUnit_Framework_TestListener
 			return self::$staticApp;
 	}
 
-	public function __construct( $verbose, $installSchema = false )
+	public function __construct( $verbose = false )
 	{
-		/* Install DB Schema */
-		if( $installSchema )
-		{
-			$config = @include 'config.php';
-			$config[ 'modules' ][ 'middleware' ] = [];
-			$config[ 'sessions' ][ 'enabled' ] = false;
-			$app = new App( $config );
-
-			$app->installSchema( $verbose );
-		}
-
 		$config = @include 'config.php';
 		if( !$config )
 			$config = [];
