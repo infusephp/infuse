@@ -429,12 +429,12 @@ class App extends Container
 		if( $this[ 'config' ]->get( 'sessions.adapter' ) == 'database' )
 		{
 			if( $echoOutput )
-				echo "Migrating Database Sessions\n";
+				echo "-- Migrating Database Sessions\n";
 
 			$result = Session\Database::install();
 
 			if( $echoOutput )
-				echo ($result) ? "Database Sessions Installed\n" : "Could not install Database Sessions\n";
+				echo ($result) ? "-- Database Sessions Installed\n" : "-- Error installing Database Sessions\n";
 
 			$success = $result && $success;
 		}
