@@ -25,6 +25,7 @@
 		"monolog/monolog": "1.*",
 		"smarty/smarty": ">=v3.1.19",
 		"predis/predis": ">=v1.0.0",
-		"robmorgan/phinx": "*"
+		"robmorgan/phinx": "*",
+		"symfony/console": "2.*"
 	}
 }
