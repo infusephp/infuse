@@ -31,12 +31,18 @@ class MigrateCommand extends Command
                 'module',
                 InputArgument::OPTIONAL,
                 'Specific module to run migrations for'
+            )
+            ->addArgument(
+                'args',
+                InputArgument::IS_ARRAY | InputArgument::OPTIONAL,
+                'Optional arguments to pass to phinx'
             );
     }
 
     protected function execute( InputInterface $input, OutputInterface $output )
     {
-        $result = $this->migrate( $input->getArgument( 'module' ), $output );
+        $migrateArgs = implode( ' ', $input->getArgument( 'args' ) );
+        $result = $this->migrate( $input->getArgument( 'module' ), $migrateArgs, $output );
 
         return $result ? 0 : 1;
     }
@@ -46,18 +52,23 @@ class MigrateCommand extends Command
      * Also, will setup database sessions if enabled
      *
      * @param string $module optional module
+     * @param string $migrateArgs optional arguments to pass to phinx
      * @param OutputInterface $output
      *
      * @return boolean success
      */
-    private function migrate( $module = '', OutputInterface $output )
+    private function migrate( $module = '', $migrateArgs, OutputInterface $output )
     {
         $success = true;
 
-        $output->writeln( '-- Running migrations' );
+        if( empty( $migrateArgs ) )
+            $migrateArgs = 'migrate';
+
+        if( $migrateArgs == 'migrate' )
+            $output->writeln( '-- Running migrations' );
 
         // database sessions
-        if( $this->app[ 'config' ]->get( 'sessions.adapter' ) == 'database' )
+        if( empty( $module ) && $this->app[ 'config' ]->get( 'sessions.adapter' ) == 'database' )
         {
             $output->writeln( 'Migrating Database Sessions' );
 
@@ -76,13 +87,14 @@ class MigrateCommand extends Command
 
         foreach( (array)$modules as $mod )
         {
-            $output->writeln( "-- Migrating $mod" );
+            if( $migrateArgs == 'migrate' )
+                $output->writeln( "-- Migrating $mod" );
 
             $result = 1;
             putenv( "PHINX_APP_MODULE=$mod" );
 
             ob_start();
-            system( 'php vendor/robmorgan/phinx/bin/phinx migrate', $result );
+            system( 'php vendor/robmorgan/phinx/bin/phinx ' . $migrateArgs, $result );
             $phinxOutput = ob_get_contents();
             ob_end_clean();
 
@@ -98,10 +110,13 @@ class MigrateCommand extends Command
             }
         }
 
-        if( $success )
-            $output->writeln( '-- Success!' );
-        else
-            $output->writeln( '-- Error running migrations' );
+        if( $migrateArgs == 'migrate' )
+        {
+            if( $success )
+                $output->writeln( '-- Success!' );
+            else
+                $output->writeln( '-- Error running migrations' );            
+        }
 
         return $success;
     }
