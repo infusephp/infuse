@@ -78,11 +78,15 @@ class MigrateCommand extends Command
         {
             $output->writeln( "-- Migrating $mod" );
 
+            $result = 1;
             putenv( "PHINX_APP_MODULE=$mod" );
+
             ob_start();
-            system( 'php vendor/robmorgan/phinx/bin/phinx migrate' );
+            system( 'php vendor/robmorgan/phinx/bin/phinx migrate', $result );
             $output = ob_get_contents();
             ob_end_clean();
+
+            $success = $result && $success;
 
             $lines = explode( "\n", $output );
 

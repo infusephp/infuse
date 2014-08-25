@@ -28,6 +28,8 @@ class TestCommand extends Command
         if( $module = $input->getArgument( 'module' ) )
             $args[] = 'app/' . $module . '/tests/';
 
-        system( 'phpunit ' . implode( ' ', $args ) );
+        $result = 1;
+        system( 'phpunit ' . implode( ' ', $args ), $result );
+        return $result;
     }
 }
