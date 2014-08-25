@@ -86,7 +86,7 @@ class MigrateCommand extends Command
             $output = ob_get_contents();
             ob_end_clean();
 
-            $success = $result && $success;
+            $success = ($result == 0) && $success;
 
             $lines = explode( "\n", $output );
 
