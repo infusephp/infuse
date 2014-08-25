@@ -83,12 +83,12 @@ class MigrateCommand extends Command
 
             ob_start();
             system( 'php vendor/robmorgan/phinx/bin/phinx migrate', $result );
-            $output = ob_get_contents();
+            $phinxOutput = ob_get_contents();
             ob_end_clean();
 
             $success = ($result == 0) && $success;
 
-            $lines = explode( "\n", $output );
+            $lines = explode( "\n", $phinxOutput );
 
             // clean up the output
             foreach( $lines as $line )
