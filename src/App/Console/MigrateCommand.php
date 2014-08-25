@@ -105,7 +105,10 @@ class MigrateCommand extends Command
             // clean up the output
             foreach( $lines as $line )
             {
-                if( !empty( $line ) && substr( $line, 0, 3 ) == ' ==' )
+                // when migrating, only output lines starting
+                // with ' =='
+                if( $migrateArgs != 'migrate' ||
+                    !empty( $line ) && substr( $line, 0, 3 ) == ' ==' )
                     $output->writeln( $line );
             }
         }
