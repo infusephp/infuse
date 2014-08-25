@@ -332,7 +332,7 @@ class App extends Container
 	 */
 	function get( $route, callable $handler )
 	{
-		$this->match( 'get', $route, $handler );
+		$this->map( 'get', $route, $handler );
 	}
 
 	/**
@@ -343,7 +343,7 @@ class App extends Container
 	 */
 	function post( $route, callable $handler )
 	{
-		$this->match( 'post', $route, $handler );
+		$this->map( 'post', $route, $handler );
 	}
 
 	/**
@@ -354,7 +354,7 @@ class App extends Container
 	 */
 	function put( $route, callable $handler )
 	{
-		$this->match( 'put', $route, $handler );
+		$this->map( 'put', $route, $handler );
 	}
 
 	/**
@@ -365,7 +365,7 @@ class App extends Container
 	 */
 	function delete( $route, callable $handler )
 	{
-		$this->match( 'delete', $route, $handler );
+		$this->map( 'delete', $route, $handler );
 	}
 
 	/**
@@ -376,7 +376,7 @@ class App extends Container
 	 */
 	function patch( $route, callable $handler )
 	{
-		$this->match( 'patch', $route, $handler );
+		$this->map( 'patch', $route, $handler );
 	}
 
 	/**
@@ -387,7 +387,7 @@ class App extends Container
 	 */
 	function options( $route, callable $handler )
 	{
-		$this->match( 'options', $route, $handler );
+		$this->map( 'options', $route, $handler );
 	}
 
 	/**
@@ -397,7 +397,7 @@ class App extends Container
 	 * @param string $route path pattern
 	 * @param callable $handler route handler
 	 */
-	function match( $method, $route, callable $handler )
+	function map( $method, $route, callable $handler )
 	{
 		$config = $this[ 'config' ];
 		$routes = $config->get( 'routes' );
