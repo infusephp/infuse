@@ -94,10 +94,10 @@ class MigrateCommand extends Command
             putenv( "PHINX_APP_MODULE=$mod" );
 
             ob_start();
-            system( 'php vendor/robmorgan/phinx/bin/phinx ' . $migrateArgs, $result );
+            system( 'php ' . INFUSE_BASE_DIR . '/vendor/robmorgan/phinx/bin/phinx ' . $migrateArgs . ' -c ' . INFUSE_BASE_DIR . '/phinx.php', $result );
             $phinxOutput = ob_get_contents();
             ob_end_clean();
-
+            
             $success = ($result == 0) && $success;
 
             $lines = explode( "\n", $phinxOutput );
