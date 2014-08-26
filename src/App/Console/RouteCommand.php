@@ -25,7 +25,7 @@ class RouteCommand extends Command
     protected function execute( InputInterface $input, OutputInterface $output )
     {
         $result = 1;
-        system( "php public/index.php " . $input->getArgument( 'route' ), $result );
+        system( "php " . INFUSE_BASE_DIR . "/public/index.php " . $input->getArgument( 'route' ), $result );
         return $result;
     }
 }
