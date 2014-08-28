@@ -101,7 +101,7 @@ class App extends Container
 
 		/* Error Reporting */
 
-		ini_set( 'display_errors', $config->get( 'site.production-level' ) );
+		ini_set( 'display_errors', !$config->get( 'site.production-level' ) );
 		ini_set( 'log_errors', 1 );
 		error_reporting( E_ALL | E_STRICT );
 
