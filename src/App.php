@@ -23,385 +23,377 @@ use Monolog\Logger;
 use Pimple\Container;
 
 if( !defined( 'INFUSE_BASE_DIR' ) )
-	die( 'INFUSE_BASE_DIR has not been defined!' );
+    die( 'INFUSE_BASE_DIR has not been defined!' );
 
 /* app constants */
 if( !defined( 'INFUSE_APP_DIR' ) )
-	define( 'INFUSE_APP_DIR', INFUSE_BASE_DIR . '/app' );
+    define( 'INFUSE_APP_DIR', INFUSE_BASE_DIR . '/app' );
 if( !defined( 'INFUSE_ASSETS_DIR' ) )
-	define( 'INFUSE_ASSETS_DIR', INFUSE_BASE_DIR . '/assets' );
+    define( 'INFUSE_ASSETS_DIR', INFUSE_BASE_DIR . '/assets' );
 if( !defined( 'INFUSE_PUBLIC_DIR' ) )
-	define( 'INFUSE_PUBLIC_DIR', INFUSE_BASE_DIR . '/public' );
+    define( 'INFUSE_PUBLIC_DIR', INFUSE_BASE_DIR . '/public' );
 if( !defined( 'INFUSE_TEMP_DIR' ) )
-	define( 'INFUSE_TEMP_DIR', INFUSE_BASE_DIR . '/temp' );
+    define( 'INFUSE_TEMP_DIR', INFUSE_BASE_DIR . '/temp' );
 if( !defined( 'INFUSE_VIEWS_DIR' ) )
-	define( 'INFUSE_VIEWS_DIR', INFUSE_BASE_DIR . '/views' );
+    define( 'INFUSE_VIEWS_DIR', INFUSE_BASE_DIR . '/views' );
 
 /* error codes */
 if( !defined( 'ERROR_NO_PERMISSION' ) )
-	define( 'ERROR_NO_PERMISSION', 'no_permission' );
+    define( 'ERROR_NO_PERMISSION', 'no_permission' );
 if( !defined( 'VALIDATION_FAILED' ) )
-	define( 'VALIDATION_FAILED', 'validation_failed' );
+    define( 'VALIDATION_FAILED', 'validation_failed' );
 if( !defined( 'VALIDATION_REQUIRED_FIELD_MISSING' ) )
-	define( 'VALIDATION_REQUIRED_FIELD_MISSING', 'required_field_missing' );
+    define( 'VALIDATION_REQUIRED_FIELD_MISSING', 'required_field_missing' );
 if( !defined( 'VALIDATION_NOT_UNIQUE' ) )
-	define( 'VALIDATION_NOT_UNIQUE', 'not_unique' );
+    define( 'VALIDATION_NOT_UNIQUE', 'not_unique' );
 
 /* useful constants */
 if( !defined( 'SKIP_ROUTE' ) )
-	define( 'SKIP_ROUTE', -1 );
+    define( 'SKIP_ROUTE', -1 );
 
 class App extends Container
 {
-	function __construct( array $configValues = [] )
-	{
-		parent::__construct();
+    public function __construct(array $configValues = [])
+    {
+        parent::__construct();
 
-		$app = $this;
+        $app = $this;
 
-		/* Load Configuration */
+        /* Load Configuration */
 
-		$this[ 'config' ] = function() use ( $configValues ) {
-			return new Config( $configValues );
-		};
+        $this[ 'config' ] = function () use ($configValues) {
+            return new Config( $configValues );
+        };
 
-		$config = $app[ 'config' ];
+        $config = $app[ 'config' ];
 
-		/* Logging */
+        /* Logging */
 
-		$this[ 'logger' ] = function() use ( $app, $config ) {
-			if( $config->get( 'logger.enabled' ) )
-			{
-				$extraFields = [
-					'url' => 'REQUEST_URI',
-					'ip' => 'REMOTE_ADDR',
-					'http_method' => 'REQUEST_METHOD',
-					'server' => 'SERVER_NAME',
-					'referrer' => 'HTTP_REFERER',
-					'user_agent' => 'HTTP_USER_AGENT' ];
+        $this[ 'logger' ] = function () use ($app, $config) {
+            if ( $config->get( 'logger.enabled' ) ) {
+                $extraFields = [
+                    'url' => 'REQUEST_URI',
+                    'ip' => 'REMOTE_ADDR',
+                    'http_method' => 'REQUEST_METHOD',
+                    'server' => 'SERVER_NAME',
+                    'referrer' => 'HTTP_REFERER',
+                    'user_agent' => 'HTTP_USER_AGENT' ];
 
-				$processors = [
-					new ExtraFieldProcessor( null, $extraFields ),
-					new IntrospectionProcessor ];
-				
-				$handlers = [ new ErrorLogHandler ];
+                $processors = [
+                    new ExtraFieldProcessor( null, $extraFields ),
+                    new IntrospectionProcessor() ];
 
-				// firephp
-				if( !$config->get( 'site.production-level' ) )
-					$handlers[] = new FirePHPHandler;
-			}
-			else
-			{
-				$processors = [];
-				$handlers = [ new NullHandler ];
-			}
+                $handlers = [ new ErrorLogHandler() ];
 
-			return new Logger( $config->get( 'site.host-name' ), $handlers, $processors );
-		};
+                // firephp
+                if( !$config->get( 'site.production-level' ) )
+                    $handlers[] = new FirePHPHandler();
+            } else {
+                $processors = [];
+                $handlers = [ new NullHandler() ];
+            }
 
-		/* Error Reporting */
+            return new Logger( $config->get( 'site.host-name' ), $handlers, $processors );
+        };
 
-		ini_set( 'display_errors', !$config->get( 'site.production-level' ) );
-		ini_set( 'log_errors', 1 );
-		error_reporting( E_ALL | E_STRICT );
+        /* Error Reporting */
 
-		ErrorHandler::register( $this[ 'logger' ] );
+        ini_set( 'display_errors', !$config->get( 'site.production-level' ) );
+        ini_set( 'log_errors', 1 );
+        error_reporting( E_ALL | E_STRICT );
 
-		/* Time Zone */
+        ErrorHandler::register( $this[ 'logger' ] );
 
-		if( $tz = $config->get( 'site.time-zone' ) )
-			date_default_timezone_set( $tz );
+        /* Time Zone */
 
-		/* Constants */
+        if( $tz = $config->get( 'site.time-zone' ) )
+            date_default_timezone_set( $tz );
 
-		if( !defined( 'SITE_TITLE' ) )
-			define( 'SITE_TITLE', $config->get( 'site.title' ) );
+        /* Constants */
 
-		/* Locale */
+        if( !defined( 'SITE_TITLE' ) )
+            define( 'SITE_TITLE', $config->get( 'site.title' ) );
 
-		$this[ 'locale' ] = function() use ( $app, $config ) {
-			$locale = new Locale( $config->get( 'site.language' ) );
-			$locale->setLocaleDataDir( INFUSE_ASSETS_DIR . '/locales' );
-			return $locale;
-		};
+        /* Locale */
 
-		/* Validator */
+        $this[ 'locale' ] = function () use ($app, $config) {
+            $locale = new Locale( $config->get( 'site.language' ) );
+            $locale->setLocaleDataDir( INFUSE_ASSETS_DIR . '/locales' );
 
-		Validate::configure( [ 'salt' => $config->get( 'site.salt' ) ] );
+            return $locale;
+        };
 
-		/* Database */
+        /* Validator */
 
-		$dbSettings = (array)$config->get( 'database' );
-		$dbSettings[ 'productionLevel' ] = $config->get( 'site.production-level' );
-		Database::configure( $dbSettings );
-		Database::inject( $this );
+        Validate::configure( [ 'salt' => $config->get( 'site.salt' ) ] );
 
-		/* Redis */
+        /* Database */
 
-		$redisConfig = $config->get( 'redis' );
-		if( $redisConfig )
-		{
-			$this[ 'redis' ] = function() use ( $app, $redisConfig ) {
-				return new Predis\Client( $redisConfig );
-			};
-		}
+        $dbSettings = (array) $config->get( 'database' );
+        $dbSettings[ 'productionLevel' ] = $config->get( 'site.production-level' );
+        Database::configure( $dbSettings );
+        Database::inject( $this );
 
-		/* Memcache */
+        /* Redis */
 
-		$memcacheConfig = $config->get( 'memcache' );
-		if( $memcacheConfig )
-		{
-			$this[ 'memcache' ] = function() use ( $app, $memcacheConfig ) {
-				$memcache = new Memcache;
-				$memcache->connect( $memcacheConfig[ 'host' ], $memcacheConfig[ 'port' ] );
-				return $memcache;
-			};
-		}
+        $redisConfig = $config->get( 'redis' );
+        if ($redisConfig) {
+            $this[ 'redis' ] = function () use ($app, $redisConfig) {
+                return new Predis\Client( $redisConfig );
+            };
+        }
 
-		/* Request + Response */
+        /* Memcache */
 
-		$this[ 'req' ] = function() use ( $app ) {
-			return new Request();
-		};
+        $memcacheConfig = $config->get( 'memcache' );
+        if ($memcacheConfig) {
+            $this[ 'memcache' ] = function () use ($app, $memcacheConfig) {
+                $memcache = new Memcache();
+                $memcache->connect( $memcacheConfig[ 'host' ], $memcacheConfig[ 'port' ] );
 
-		$this[ 'res' ] = function() use ( $app ) {
-			return new Response( $app );
-		};
+                return $memcache;
+            };
+        }
 
-		$req = $this[ 'req' ];
-		$res = $this[ 'res' ];
+        /* Request + Response */
 
-		/* Queue */
+        $this[ 'req' ] = function () use ($app) {
+            return new Request();
+        };
 
-		$this[ 'queue' ] = function() use ( $app, $config ) {
-			Queue::configure( array_merge( [
-				'namespace' => '\\app' ], (array)$config->get( 'queue' ) ) );
+        $this[ 'res' ] = function () use ($app) {
+            return new Response( $app );
+        };
 
-			Queue::inject( $app );
+        $req = $this[ 'req' ];
+        $res = $this[ 'res' ];
 
-			return new Queue( $config->get( 'queue.type' ), (array)$config->get( 'queue.listeners' ) );
-		};
+        /* Queue */
 
-		/* Models */
+        $this[ 'queue' ] = function () use ($app, $config) {
+            Queue::configure( array_merge( [
+                'namespace' => '\\app' ], (array) $config->get( 'queue' ) ) );
 
-		Model::inject( $this );
-		Model::configure( (array)$config->get( 'models' ) );
+            Queue::inject( $app );
 
-		/* Error Stack */
+            return new Queue( $config->get( 'queue.type' ), (array) $config->get( 'queue.listeners' ) );
+        };
 
-		$this[ 'errors' ] = function() use ( $app ) {
-			return new ErrorStack( $app );
-		};
+        /* Models */
 
-		/* ViewEngine  */
+        Model::inject( $this );
+        Model::configure( (array) $config->get( 'models' ) );
 
-		$this[ 'base_url' ] = (($config->get('site.ssl-enabled'))?'https':'http') . '://' . $config->get('site.host-name') . '/';
+        /* Error Stack */
 
-		$this[ 'view_engine' ] = function() use ( $app, $config ) {
-			$engine = new ViewEngine( [
-				'engine' => $config->get( 'views.engine' ),
-				'viewsDir' => INFUSE_VIEWS_DIR,
-				'compileDir' => INFUSE_TEMP_DIR . '/smarty',
-				'cacheDir' => INFUSE_TEMP_DIR . '/smarty/cache',
-				'assetMapFile' => INFUSE_ASSETS_DIR . '/static.assets.json',
-				'assetsBaseUrl' => $config->get( 'assets.base_url' ) ] );
-			$engine->assignData( [ 'app' => $app ] );
+        $this[ 'errors' ] = function () use ($app) {
+            return new ErrorStack( $app );
+        };
 
-			return $engine;
-		};
+        /* ViewEngine  */
 
-		$config->set( 'assets.dirs', [ INFUSE_PUBLIC_DIR ] );
+        $this[ 'base_url' ] = (($config->get('site.ssl-enabled')) ? 'https' : 'http') . '://' . $config->get('site.host-name') . '/';
 
-		/* Session */
+        $this[ 'view_engine' ] = function () use ($app, $config) {
+            $engine = new ViewEngine( [
+                'engine' => $config->get( 'views.engine' ),
+                'viewsDir' => INFUSE_VIEWS_DIR,
+                'compileDir' => INFUSE_TEMP_DIR . '/smarty',
+                'cacheDir' => INFUSE_TEMP_DIR . '/smarty/cache',
+                'assetMapFile' => INFUSE_ASSETS_DIR . '/static.assets.json',
+                'assetsBaseUrl' => $config->get( 'assets.base_url' ) ] );
+            $engine->assignData( [ 'app' => $app ] );
 
-		if( !$req->isApi() && $config->get( 'sessions.enabled' ) )
-		{
-			// initialize sessions
-			ini_set( 'session.use_trans_sid', false );
-			ini_set( 'session.use_only_cookies', true ); 
-			ini_set( 'url_rewriter.tags', '' );
-			ini_set( 'session.gc_maxlifetime', $config->get( 'sessions.lifetime' ) );
+            return $engine;
+        };
 
-			// set the session name
-			$sessionTitle = $config->get( 'site.title' ) . '-' . $req->host();
-			$safeSessionTitle = str_replace( [ '.',' ',"'", '"' ], [ '','_','','' ], $sessionTitle );
-			session_name( $safeSessionTitle );
-			
-			// set the session cookie parameters
-			session_set_cookie_params(
-			    $config->get( 'sessions.lifetime' ), // lifetime
-			    '/', // path
-			    '.' . $req->host(), // domain
-			    $req->isSecure(), // secure
-			    true // http only
-			);
+        $config->set( 'assets.dirs', [ INFUSE_PUBLIC_DIR ] );
 
-			$sessionAdapter = $config->get( 'sessions.adapter' );
-			if( $sessionAdapter == 'redis' )
-				Session\Redis::start( $app, $config->get( 'sessions.prefix' ) );
-			else if( $sessionAdapter == 'database' )
-				Session\Database::start();
-			else
-				session_start();
+        /* Session */
 
-			// set the cookie by sending it in a header.
-			Util::set_cookie_fix_domain(
-				session_name(),
-				session_id(),
-				time() + $config->get( 'sessions.lifetime' ),
-				'/',
-				$req->host(),
-				$req->isSecure(),
-				true
-			);
-			
-			// update the session in our request
-			$req->setSession( $_SESSION );
-		}
+        if ( !$req->isApi() && $config->get( 'sessions.enabled' ) ) {
+            // initialize sessions
+            ini_set( 'session.use_trans_sid', false );
+            ini_set( 'session.use_only_cookies', true );
+            ini_set( 'url_rewriter.tags', '' );
+            ini_set( 'session.gc_maxlifetime', $config->get( 'sessions.lifetime' ) );
 
-		/* CLI Requests */
+            // set the session name
+            $sessionTitle = $config->get( 'site.title' ) . '-' . $req->host();
+            $safeSessionTitle = str_replace( [ '.',' ',"'", '"' ], [ '','_','','' ], $sessionTitle );
+            session_name( $safeSessionTitle );
 
-		if( $req->isCli() )
-		{
-			global $argc, $argv;
-			if( $argc >= 2 )
-				$req->setPath( $argv[ 1 ] );
-		}
+            // set the session cookie parameters
+            session_set_cookie_params(
+                $config->get( 'sessions.lifetime' ), // lifetime
+                '/', // path
+                '.' . $req->host(), // domain
+                $req->isSecure(), // secure
+                true // http only
+            );
 
-		/* Router */
+            $sessionAdapter = $config->get( 'sessions.adapter' );
+            if( $sessionAdapter == 'redis' )
+                Session\Redis::start( $app, $config->get( 'sessions.prefix' ) );
+            elseif( $sessionAdapter == 'database' )
+                Session\Database::start();
+            else
+                session_start();
 
-		Router::configure( [
-			'namespace' => '\\app' ] );
+            // set the cookie by sending it in a header.
+            Util::set_cookie_fix_domain(
+                session_name(),
+                session_id(),
+                time() + $config->get( 'sessions.lifetime' ),
+                '/',
+                $req->host(),
+                $req->isSecure(),
+                true
+            );
 
-		/* Middleware */
+            // update the session in our request
+            $req->setSession( $_SESSION );
+        }
 
-		foreach( (array)$config->get( 'modules.middleware' ) as $module )
-		{
-			$class = '\\app\\' . $module . '\\Controller';
-			$controller = new $class( $app );
-			$controller->middleware( $req, $res );
-		}
-	}
+        /* CLI Requests */
 
-	////////////////////////
-	// ROUTING
-	////////////////////////
+        if ( $req->isCli() ) {
+            global $argc, $argv;
+            if( $argc >= 2 )
+                $req->setPath( $argv[ 1 ] );
+        }
 
-	function go()
-	{
-		$routed = false;
+        /* Router */
 
-		$req = $this[ 'req' ];
-		$res = $this[ 'res' ];
+        Router::configure( [
+            'namespace' => '\\app' ] );
 
-		/* 1. Global Routes */
-		$routed = Router::route( $this[ 'config' ]->get( 'routes' ), $this, $req, $res );
+        /* Middleware */
 
-		/* 2. Module Routes */
-		if( !$routed )
-		{
-			// check if the first part of the path is a controller
-			$module = $req->params( 'module' );
-			if( !$module )
-				$module = $req->paths( 0 );
+        foreach ( (array) $config->get( 'modules.middleware' ) as $module ) {
+            $class = '\\app\\' . $module . '\\Controller';
+            $controller = new $class( $app );
+            $controller->middleware( $req, $res );
+        }
+    }
 
-			$controller = '\\app\\' . $module . '\\Controller';
-			
-			if( class_exists( $controller ) )
-			{
-				$moduleRoutes = (array)Util::array_value( $controller::$properties, 'routes' );
-				
-				$req->setParams( [ 'controller' => $module . '\\Controller' ] );
-				
-				$routed = Router::route( $moduleRoutes, $this, $req, $res );
-			}
-		}
+    ////////////////////////
+    // ROUTING
+    ////////////////////////
 
-		/* 3. Not Found */
-		if( !$routed )
-			$res->setCode( 404 );
+    public function go()
+    {
+        $routed = false;
 
-		$res->send( $req );
-	}
+        $req = $this[ 'req' ];
+        $res = $this[ 'res' ];
 
-	/**
+        /* 1. Global Routes */
+        $routed = Router::route( $this[ 'config' ]->get( 'routes' ), $this, $req, $res );
+
+        /* 2. Module Routes */
+        if (!$routed) {
+            // check if the first part of the path is a controller
+            $module = $req->params( 'module' );
+            if( !$module )
+                $module = $req->paths( 0 );
+
+            $controller = '\\app\\' . $module . '\\Controller';
+
+            if ( class_exists( $controller ) ) {
+                $moduleRoutes = (array) Util::array_value( $controller::$properties, 'routes' );
+
+                $req->setParams( [ 'controller' => $module . '\\Controller' ] );
+
+                $routed = Router::route( $moduleRoutes, $this, $req, $res );
+            }
+        }
+
+        /* 3. Not Found */
+        if( !$routed )
+            $res->setCode( 404 );
+
+        $res->send( $req );
+    }
+
+    /**
 	 * Adds a handler to the routing table for a given GET route
 	 *
 	 * @param string $route path pattern
 	 * @param callable $handler route handler
 	 */
-	function get( $route, callable $handler )
-	{
-		$this->map( 'get', $route, $handler );
-	}
+    public function get($route, callable $handler)
+    {
+        $this->map( 'get', $route, $handler );
+    }
 
-	/**
+    /**
 	 * Adds a handler to the routing table for a given POST route
 	 *
 	 * @param string $route path pattern
 	 * @param callable $handler route handler
 	 */
-	function post( $route, callable $handler )
-	{
-		$this->map( 'post', $route, $handler );
-	}
+    public function post($route, callable $handler)
+    {
+        $this->map( 'post', $route, $handler );
+    }
 
-	/**
+    /**
 	 * Adds a handler to the routing table for a given PUT route
 	 *
 	 * @param string $route path pattern
 	 * @param callable $handler route handler
 	 */
-	function put( $route, callable $handler )
-	{
-		$this->map( 'put', $route, $handler );
-	}
+    public function put($route, callable $handler)
+    {
+        $this->map( 'put', $route, $handler );
+    }
 
-	/**
+    /**
 	 * Adds a handler to the routing table for a given DELETE route
 	 *
 	 * @param string $route path pattern
 	 * @param callable $handler route handler
 	 */
-	function delete( $route, callable $handler )
-	{
-		$this->map( 'delete', $route, $handler );
-	}
+    public function delete($route, callable $handler)
+    {
+        $this->map( 'delete', $route, $handler );
+    }
 
-	/**
+    /**
 	 * Adds a handler to the routing table for a given PATCH route
 	 *
 	 * @param string $route path pattern
 	 * @param callable $handler route handler
 	 */
-	function patch( $route, callable $handler )
-	{
-		$this->map( 'patch', $route, $handler );
-	}
+    public function patch($route, callable $handler)
+    {
+        $this->map( 'patch', $route, $handler );
+    }
 
-	/**
+    /**
 	 * Adds a handler to the routing table for a given OPTIONS route
 	 *
 	 * @param string $route path pattern
 	 * @param callable $handler route handler
 	 */
-	function options( $route, callable $handler )
-	{
-		$this->map( 'options', $route, $handler );
-	}
+    public function options($route, callable $handler)
+    {
+        $this->map( 'options', $route, $handler );
+    }
 
-	/**
+    /**
 	 * Adds a handler to the routing table for a given route
 	 *
 	 * @param string $method HTTP method
 	 * @param string $route path pattern
 	 * @param callable $handler route handler
 	 */
-	function map( $method, $route, callable $handler )
-	{
-		$config = $this[ 'config' ];
-		$routes = $config->get( 'routes' );
-		$routes[ $method . ' ' . $route ] = $handler;
-		$config->set( 'routes', $routes );
-	}
+    public function map($method, $route, callable $handler)
+    {
+        $config = $this[ 'config' ];
+        $routes = $config->get( 'routes' );
+        $routes[ $method . ' ' . $route ] = $handler;
+        $config->set( 'routes', $routes );
+    }
 }

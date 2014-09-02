@@ -5,7 +5,6 @@ namespace App\Console;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class RouteCommand extends Command
@@ -22,10 +21,11 @@ class RouteCommand extends Command
             );
     }
 
-    protected function execute( InputInterface $input, OutputInterface $output )
+    protected function execute(InputInterface $input, OutputInterface $output)
     {
         $result = 1;
         system( "php " . INFUSE_BASE_DIR . "/public/index.php " . $input->getArgument( 'route' ), $result );
+
         return $result;
     }
 }

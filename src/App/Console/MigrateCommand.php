@@ -8,14 +8,13 @@ use infuse\Session;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class MigrateCommand extends Command
 {
     private $app;
 
-    function __construct( App $app )
+    public function __construct(App $app)
     {
         parent::__construct();
 
@@ -39,7 +38,7 @@ class MigrateCommand extends Command
             );
     }
 
-    protected function execute( InputInterface $input, OutputInterface $output )
+    protected function execute(InputInterface $input, OutputInterface $output)
     {
         $migrateArgs = implode( ' ', $input->getArgument( 'args' ) );
         $result = $this->migrate( $input->getArgument( 'module' ), $migrateArgs, $output );
@@ -51,13 +50,13 @@ class MigrateCommand extends Command
      * Runs migrations for all app modules or a specified module.
      * Also, will setup database sessions if enabled
      *
-     * @param string $module optional module
-     * @param string $migrateArgs optional arguments to pass to phinx
+     * @param string          $module      optional module
+     * @param string          $migrateArgs optional arguments to pass to phinx
      * @param OutputInterface $output
      *
      * @return boolean success
      */
-    private function migrate( $module = '', $migrateArgs, OutputInterface $output )
+    private function migrate($module = '', $migrateArgs, OutputInterface $output)
     {
         $success = true;
 
@@ -68,8 +67,7 @@ class MigrateCommand extends Command
             $output->writeln( '-- Running migrations' );
 
         // database sessions
-        if( empty( $module ) && $this->app[ 'config' ]->get( 'sessions.adapter' ) == 'database' )
-        {
+        if ( empty( $module ) && $this->app[ 'config' ]->get( 'sessions.adapter' ) == 'database' ) {
             $output->writeln( 'Migrating Database Sessions' );
 
             $result = Session\Database::install();
@@ -85,8 +83,7 @@ class MigrateCommand extends Command
         // module migrations
         $modules = (empty($module)) ? $this->app[ 'config' ]->get( 'modules.all' ) : [ $module ];
 
-        foreach( (array)$modules as $mod )
-        {
+        foreach ( (array) $modules as $mod ) {
             if( $migrateArgs == 'migrate' )
                 $output->writeln( "-- Migrating $mod" );
 
@@ -97,14 +94,13 @@ class MigrateCommand extends Command
             system( 'php ' . INFUSE_BASE_DIR . '/vendor/robmorgan/phinx/bin/phinx ' . $migrateArgs . ' -c ' . INFUSE_BASE_DIR . '/phinx.php', $result );
             $phinxOutput = ob_get_contents();
             ob_end_clean();
-            
+
             $success = ($result == 0) && $success;
 
             $lines = explode( "\n", $phinxOutput );
 
             // clean up the output
-            foreach( $lines as $line )
-            {
+            foreach ($lines as $line) {
                 // when migrating, only output lines starting
                 // with ' =='
                 if( $migrateArgs != 'migrate' ||
@@ -113,12 +109,11 @@ class MigrateCommand extends Command
             }
         }
 
-        if( $migrateArgs == 'migrate' )
-        {
+        if ($migrateArgs == 'migrate') {
             if( $success )
                 $output->writeln( '-- Success!' );
             else
-                $output->writeln( '-- Error running migrations' );            
+                $output->writeln( '-- Error running migrations' );
         }
 
         return $success;

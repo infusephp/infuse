@@ -5,7 +5,6 @@ namespace App\Console;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class TestCommand extends Command
@@ -22,7 +21,7 @@ class TestCommand extends Command
             );
     }
 
-    protected function execute( InputInterface $input, OutputInterface $output )
+    protected function execute(InputInterface $input, OutputInterface $output)
     {
         $args = [];
         if( $module = $input->getArgument( 'module' ) )
@@ -30,6 +29,7 @@ class TestCommand extends Command
 
         $result = 1;
         system( 'phpunit ' . implode( ' ', $args ), $result );
+
         return $result;
     }
 }
