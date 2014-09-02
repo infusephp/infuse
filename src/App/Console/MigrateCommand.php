@@ -68,14 +68,14 @@ class MigrateCommand extends Command
 
         // database sessions
         if ( empty( $module ) && $this->app[ 'config' ]->get( 'sessions.adapter' ) == 'database' ) {
-            $output->writeln( 'Migrating Database Sessions' );
+            $output->writeln( '-- Migrating Database Sessions' );
 
             $result = Session\Database::install();
 
             if( $result )
-                $output->writeln( '-- Database Sessions Installed' );
+                $output->writeln( ' == Database Sessions Installed' );
             else
-                $output->writeln( '-- Error installing Database Sessions' );
+                $output->writeln(  '== Error installing Database Sessions' );
 
             $success = $result && $success;
         }
@@ -91,7 +91,7 @@ class MigrateCommand extends Command
             putenv( "PHINX_APP_MODULE=$mod" );
 
             ob_start();
-            system( 'php ' . INFUSE_BASE_DIR . '/vendor/robmorgan/phinx/bin/phinx ' . $migrateArgs . ' -c ' . INFUSE_BASE_DIR . '/phinx.php', $result );
+            system( 'php ' . INFUSE_BASE_DIR . '/vendor/bin/phinx ' . $migrateArgs . ' -c ' . INFUSE_BASE_DIR . '/phinx.php', $result );
             $phinxOutput = ob_get_contents();
             ob_end_clean();
 
