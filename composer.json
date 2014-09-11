@@ -18,7 +18,7 @@
     "autoload": {
         "psr-4": {
         	"App\\Console\\": "src/App/Console/", 
-        	"Monolog\\Processor": "src/Monolog/Processor/",
+        	"Monolog\\Processor\\": "src/Monolog/Processor/",
         	"": "src/"
        	}
     },
