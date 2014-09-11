@@ -138,7 +138,7 @@ class App extends Container
 
         $redisConfig = $config->get( 'redis' );
         if ($redisConfig) {
-            $this[ 'redis' ] = function () use ($app, $redisConfig) {
+            $this[ 'redis' ] = function () use ($redisConfig) {
                 return new Predis\Client( $redisConfig );
             };
         }
@@ -147,7 +147,7 @@ class App extends Container
 
         $memcacheConfig = $config->get( 'memcache' );
         if ($memcacheConfig) {
-            $this[ 'memcache' ] = function () use ($app, $memcacheConfig) {
+            $this[ 'memcache' ] = function () use ($memcacheConfig) {
                 $memcache = new Memcache();
                 $memcache->connect( $memcacheConfig[ 'host' ], $memcacheConfig[ 'port' ] );
 
@@ -157,7 +157,7 @@ class App extends Container
 
         /* Request + Response */
 
-        $this[ 'req' ] = function () use ($app) {
+        $this[ 'req' ] = function () {
             return new Request();
         };
 
@@ -272,7 +272,9 @@ class App extends Container
 
         foreach ( (array) $config->get( 'modules.middleware' ) as $module ) {
             $class = '\\app\\' . $module . '\\Controller';
-            $controller = new $class( $app );
+            $controller = new $class;
+            if (method_exists($controller, 'injectApp'))
+                $controller->injectApp( $app );
             $controller->middleware( $req, $res );
         }
     }
@@ -300,7 +302,7 @@ class App extends Container
 
             $controller = '\\app\\' . $module . '\\Controller';
 
-            if ( class_exists( $controller ) ) {
+            if (class_exists($controller)) {
                 $moduleRoutes = (array) Util::array_value( $controller::$properties, 'routes' );
 
                 $req->setParams( [ 'controller' => $module . '\\Controller' ] );
