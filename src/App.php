@@ -8,7 +8,7 @@ use infuse\Model;
 use infuse\Response;
 use infuse\Request;
 use infuse\Router;
-use infuse\Util;
+use infuse\Utility as U;
 use infuse\Validate;
 use infuse\ViewEngine;
 use infuse\Queue;
@@ -241,7 +241,7 @@ class App extends Container
                 session_start();
 
             // set the cookie by sending it in a header.
-            Util::set_cookie_fix_domain(
+            U::set_cookie_fix_domain(
                 session_name(),
                 session_id(),
                 time() + $config->get( 'sessions.lifetime' ),
@@ -303,7 +303,7 @@ class App extends Container
             $controller = '\\app\\' . $module . '\\Controller';
 
             if (class_exists($controller)) {
-                $moduleRoutes = (array) Util::array_value( $controller::$properties, 'routes' );
+                $moduleRoutes = (array) U::array_value( $controller::$properties, 'routes' );
 
                 $req->setParams( [ 'controller' => $module . '\\Controller' ] );
 
