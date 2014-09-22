@@ -319,9 +319,9 @@ class App extends Container
         if( !$routed )
             $res->setCode( 404 );
 
-        /* 4. HTML Error Pages for codes 4xx and 5xx codes */
+        /* 4. HTML Error Pages for 4xx and 5xx responses */
         $code = $res->getCode();
-        if ($req->isHtml() && $code >= 400)
+        if ($req->isHtml() && $code >= 400 && empty($res->getBody()))
             $res->render(new View('error', [
                 'message' => Response::$codes[$code],
                 'code' => $code,
