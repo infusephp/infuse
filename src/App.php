@@ -11,6 +11,7 @@ use infuse\Router;
 use infuse\Utility as U;
 use infuse\Validate;
 use infuse\ViewEngine;
+use infuse\View;
 use infuse\Queue;
 use infuse\Session;
 use Monolog\ErrorHandler;
@@ -162,8 +163,10 @@ class App extends Container
         };
 
         $this[ 'res' ] = function () use ($app) {
-            return new Response( $app );
+            return new Response();
         };
+
+        $this[ 'base_url' ] = (($config->get('site.ssl-enabled')) ? 'https' : 'http') . '://' . $config->get('site.host-name') . '/';
 
         $req = $this[ 'req' ];
         $res = $this[ 'res' ];
@@ -190,19 +193,20 @@ class App extends Container
             return new ErrorStack( $app );
         };
 
-        /* ViewEngine  */
-
-        $this[ 'base_url' ] = (($config->get('site.ssl-enabled')) ? 'https' : 'http') . '://' . $config->get('site.host-name') . '/';
+        /* Views  */
 
         $this[ 'view_engine' ] = function () use ($app, $config) {
-            $engine = new ViewEngine( [
-                'engine' => $config->get( 'views.engine' ),
-                'viewsDir' => INFUSE_VIEWS_DIR,
-                'compileDir' => INFUSE_TEMP_DIR . '/smarty',
-                'cacheDir' => INFUSE_TEMP_DIR . '/smarty/cache',
-                'assetMapFile' => INFUSE_ASSETS_DIR . '/static.assets.json',
-                'assetsBaseUrl' => $config->get( 'assets.base_url' ) ] );
-            $engine->assignData( [ 'app' => $app ] );
+            $engine = $config->get('views.engine');
+            if ($engine == 'smarty') {
+                $engine = new ViewEngine\Smarty(INFUSE_VIEWS_DIR, INFUSE_TEMP_DIR . '/smarty', INFUSE_TEMP_DIR . '/smarty/cache');
+            } elseif ($engine == 'php') {
+                $engine = new ViewEngine\PHP(INFUSE_VIEWS_DIR);
+            } else
+                $engine = View::defaultEngine();
+
+            $engine->setAssetMapFile(INFUSE_ASSETS_DIR . '/static.assets.json')
+                   ->setAssetBaseUrl($config->get('assets.base_url'))
+                   ->setGlobalParameters(['app' => $app]);
 
             return $engine;
         };
@@ -272,7 +276,7 @@ class App extends Container
 
         foreach ( (array) $config->get( 'modules.middleware' ) as $module ) {
             $class = '\\app\\' . $module . '\\Controller';
-            $controller = new $class;
+            $controller = new $class();
             if (method_exists($controller, 'injectApp'))
                 $controller->injectApp( $app );
             $controller->middleware( $req, $res );
@@ -315,7 +319,15 @@ class App extends Container
         if( !$routed )
             $res->setCode( 404 );
 
-        $res->send( $req );
+        /* 4. HTML Error Pages for codes 4xx and 5xx codes */
+        $code = $res->getCode();
+        if ($req->isHtml() && $code >= 400)
+            $res->render(new View('error', [
+                'message' => Response::$codes[$code],
+                'code' => $code,
+                'title' => $code]));
+
+        $res->send();
     }
 
     /**
