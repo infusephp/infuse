@@ -325,7 +325,7 @@ class App extends Container
         $code = $res->getCode();
         if ($req->isHtml() && $code >= 400) {
             $body = $res->getBody();
-            if (!empty($body))
+            if (empty($body))
                 $res->render(new View('error', [
                     'message' => Response::$codes[$code],
                     'code' => $code,
