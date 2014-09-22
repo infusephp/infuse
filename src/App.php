@@ -196,12 +196,12 @@ class App extends Container
         /* Views  */
 
         $this[ 'view_engine' ] = function () use ($app, $config) {
-            $engine = $config->get('views.engine');
-            if ($engine == 'smarty') {
+            $type = $config->get('views.engine');
+            if ($type == 'smarty')
                 $engine = new ViewEngine\Smarty(INFUSE_VIEWS_DIR, INFUSE_TEMP_DIR . '/smarty', INFUSE_TEMP_DIR . '/smarty/cache');
-            } elseif ($engine == 'php') {
+            elseif ($type == 'php')
                 $engine = new ViewEngine\PHP(INFUSE_VIEWS_DIR);
-            } else
+            else
                 $engine = View::defaultEngine();
 
             $engine->setAssetMapFile(INFUSE_ASSETS_DIR . '/static.assets.json')
@@ -210,6 +210,8 @@ class App extends Container
 
             return $engine;
         };
+
+        View::inject($this);
 
         $config->set( 'assets.dirs', [ INFUSE_PUBLIC_DIR ] );
 
