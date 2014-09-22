@@ -321,11 +321,13 @@ class App extends Container
 
         /* 4. HTML Error Pages for 4xx and 5xx responses */
         $code = $res->getCode();
-        if ($req->isHtml() && $code >= 400 && empty($res->getBody()))
-            $res->render(new View('error', [
+        if ($req->isHtml() && $code >= 400 && empty($res->getBody())) {
+            $errorView = new View('error', [
                 'message' => Response::$codes[$code],
                 'code' => $code,
-                'title' => $code]));
+                'title' => $code]);
+            $res->render($errorView);
+        }
 
         $res->send();
     }
