@@ -27,6 +27,8 @@ class TestBootstrap implements PHPUnit_Framework_TestListener
         if( !$config )
             $config = [];
 
+        $config['logger']['enabled'] = false;
+
         $this->app = new App( $config );
         self::$staticApp = $this->app;
 
