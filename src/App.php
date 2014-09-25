@@ -202,7 +202,7 @@ class App extends Container
             elseif ($type == 'php')
                 $engine = new ViewEngine\PHP(INFUSE_VIEWS_DIR);
             else
-                $engine = View::defaultEngine();
+                $engine = new ViewEngine\PHP();
 
             $engine->setAssetMapFile(INFUSE_ASSETS_DIR . '/static.assets.json')
                    ->setAssetBaseUrl($config->get('assets.base_url'))
