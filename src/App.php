@@ -19,7 +19,7 @@ use Monolog\Handler\NullHandler;
 use Monolog\Handler\ErrorLogHandler;
 use Monolog\Handler\FirePHPHandler;
 use Monolog\Processor\IntrospectionProcessor;
-use Monolog\Processor\ExtraFieldProcessor;
+use Monolog\Processor\WebProcessor;
 use Monolog\Logger;
 use Pimple\Container;
 
@@ -70,31 +70,26 @@ class App extends Container
 
         /* Logging */
 
-        $this[ 'logger' ] = function () use ($app, $config) {
-            if ( $config->get( 'logger.enabled' ) ) {
-                $extraFields = [
-                    'url' => 'REQUEST_URI',
-                    'ip' => 'REMOTE_ADDR',
-                    'http_method' => 'REQUEST_METHOD',
-                    'server' => 'SERVER_NAME',
-                    'referrer' => 'HTTP_REFERER',
-                    'user_agent' => 'HTTP_USER_AGENT' ];
+        $this['logger'] = function () use ($app, $config) {
+            if ($config->get('logger.enabled')) {
+                $webProcessor = new WebProcessor();
+                $webProcessor->addExtraField('user_agent', 'HTTP_USER_AGENT');
 
                 $processors = [
-                    new ExtraFieldProcessor( null, $extraFields ),
-                    new IntrospectionProcessor() ];
+                    $webProcessor,
+                    new IntrospectionProcessor()];
 
-                $handlers = [ new ErrorLogHandler() ];
+                $handlers = [new ErrorLogHandler()];
 
                 // firephp
-                if( !$config->get( 'site.production-level' ) )
+                if (!$config->get('site.production-level'))
                     $handlers[] = new FirePHPHandler();
             } else {
                 $processors = [];
-                $handlers = [ new NullHandler() ];
+                $handlers = [new NullHandler()];
             }
 
-            return new Logger( $config->get( 'site.host-name' ), $handlers, $processors );
+            return new Logger($config->get('site.host-name'), $handlers, $processors);
         };
 
         /* Error Reporting */
