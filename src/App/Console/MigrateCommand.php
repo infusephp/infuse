@@ -83,39 +83,54 @@ class MigrateCommand extends Command
         // module migrations
         $modules = (empty($module)) ? $this->app[ 'config' ]->get( 'modules.all' ) : [ $module ];
 
-        foreach ( (array) $modules as $mod ) {
-            if( $migrateArgs == 'migrate' )
-                $output->writeln( "-- Migrating $mod" );
+        foreach ((array) $modules as $mod) {
+            // determine module directory
+            $controller = '\\app\\' . $mod . '\\Controller';
 
-            $result = 1;
-            putenv( "PHINX_APP_MODULE=$mod" );
+            if (class_exists($controller)) {
+                $reflection = new \ReflectionClass($controller);
+                $migrationPath = dirname($reflection->getFileName()) . '/migrations';
 
-            ob_start();
-            system( 'php ' . INFUSE_BASE_DIR . '/vendor/bin/phinx ' . $migrateArgs . ' -c ' . INFUSE_BASE_DIR . '/phinx.php', $result );
-            $phinxOutput = ob_get_contents();
-            ob_end_clean();
+                if (is_dir($migrationPath)) {
+                    if ($migrateArgs == 'migrate')
+                        $output->writeln("-- Migrating $mod");
 
-            $success = ($result == 0) && $success;
-
-            $lines = explode( "\n", $phinxOutput );
-
-            // clean up the output
-            foreach ($lines as $line) {
-                // when migrating, only output lines starting
-                // with ' =='
-                if( $migrateArgs != 'migrate' ||
-                    !empty( $line ) && substr( $line, 0, 3 ) == ' ==' )
-                    $output->writeln( $line );
+                    $success = $this->migrateWithPath($migrationPath, $migrateArgs, $output) && $success;
+                }
             }
         }
 
         if ($migrateArgs == 'migrate') {
             if( $success )
-                $output->writeln( '-- Success!' );
+                $output->writeln('-- Success!');
             else
-                $output->writeln( '-- Error running migrations' );
+                $output->writeln('-- Error running migrations');
         }
 
         return $success;
+    }
+
+    private function migrateWithPath($path, $migrateArgs, OutputInterface $output)
+    {
+        $result = 1;
+        putenv("PHINX_MIGRATION_PATH=$path");
+
+        ob_start();
+        system('php ' . INFUSE_BASE_DIR . '/vendor/bin/phinx ' . $migrateArgs . ' -c ' . INFUSE_BASE_DIR . '/phinx.php', $result);
+        $phinxOutput = ob_get_contents();
+        ob_end_clean();
+
+        $lines = explode("\n", $phinxOutput);
+
+        // clean up the output
+        foreach ($lines as $line) {
+            // when migrating, only output lines starting
+            // with ' =='
+            if ($migrateArgs != 'migrate' ||
+                !empty($line) && substr($line, 0, 3) == ' ==')
+                $output->writeln($line);
+        }
+
+        return $result == 0;
     }
 }
