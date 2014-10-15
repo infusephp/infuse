@@ -70,6 +70,8 @@ class App extends Container
         /* Logging */
 
         $this['logger'] = function () use ($app, $config) {
+            $handlers = [];
+
             if ($config->get('logger.enabled')) {
                 $webProcessor = new WebProcessor();
                 $webProcessor->addExtraField('user_agent', 'HTTP_USER_AGENT');
@@ -83,7 +85,7 @@ class App extends Container
                     $handlers[] = new FirePHPHandler();
             } else {
                 $processors = [];
-                $handlers = [new NullHandler()];
+                $handlers[] = new NullHandler();
             }
 
             return new Logger($config->get('site.host-name'), $handlers, $processors);
