@@ -168,7 +168,7 @@ class App extends Container
             $config->set('site.hostname', $req->host());
 
         $port = $config->get('site.port');
-        $this['base_url'] = (($config->get('site.ssl') == 443) ? 'https' : 'http') . '://' .
+        $this['base_url'] = (($config->get('site.ssl')) ? 'https' : 'http') . '://' .
             $config->get('site.hostname') . ((!in_array($port, [0,80,443])) ? ':'.$port : '') . '/';
 
         /* Queue */
