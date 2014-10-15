@@ -88,7 +88,7 @@ class App extends Container
                 $handlers[] = new NullHandler();
             }
 
-            return new Logger($config->get('site.host-name'), $handlers, $processors);
+            return new Logger($config->get('site.hostname'), $handlers, $processors);
         };
 
         /* Error Reporting */
@@ -160,10 +160,16 @@ class App extends Container
             return new Response();
         };
 
-        $this[ 'base_url' ] = (($config->get('site.ssl-enabled')) ? 'https' : 'http') . '://' . $config->get('site.host-name') . '/';
-
         $req = $this[ 'req' ];
         $res = $this[ 'res' ];
+
+        // set host name if one is not provided
+        if (!$config->get('site.hostname'))
+            $config->set('site.hostname', $req->host());
+
+        $port = $config->get('site.port');
+        $this['base_url'] = (($config->get('site.ssl') == 443) ? 'https' : 'http') . '://' .
+            $config->get('site.hostname') . ((!in_array($port, [0,80,443])) ? ':'.$port : '') . '/';
 
         /* Queue */
 
@@ -218,8 +224,10 @@ class App extends Container
             ini_set( 'url_rewriter.tags', '' );
             ini_set( 'session.gc_maxlifetime', $config->get( 'sessions.lifetime' ) );
 
+            $hostname = $config->get('site.hostname');
+
             // set the session name
-            $sessionTitle = $config->get( 'site.title' ) . '-' . $req->host();
+            $sessionTitle = $config->get( 'site.title' ) . '-' . $hostname;
             $safeSessionTitle = str_replace( [ '.',' ',"'", '"' ], [ '','_','','' ], $sessionTitle );
             session_name( $safeSessionTitle );
 
@@ -227,7 +235,7 @@ class App extends Container
             session_set_cookie_params(
                 $config->get( 'sessions.lifetime' ), // lifetime
                 '/', // path
-                '.' . $req->host(), // domain
+                '.' . $hostname, // domain
                 $req->isSecure(), // secure
                 true // http only
             );
@@ -246,7 +254,7 @@ class App extends Container
                 session_id(),
                 time() + $config->get( 'sessions.lifetime' ),
                 '/',
-                $req->host(),
+                $hostname,
                 $req->isSecure(),
                 true
             );
@@ -330,78 +338,78 @@ class App extends Container
     }
 
     /**
-	 * Adds a handler to the routing table for a given GET route
-	 *
-	 * @param string $route path pattern
-	 * @param callable $handler route handler
-	 */
+     * Adds a handler to the routing table for a given GET route
+     *
+     * @param string   $route   path pattern
+     * @param callable $handler route handler
+     */
     public function get($route, callable $handler)
     {
         $this->map( 'get', $route, $handler );
     }
 
     /**
-	 * Adds a handler to the routing table for a given POST route
-	 *
-	 * @param string $route path pattern
-	 * @param callable $handler route handler
-	 */
+     * Adds a handler to the routing table for a given POST route
+     *
+     * @param string   $route   path pattern
+     * @param callable $handler route handler
+     */
     public function post($route, callable $handler)
     {
         $this->map( 'post', $route, $handler );
     }
 
     /**
-	 * Adds a handler to the routing table for a given PUT route
-	 *
-	 * @param string $route path pattern
-	 * @param callable $handler route handler
-	 */
+     * Adds a handler to the routing table for a given PUT route
+     *
+     * @param string   $route   path pattern
+     * @param callable $handler route handler
+     */
     public function put($route, callable $handler)
     {
         $this->map( 'put', $route, $handler );
     }
 
     /**
-	 * Adds a handler to the routing table for a given DELETE route
-	 *
-	 * @param string $route path pattern
-	 * @param callable $handler route handler
-	 */
+     * Adds a handler to the routing table for a given DELETE route
+     *
+     * @param string   $route   path pattern
+     * @param callable $handler route handler
+     */
     public function delete($route, callable $handler)
     {
         $this->map( 'delete', $route, $handler );
     }
 
     /**
-	 * Adds a handler to the routing table for a given PATCH route
-	 *
-	 * @param string $route path pattern
-	 * @param callable $handler route handler
-	 */
+     * Adds a handler to the routing table for a given PATCH route
+     *
+     * @param string   $route   path pattern
+     * @param callable $handler route handler
+     */
     public function patch($route, callable $handler)
     {
         $this->map( 'patch', $route, $handler );
     }
 
     /**
-	 * Adds a handler to the routing table for a given OPTIONS route
-	 *
-	 * @param string $route path pattern
-	 * @param callable $handler route handler
-	 */
+     * Adds a handler to the routing table for a given OPTIONS route
+     *
+     * @param string   $route   path pattern
+     * @param callable $handler route handler
+     */
     public function options($route, callable $handler)
     {
         $this->map( 'options', $route, $handler );
     }
 
     /**
-	 * Adds a handler to the routing table for a given route
-	 *
-	 * @param string $method HTTP method
-	 * @param string $route path pattern
-	 * @param callable $handler route handler
-	 */
+     * Adds a handler to the routing table for a given route
+     *
+     * @param string   $method  HTTP method
+     * @param string   $route   path pattern
+     * @param callable $handler route handler
+     */
     public function map($method, $route, callable $handler)
     {
         $config = $this[ 'config' ];
