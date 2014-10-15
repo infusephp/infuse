@@ -16,7 +16,6 @@ use infuse\Queue;
 use infuse\Session;
 use Monolog\ErrorHandler;
 use Monolog\Handler\NullHandler;
-use Monolog\Handler\ErrorLogHandler;
 use Monolog\Handler\FirePHPHandler;
 use Monolog\Processor\IntrospectionProcessor;
 use Monolog\Processor\WebProcessor;
@@ -78,8 +77,6 @@ class App extends Container
                 $processors = [
                     $webProcessor,
                     new IntrospectionProcessor()];
-
-                $handlers = [new ErrorLogHandler()];
 
                 // firephp
                 if (!$config->get('site.production-level'))
