@@ -13,6 +13,7 @@ use infuse\Validate;
 use infuse\ViewEngine;
 use infuse\View;
 use infuse\Queue;
+use infuse\QueryBuilder;
 use infuse\Session;
 use Monolog\ErrorHandler;
 use Monolog\Handler\NullHandler;
@@ -126,8 +127,27 @@ class App extends Container
 
         $dbSettings = (array) $config->get( 'database' );
         $dbSettings[ 'productionLevel' ] = $config->get( 'site.production-level' );
-        Database::configure( $dbSettings );
-        Database::inject( $this );
+
+        // WARNING this will be deprecated in the future
+        Database::configure($dbSettings);
+        Database::inject($this);
+
+        $this['pdo'] = function () use ($dbSettings) {
+            if (isset($dbSettings['dsn'])) {
+                $dsn = $dbSettings['dsn'];
+            } else { // generate the dsn
+                $dsn = $dbSettings['type'] . ':host=' . $dbSettings['host'] . ';dbname=' . $dbSettings['name'];
+            }
+
+            $user = U::array_value($dbSettings, 'user');
+            $password = U::array_value($dbSettings, 'password');
+
+            return new PDO($dsn, $user, $password);
+        };
+
+        $this['db'] = function () use ($app) {
+            return new QueryBuilder($app['pdo']);
+        };
 
         /* Redis */
 
@@ -197,12 +217,13 @@ class App extends Container
 
         $this[ 'view_engine' ] = function () use ($app, $config) {
             $type = $config->get('views.engine');
-            if ($type == 'smarty')
+            if ($type == 'smarty') {
                 $engine = new ViewEngine\Smarty(INFUSE_VIEWS_DIR, INFUSE_TEMP_DIR . '/smarty', INFUSE_TEMP_DIR . '/smarty/cache');
-            elseif ($type == 'php')
+            } elseif ($type == 'php' || !$type) {
                 $engine = new ViewEngine\PHP(INFUSE_VIEWS_DIR);
-            else
-                $engine = new ViewEngine\PHP();
+            } else {
+                throw new Exception("'$type' is not a valid view engine");
+            }
 
             $engine->setAssetMapFile(INFUSE_ASSETS_DIR . '/static.assets.json')
                    ->setAssetBaseUrl($config->get('assets.base_url'))
