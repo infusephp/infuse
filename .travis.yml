@@ -10,7 +10,6 @@ services:
   - redis-server
 
 before_script:
-    - composer self-update
     - composer install
     - mysql -e 'create database mydb;'
 
