@@ -132,7 +132,7 @@ class App extends Container
         Database::configure($dbSettings);
         Database::inject($this);
 
-        $this['pdo'] = function () use ($dbSettings) {
+        $this['pdo'] = function () use ($dbSettings, $app) {
             if (isset($dbSettings['dsn'])) {
                 $dsn = $dbSettings['dsn'];
             } else { // generate the dsn
@@ -142,7 +142,20 @@ class App extends Container
             $user = U::array_value($dbSettings, 'user');
             $password = U::array_value($dbSettings, 'password');
 
-            return new PDO($dsn, $user, $password);
+            try {
+                $pdo = new PDO($dsn, $user, $password);
+            } catch (\Exception $e) {
+                $app['logger']->emergency($e);
+                die('Could not connect to database.');
+            }
+
+            if ($dbSettings['productionLevel']) {
+                $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_WARNING);
+            } else {
+                $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+            }
+
+            return $pdo;
         };
 
         $this['db'] = function () use ($app) {

@@ -54,9 +54,14 @@ class AppTest extends \PHPUnit_Framework_TestCase
 
         $db = $app['db'];
         $this->assertInstanceOf('\\infuse\\QueryBuilder', $db);
-        $this->assertInstanceOf('\\PDO', $db->getPDO());
+
+        $pdo = $db->getPDO();
+        $this->assertInstanceOf('\\PDO', $pdo);
+        $this->assertEquals(PDO::ERRMODE_EXCEPTION, $pdo->getAttribute(PDO::ATTR_ERRMODE));
 
         $app = new App([
+            'site' => [
+                'production-level' => true ],
             'database' => [
                 'dsn' => 'mysql:host=localhost;dbname=mydb',
                 'user' => 'root',
@@ -64,7 +69,9 @@ class AppTest extends \PHPUnit_Framework_TestCase
 
         $db = $app['db'];
         $this->assertInstanceOf('\\infuse\\QueryBuilder', $db);
-        $this->assertInstanceOf('\\PDO', $db->getPDO());
+        $pdo = $db->getPDO();
+        $this->assertInstanceOf('\\PDO', $pdo);
+        $this->assertEquals(PDO::ERRMODE_WARNING, $pdo->getAttribute(PDO::ATTR_ERRMODE));
     }
 
     public function testRedis()
