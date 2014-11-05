@@ -62,11 +62,11 @@ class App extends Container
 
         /* Load Configuration */
 
-        $this[ 'config' ] = function () use ($configValues) {
-            return new Config( $configValues );
+        $this['config'] = function () use ($configValues) {
+            return new Config($configValues);
         };
 
-        $config = $app[ 'config' ];
+        $config = $app['config'];
 
         /* Logging */
 
@@ -94,34 +94,34 @@ class App extends Container
 
         /* Error Reporting */
 
-        ini_set( 'display_errors', !$config->get( 'site.production-level' ) );
-        ini_set( 'log_errors', 1 );
-        error_reporting( E_ALL | E_STRICT );
+        ini_set('display_errors', !$config->get('site.production-level'));
+        ini_set('log_errors', 1);
+        error_reporting(E_ALL | E_STRICT);
 
-        ErrorHandler::register( $this[ 'logger' ] );
+        ErrorHandler::register($this['logger']);
 
         /* Time Zone */
 
-        if( $tz = $config->get( 'site.time-zone' ) )
-            date_default_timezone_set( $tz );
+        if ($tz = $config->get('site.time-zone'))
+            date_default_timezone_set($tz);
 
         /* Constants */
 
-        if( !defined( 'SITE_TITLE' ) )
-            define( 'SITE_TITLE', $config->get( 'site.title' ) );
+        if (!defined('SITE_TITLE'))
+            define('SITE_TITLE', $config->get('site.title'));
 
         /* Locale */
 
-        $this[ 'locale' ] = function () use ($app, $config) {
-            $locale = new Locale( $config->get( 'site.language' ) );
-            $locale->setLocaleDataDir( INFUSE_ASSETS_DIR . '/locales' );
+        $this['locale'] = function () use ($app, $config) {
+            $locale = new Locale($config->get('site.language'));
+            $locale->setLocaleDataDir(INFUSE_ASSETS_DIR . '/locales');
 
             return $locale;
         };
 
         /* Validator */
 
-        Validate::configure( [ 'salt' => $config->get( 'site.salt' ) ] );
+        Validate::configure(['salt' => $config->get('site.salt')]);
 
         /* Database */
 
