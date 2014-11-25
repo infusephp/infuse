@@ -126,13 +126,12 @@ class App extends Container
         /* Database */
 
         $dbSettings = (array) $config->get( 'database' );
-        $dbSettings[ 'productionLevel' ] = $config->get( 'site.production-level' );
 
         // WARNING the static Database class is deprecated
         // and will be removed in the future
         Database::inject($this);
 
-        $this['pdo'] = function () use ($dbSettings, $app) {
+        $this['pdo'] = function () use ($dbSettings, $config, $app) {
             if (isset($dbSettings['dsn'])) {
                 $dsn = $dbSettings['dsn'];
             } else { // generate the dsn
@@ -149,7 +148,7 @@ class App extends Container
                 die('Could not connect to database.');
             }
 
-            if ($dbSettings['productionLevel']) {
+            if ($config->get('site.production-level')) {
                 $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_WARNING);
             } else {
                 $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
