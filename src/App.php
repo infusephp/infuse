@@ -128,8 +128,8 @@ class App extends Container
         $dbSettings = (array) $config->get( 'database' );
         $dbSettings[ 'productionLevel' ] = $config->get( 'site.production-level' );
 
-        // WARNING this will be deprecated in the future
-        Database::configure($dbSettings);
+        // WARNING the static Database class is deprecated
+        // and will be removed in the future
         Database::inject($this);
 
         $this['pdo'] = function () use ($dbSettings, $app) {
