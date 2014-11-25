@@ -1,6 +1,5 @@
 <?php
 
-
 use app\search\libs\SearchableModel;
 use app\users\models\User;
 
@@ -27,7 +26,7 @@ class TestBootstrap implements PHPUnit_Framework_TestListener
         if( !$config )
             $config = [];
 
-        $config['logger']['enabled'] = false;
+        $config['logger']['enabled'] = $verbose;
 
         $this->app = new App( $config );
         self::$staticApp = $this->app;
