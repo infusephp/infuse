@@ -1,5 +1,13 @@
 <?php
 
+/**
+ * @package idealistsoft\framework-bootstrap
+ * @author Jared King <j@jaredtking.com>
+ * @link http://jaredtking.com
+ * @copyright 2014 Jared King
+ * @license MIT
+ */
+
 use infuse\Config;
 use infuse\Database;
 use infuse\ErrorStack;

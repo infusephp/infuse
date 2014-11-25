@@ -3,6 +3,7 @@ Desktop.ini
 .DS_Store
 /composer.phar
 /vendor
+/HEADER
 ._.DS_Store
 /build
 composer.lock
