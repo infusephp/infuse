@@ -31,34 +31,45 @@ use Monolog\Processor\WebProcessor;
 use Monolog\Logger;
 use Pimple\Container;
 
-if( !defined( 'INFUSE_BASE_DIR' ) )
-    die( 'INFUSE_BASE_DIR has not been defined!' );
+if (!defined('INFUSE_BASE_DIR')) {
+    die('INFUSE_BASE_DIR has not been defined!');
+}
 
 /* app constants */
-if( !defined( 'INFUSE_APP_DIR' ) )
-    define( 'INFUSE_APP_DIR', INFUSE_BASE_DIR . '/app' );
-if( !defined( 'INFUSE_ASSETS_DIR' ) )
-    define( 'INFUSE_ASSETS_DIR', INFUSE_BASE_DIR . '/assets' );
-if( !defined( 'INFUSE_PUBLIC_DIR' ) )
-    define( 'INFUSE_PUBLIC_DIR', INFUSE_BASE_DIR . '/public' );
-if( !defined( 'INFUSE_TEMP_DIR' ) )
-    define( 'INFUSE_TEMP_DIR', INFUSE_BASE_DIR . '/temp' );
-if( !defined( 'INFUSE_VIEWS_DIR' ) )
-    define( 'INFUSE_VIEWS_DIR', INFUSE_BASE_DIR . '/views' );
+if (!defined('INFUSE_APP_DIR')) {
+    define('INFUSE_APP_DIR', INFUSE_BASE_DIR.'/app');
+}
+if (!defined('INFUSE_ASSETS_DIR')) {
+    define('INFUSE_ASSETS_DIR', INFUSE_BASE_DIR.'/assets');
+}
+if (!defined('INFUSE_PUBLIC_DIR')) {
+    define('INFUSE_PUBLIC_DIR', INFUSE_BASE_DIR.'/public');
+}
+if (!defined('INFUSE_TEMP_DIR')) {
+    define('INFUSE_TEMP_DIR', INFUSE_BASE_DIR.'/temp');
+}
+if (!defined('INFUSE_VIEWS_DIR')) {
+    define('INFUSE_VIEWS_DIR', INFUSE_BASE_DIR.'/views');
+}
 
 /* error codes */
-if( !defined( 'ERROR_NO_PERMISSION' ) )
-    define( 'ERROR_NO_PERMISSION', 'no_permission' );
-if( !defined( 'VALIDATION_FAILED' ) )
-    define( 'VALIDATION_FAILED', 'validation_failed' );
-if( !defined( 'VALIDATION_REQUIRED_FIELD_MISSING' ) )
-    define( 'VALIDATION_REQUIRED_FIELD_MISSING', 'required_field_missing' );
-if( !defined( 'VALIDATION_NOT_UNIQUE' ) )
-    define( 'VALIDATION_NOT_UNIQUE', 'not_unique' );
+if (!defined('ERROR_NO_PERMISSION')) {
+    define('ERROR_NO_PERMISSION', 'no_permission');
+}
+if (!defined('VALIDATION_FAILED')) {
+    define('VALIDATION_FAILED', 'validation_failed');
+}
+if (!defined('VALIDATION_REQUIRED_FIELD_MISSING')) {
+    define('VALIDATION_REQUIRED_FIELD_MISSING', 'required_field_missing');
+}
+if (!defined('VALIDATION_NOT_UNIQUE')) {
+    define('VALIDATION_NOT_UNIQUE', 'not_unique');
+}
 
 /* useful constants */
-if( !defined( 'SKIP_ROUTE' ) )
-    define( 'SKIP_ROUTE', -1 );
+if (!defined('SKIP_ROUTE')) {
+    define('SKIP_ROUTE', -1);
+}
 
 class App extends Container
 {
@@ -87,11 +98,12 @@ class App extends Container
 
                 $processors = [
                     $webProcessor,
-                    new IntrospectionProcessor()];
+                    new IntrospectionProcessor(), ];
 
                 // firephp
-                if (!$config->get('site.production-level'))
+                if (!$config->get('site.production-level')) {
                     $handlers[] = new FirePHPHandler();
+                }
             } else {
                 $processors = [];
                 $handlers[] = new NullHandler();
@@ -110,19 +122,21 @@ class App extends Container
 
         /* Time Zone */
 
-        if ($tz = $config->get('site.time-zone'))
+        if ($tz = $config->get('site.time-zone')) {
             date_default_timezone_set($tz);
+        }
 
         /* Constants */
 
-        if (!defined('SITE_TITLE'))
+        if (!defined('SITE_TITLE')) {
             define('SITE_TITLE', $config->get('site.title'));
+        }
 
         /* Locale */
 
         $this['locale'] = function () use ($app, $config) {
             $locale = new Locale($config->get('site.language'));
-            $locale->setLocaleDataDir(INFUSE_ASSETS_DIR . '/locales');
+            $locale->setLocaleDataDir(INFUSE_ASSETS_DIR.'/locales');
 
             return $locale;
         };
@@ -133,7 +147,7 @@ class App extends Container
 
         /* Database */
 
-        $dbSettings = (array) $config->get( 'database' );
+        $dbSettings = (array) $config->get('database');
 
         // WARNING the static Database class is deprecated
         // and will be removed in the future
@@ -143,7 +157,7 @@ class App extends Container
             if (isset($dbSettings['dsn'])) {
                 $dsn = $dbSettings['dsn'];
             } else { // generate the dsn
-                $dsn = $dbSettings['type'] . ':host=' . $dbSettings['host'] . ';dbname=' . $dbSettings['name'];
+                $dsn = $dbSettings['type'].':host='.$dbSettings['host'].';dbname='.$dbSettings['name'];
             }
 
             $user = U::array_value($dbSettings, 'user');
@@ -171,20 +185,20 @@ class App extends Container
 
         /* Redis */
 
-        $redisConfig = $config->get( 'redis' );
+        $redisConfig = $config->get('redis');
         if ($redisConfig) {
             $this[ 'redis' ] = function () use ($redisConfig) {
-                return new Predis\Client( $redisConfig );
+                return new Predis\Client($redisConfig);
             };
         }
 
         /* Memcache */
 
-        $memcacheConfig = $config->get( 'memcache' );
+        $memcacheConfig = $config->get('memcache');
         if ($memcacheConfig) {
             $this[ 'memcache' ] = function () use ($memcacheConfig) {
                 $memcache = new Memcache();
-                $memcache->connect( $memcacheConfig[ 'host' ], $memcacheConfig[ 'port' ] );
+                $memcache->connect($memcacheConfig[ 'host' ], $memcacheConfig[ 'port' ]);
 
                 return $memcache;
             };
@@ -204,33 +218,34 @@ class App extends Container
         $res = $this[ 'res' ];
 
         // set host name if one is not provided
-        if (!$config->get('site.hostname'))
+        if (!$config->get('site.hostname')) {
             $config->set('site.hostname', $req->host());
+        }
 
         $port = $config->get('site.port');
-        $this['base_url'] = (($config->get('site.ssl')) ? 'https' : 'http') . '://' .
-            $config->get('site.hostname') . ((!in_array($port, [0,80,443])) ? ':'.$port : '') . '/';
+        $this['base_url'] = (($config->get('site.ssl')) ? 'https' : 'http').'://'.
+            $config->get('site.hostname').((!in_array($port, [0, 80, 443])) ? ':'.$port : '').'/';
 
         /* Queue */
 
         $this[ 'queue' ] = function () use ($app, $config) {
-            Queue::configure( array_merge( [
-                'namespace' => '\\app' ], (array) $config->get( 'queue' ) ) );
+            Queue::configure(array_merge([
+                'namespace' => '\\app', ], (array) $config->get('queue')));
 
-            Queue::inject( $app );
+            Queue::inject($app);
 
-            return new Queue( $config->get( 'queue.type' ), (array) $config->get( 'queue.listeners' ) );
+            return new Queue($config->get('queue.type'), (array) $config->get('queue.listeners'));
         };
 
         /* Models */
 
-        Model::inject( $this );
-        Model::configure( (array) $config->get( 'models' ) );
+        Model::inject($this);
+        Model::configure((array) $config->get('models'));
 
         /* Error Stack */
 
         $this[ 'errors' ] = function () use ($app) {
-            return new ErrorStack( $app );
+            return new ErrorStack($app);
         };
 
         /* Views  */
@@ -238,14 +253,14 @@ class App extends Container
         $this[ 'view_engine' ] = function () use ($app, $config) {
             $type = $config->get('views.engine');
             if ($type == 'smarty') {
-                $engine = new ViewEngine\Smarty(INFUSE_VIEWS_DIR, INFUSE_TEMP_DIR . '/smarty', INFUSE_TEMP_DIR . '/smarty/cache');
+                $engine = new ViewEngine\Smarty(INFUSE_VIEWS_DIR, INFUSE_TEMP_DIR.'/smarty', INFUSE_TEMP_DIR.'/smarty/cache');
             } elseif ($type == 'php' || !$type) {
                 $engine = new ViewEngine\PHP(INFUSE_VIEWS_DIR);
             } else {
                 throw new Exception("'$type' is not a valid view engine");
             }
 
-            $engine->setAssetMapFile(INFUSE_ASSETS_DIR . '/static.assets.json')
+            $engine->setAssetMapFile(INFUSE_ASSETS_DIR.'/static.assets.json')
                    ->setAssetBaseUrl($config->get('assets.base_url'))
                    ->setGlobalParameters(['app' => $app]);
 
@@ -254,46 +269,47 @@ class App extends Container
 
         View::inject($this);
 
-        $config->set( 'assets.dirs', [ INFUSE_PUBLIC_DIR ] );
+        $config->set('assets.dirs', [ INFUSE_PUBLIC_DIR ]);
 
         /* Session */
 
-        if ( !$req->isApi() && $config->get( 'sessions.enabled' ) ) {
+        if (!$req->isApi() && $config->get('sessions.enabled')) {
             // initialize sessions
-            ini_set( 'session.use_trans_sid', false );
-            ini_set( 'session.use_only_cookies', true );
-            ini_set( 'url_rewriter.tags', '' );
-            ini_set( 'session.gc_maxlifetime', $config->get( 'sessions.lifetime' ) );
+            ini_set('session.use_trans_sid', false);
+            ini_set('session.use_only_cookies', true);
+            ini_set('url_rewriter.tags', '');
+            ini_set('session.gc_maxlifetime', $config->get('sessions.lifetime'));
 
             $hostname = $config->get('site.hostname');
 
             // set the session name
-            $sessionTitle = $config->get( 'site.title' ) . '-' . $hostname;
-            $safeSessionTitle = str_replace( [ '.',' ',"'", '"' ], [ '','_','','' ], $sessionTitle );
-            session_name( $safeSessionTitle );
+            $sessionTitle = $config->get('site.title').'-'.$hostname;
+            $safeSessionTitle = str_replace([ '.', ' ', "'", '"' ], [ '', '_', '', '' ], $sessionTitle);
+            session_name($safeSessionTitle);
 
             // set the session cookie parameters
             session_set_cookie_params(
-                $config->get( 'sessions.lifetime' ), // lifetime
+                $config->get('sessions.lifetime'), // lifetime
                 '/', // path
-                '.' . $hostname, // domain
+                '.'.$hostname, // domain
                 $req->isSecure(), // secure
                 true // http only
             );
 
-            $sessionAdapter = $config->get( 'sessions.adapter' );
-            if( $sessionAdapter == 'redis' )
-                Session\Redis::start( $app, $config->get( 'sessions.prefix' ) );
-            elseif( $sessionAdapter == 'database' )
+            $sessionAdapter = $config->get('sessions.adapter');
+            if ($sessionAdapter == 'redis') {
+                Session\Redis::start($app, $config->get('sessions.prefix'));
+            } elseif ($sessionAdapter == 'database') {
                 Session\Database::start();
-            else
+            } else {
                 session_start();
+            }
 
             // set the cookie by sending it in a header.
             U::set_cookie_fix_domain(
                 session_name(),
                 session_id(),
-                time() + $config->get( 'sessions.lifetime' ),
+                time() + $config->get('sessions.lifetime'),
                 '/',
                 $hostname,
                 $req->isSecure(),
@@ -301,30 +317,32 @@ class App extends Container
             );
 
             // update the session in our request
-            $req->setSession( $_SESSION );
+            $req->setSession($_SESSION);
         }
 
         /* CLI Requests */
 
-        if ( $req->isCli() ) {
+        if ($req->isCli()) {
             global $argc, $argv;
-            if( $argc >= 2 )
-                $req->setPath( $argv[ 1 ] );
+            if ($argc >= 2) {
+                $req->setPath($argv[ 1 ]);
+            }
         }
 
         /* Router */
 
-        Router::configure( [
-            'namespace' => '\\app' ] );
+        Router::configure([
+            'namespace' => '\\app', ]);
 
         /* Middleware */
 
-        foreach ( (array) $config->get( 'modules.middleware' ) as $module ) {
-            $class = '\\app\\' . $module . '\\Controller';
+        foreach ((array) $config->get('modules.middleware') as $module) {
+            $class = '\\app\\'.$module.'\\Controller';
             $controller = new $class();
-            if (method_exists($controller, 'injectApp'))
-                $controller->injectApp( $app );
-            $controller->middleware( $req, $res );
+            if (method_exists($controller, 'injectApp')) {
+                $controller->injectApp($app);
+            }
+            $controller->middleware($req, $res);
         }
     }
 
@@ -340,39 +358,42 @@ class App extends Container
         $res = $this[ 'res' ];
 
         /* 1. Global Routes */
-        $routed = Router::route( $this[ 'config' ]->get( 'routes' ), $this, $req, $res );
+        $routed = Router::route($this[ 'config' ]->get('routes'), $this, $req, $res);
 
         /* 2. Module Routes */
         if (!$routed) {
             // check if the first part of the path is a controller
-            $module = $req->params( 'module' );
-            if( !$module )
-                $module = $req->paths( 0 );
+            $module = $req->params('module');
+            if (!$module) {
+                $module = $req->paths(0);
+            }
 
-            $controller = '\\app\\' . $module . '\\Controller';
+            $controller = '\\app\\'.$module.'\\Controller';
 
             if (class_exists($controller)) {
-                $moduleRoutes = (array) U::array_value( $controller::$properties, 'routes' );
+                $moduleRoutes = (array) U::array_value($controller::$properties, 'routes');
 
-                $req->setParams( [ 'controller' => $module . '\\Controller' ] );
+                $req->setParams([ 'controller' => $module.'\\Controller' ]);
 
-                $routed = Router::route( $moduleRoutes, $this, $req, $res );
+                $routed = Router::route($moduleRoutes, $this, $req, $res);
             }
         }
 
         /* 3. Not Found */
-        if( !$routed )
-            $res->setCode( 404 );
+        if (!$routed) {
+            $res->setCode(404);
+        }
 
         /* 4. HTML Error Pages for 4xx and 5xx responses */
         $code = $res->getCode();
         if ($req->isHtml() && $code >= 400) {
             $body = $res->getBody();
-            if (empty($body))
+            if (empty($body)) {
                 $res->render(new View('error', [
                     'message' => Response::$codes[$code],
                     'code' => $code,
                     'title' => $code]));
+            }
         }
 
         $res->send();
@@ -386,7 +407,7 @@ class App extends Container
      */
     public function get($route, callable $handler)
     {
-        $this->map( 'get', $route, $handler );
+        $this->map('get', $route, $handler);
     }
 
     /**
@@ -397,7 +418,7 @@ class App extends Container
      */
     public function post($route, callable $handler)
     {
-        $this->map( 'post', $route, $handler );
+        $this->map('post', $route, $handler);
     }
 
     /**
@@ -408,7 +429,7 @@ class App extends Container
      */
     public function put($route, callable $handler)
     {
-        $this->map( 'put', $route, $handler );
+        $this->map('put', $route, $handler);
     }
 
     /**
@@ -419,7 +440,7 @@ class App extends Container
      */
     public function delete($route, callable $handler)
     {
-        $this->map( 'delete', $route, $handler );
+        $this->map('delete', $route, $handler);
     }
 
     /**
@@ -430,7 +451,7 @@ class App extends Container
      */
     public function patch($route, callable $handler)
     {
-        $this->map( 'patch', $route, $handler );
+        $this->map('patch', $route, $handler);
     }
 
     /**
@@ -441,7 +462,7 @@ class App extends Container
      */
     public function options($route, callable $handler)
     {
-        $this->map( 'options', $route, $handler );
+        $this->map('options', $route, $handler);
     }
 
     /**
@@ -454,8 +475,8 @@ class App extends Container
     public function map($method, $route, callable $handler)
     {
         $config = $this[ 'config' ];
-        $routes = $config->get( 'routes' );
-        $routes[ $method . ' ' . $route ] = $handler;
-        $config->set( 'routes', $routes );
+        $routes = $config->get('routes');
+        $routes[ $method.' '.$route ] = $handler;
+        $config->set('routes', $routes);
     }
 }

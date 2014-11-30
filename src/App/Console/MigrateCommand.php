@@ -11,7 +11,6 @@
 namespace App\Console;
 
 use App;
-
 use infuse\Session;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -32,8 +31,8 @@ class MigrateCommand extends Command
     protected function configure()
     {
         $this
-            ->setName( 'migrate' )
-            ->setDescription( 'Run app migrations' )
+            ->setName('migrate')
+            ->setDescription('Run app migrations')
             ->addArgument(
                 'module',
                 InputArgument::OPTIONAL,
@@ -48,8 +47,8 @@ class MigrateCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $migrateArgs = implode( ' ', $input->getArgument( 'args' ) );
-        $result = $this->migrate( $input->getArgument( 'module' ), $migrateArgs, $output );
+        $migrateArgs = implode(' ', $input->getArgument('args'));
+        $result = $this->migrate($input->getArgument('module'), $migrateArgs, $output);
 
         return $result ? 0 : 1;
     }
@@ -68,40 +67,44 @@ class MigrateCommand extends Command
     {
         $success = true;
 
-        if( empty( $migrateArgs ) )
+        if (empty($migrateArgs)) {
             $migrateArgs = 'migrate';
+        }
 
-        if( $migrateArgs == 'migrate' )
-            $output->writeln( '-- Running migrations' );
+        if ($migrateArgs == 'migrate') {
+            $output->writeln('-- Running migrations');
+        }
 
         // database sessions
-        if ( empty( $module ) && $this->app[ 'config' ]->get( 'sessions.adapter' ) == 'database' ) {
-            $output->writeln( '-- Migrating Database Sessions' );
+        if (empty($module) && $this->app[ 'config' ]->get('sessions.adapter') == 'database') {
+            $output->writeln('-- Migrating Database Sessions');
 
             $result = Session\Database::install();
 
-            if( $result )
-                $output->writeln( ' == Database Sessions Installed' );
-            else
-                $output->writeln(  '== Error installing Database Sessions' );
+            if ($result) {
+                $output->writeln(' == Database Sessions Installed');
+            } else {
+                $output->writeln('== Error installing Database Sessions');
+            }
 
             $success = $result && $success;
         }
 
         // module migrations
-        $modules = (empty($module)) ? $this->app[ 'config' ]->get( 'modules.all' ) : [ $module ];
+        $modules = (empty($module)) ? $this->app[ 'config' ]->get('modules.all') : [ $module ];
 
         foreach ((array) $modules as $mod) {
             // determine module directory
-            $controller = '\\app\\' . $mod . '\\Controller';
+            $controller = '\\app\\'.$mod.'\\Controller';
 
             if (class_exists($controller)) {
                 $reflection = new \ReflectionClass($controller);
-                $migrationPath = dirname($reflection->getFileName()) . '/migrations';
+                $migrationPath = dirname($reflection->getFileName()).'/migrations';
 
                 if (is_dir($migrationPath)) {
-                    if ($migrateArgs == 'migrate')
+                    if ($migrateArgs == 'migrate') {
                         $output->writeln("-- Migrating $mod");
+                    }
 
                     $success = $this->migrateWithPath($migrationPath, $migrateArgs, $output) && $success;
                 }
@@ -109,10 +112,11 @@ class MigrateCommand extends Command
         }
 
         if ($migrateArgs == 'migrate') {
-            if( $success )
+            if ($success) {
                 $output->writeln('-- Success!');
-            else
+            } else {
                 $output->writeln('-- Error running migrations');
+            }
         }
 
         return $success;
@@ -124,7 +128,7 @@ class MigrateCommand extends Command
         putenv("PHINX_MIGRATION_PATH=$path");
 
         ob_start();
-        system('php ' . INFUSE_BASE_DIR . '/vendor/bin/phinx ' . $migrateArgs . ' -c ' . INFUSE_BASE_DIR . '/phinx.php', $result);
+        system('php '.INFUSE_BASE_DIR.'/vendor/bin/phinx '.$migrateArgs.' -c '.INFUSE_BASE_DIR.'/phinx.php', $result);
         $phinxOutput = ob_get_contents();
         ob_end_clean();
 
@@ -135,8 +139,9 @@ class MigrateCommand extends Command
             // when migrating, only output lines starting
             // with ' =='
             if ($migrateArgs != 'migrate' ||
-                !empty($line) && substr($line, 0, 3) == ' ==')
+                !empty($line) && substr($line, 0, 3) == ' ==') {
                 $output->writeln($line);
+            }
         }
 
         return $result == 0;

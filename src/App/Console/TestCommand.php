@@ -20,8 +20,8 @@ class TestCommand extends Command
     protected function configure()
     {
         $this
-            ->setName( 'test' )
-            ->setDescription( 'Run app tests' )
+            ->setName('test')
+            ->setDescription('Run app tests')
             ->addArgument(
                 'module',
                 InputArgument::OPTIONAL,
@@ -32,11 +32,12 @@ class TestCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $args = [];
-        if( $module = $input->getArgument( 'module' ) )
-            $args[] = 'app/' . $module . '/tests/';
+        if ($module = $input->getArgument('module')) {
+            $args[] = 'app/'.$module.'/tests/';
+        }
 
         $result = 1;
-        system( 'phpunit ' . implode( ' ', $args ), $result );
+        system('phpunit '.implode(' ', $args), $result);
 
         return $result;
     }

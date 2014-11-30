@@ -19,8 +19,8 @@ class Application extends \Symfony\Component\Console\Application
         parent::__construct();
 
         // add commands
-        $this->add( new MigrateCommand( $app ) );
-        $this->add( new TestCommand() );
-        $this->add( new RouteCommand() );
+        $this->add(new MigrateCommand($app));
+        $this->add(new TestCommand());
+        $this->add(new RouteCommand());
     }
 }

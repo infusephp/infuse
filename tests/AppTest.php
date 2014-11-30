@@ -22,10 +22,10 @@ class AppTest extends \PHPUnit_Framework_TestCase
         $expected = [
             'test' => true,
             'site' => [
-                'hostname' => 'localhost' ],
+                'hostname' => 'localhost', ],
             'assets' => [
                 'dirs' => [
-                    '/public' ]]];
+                    '/public', ], ], ];
 
         $config = $app['config'];
         $this->assertInstanceOf('\\infuse\\Config', $config);
@@ -43,7 +43,7 @@ class AppTest extends \PHPUnit_Framework_TestCase
     {
         $app = new App([
             'site' => [
-                'language' => 'french' ]]);
+                'language' => 'french', ], ]);
 
         $locale = $app['locale'];
         $this->assertInstanceOf('\\infuse\\Locale', $locale);
@@ -58,7 +58,7 @@ class AppTest extends \PHPUnit_Framework_TestCase
                 'host' => 'localhost',
                 'name' => 'mydb',
                 'user' => 'root',
-                'password' => '' ]]);
+                'password' => '', ], ]);
 
         $db = $app['db'];
         $this->assertInstanceOf('\\infuse\\QueryBuilder', $db);
@@ -69,11 +69,11 @@ class AppTest extends \PHPUnit_Framework_TestCase
 
         $app = new App([
             'site' => [
-                'production-level' => true ],
+                'production-level' => true, ],
             'database' => [
                 'dsn' => 'mysql:host=localhost;dbname=mydb',
                 'user' => 'root',
-                'password' => '' ]]);
+                'password' => '', ], ]);
 
         $db = $app['db'];
         $this->assertInstanceOf('\\infuse\\QueryBuilder', $db);
