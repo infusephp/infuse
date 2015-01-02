@@ -11,22 +11,24 @@
 use app\search\libs\SearchableModel;
 use app\users\models\User;
 
-class TestBootstrap implements PHPUnit_Framework_TestListener
+class Test implements PHPUnit_Framework_TestListener
 {
-    public static $userEmail;
-    public static $userPassword = 'testpassword';
-    private $verbose;
-    private static $staticApp;
-    private $app;
+    /**
+     * @var App
+     */
+    public static $app;
 
-    public static function app($id = false)
-    {
-        if ($id) {
-            return self::$staticApp[ $id ];
-        } else {
-            return self::$staticApp;
-        }
-    }
+    /**
+     * @var string
+     */
+    public static $userEmail;
+
+    /**
+     * @var string
+     */
+    public static $userPassword = 'testpassword';
+
+    private $verbose;
 
     public function __construct($verbose = false)
     {
@@ -37,8 +39,7 @@ class TestBootstrap implements PHPUnit_Framework_TestListener
 
         $config['logger']['enabled'] = $verbose;
 
-        $this->app = new App($config);
-        self::$staticApp = $this->app;
+        self::$app = new App($config);
 
         $this->verbose = $verbose;
 
@@ -78,11 +79,11 @@ class TestBootstrap implements PHPUnit_Framework_TestListener
                 }
             }
 
-            $loggedIn = $this->app[ 'auth' ]->login(self::$userEmail, self::$userPassword);
+            $loggedIn = self::$app[ 'auth' ]->login(self::$userEmail, self::$userPassword);
 
             if ($this->verbose) {
                 if ($loggedIn) {
-                    echo "User #".$this->app[ 'user' ]->id()." logged in.\n";
+                    echo "User #".self::$app[ 'user' ]->id()." logged in.\n";
                 } else {
                     echo " Could not log test user in.\n";
                 }
@@ -90,8 +91,7 @@ class TestBootstrap implements PHPUnit_Framework_TestListener
         }
 
         // TODO custom listeners should be allowed
-        // CUSTOM
-        $this->app[ 'config' ]->set('email.type', 'nop');
+        self::$app[ 'config' ]->set('email.type', 'nop');
         if (class_exists('app\search\libs\SearchableModel')) {
             SearchableModel::disableIndexing();
         }
@@ -99,8 +99,8 @@ class TestBootstrap implements PHPUnit_Framework_TestListener
 
     public function __destruct()
     {
-        if (isset($this->app['user'])) {
-            $user = $this->app['user'];
+        if (isset(self::$app['user'])) {
+            $user = self::$app['user'];
             $user->grantAllPermissions();
             $deleted = $user->delete();
 
@@ -156,7 +156,7 @@ class TestBootstrap implements PHPUnit_Framework_TestListener
         }
 
         if (class_exists('\\app\\users\\models\\User')) {
-            $this->app[ 'user' ]->disableSU();
+            self::$app[ 'user' ]->disableSU();
         }
     }
 
@@ -183,18 +183,18 @@ class TestBootstrap implements PHPUnit_Framework_TestListener
         }
 
         // nuke memcache in between test suites
-        if ($this->app['config']->get('memcache.enabled')) {
-            $this->app['memcache']->flush();
+        if (self::$app['config']->get('memcache.enabled')) {
+            self::$app['memcache']->flush();
         }
 
-        $errors = $this->app[ 'errors' ]->errors();
+        $errors = self::$app[ 'errors' ]->errors();
 
         if (count($errors) > 0) {
             if ($this->verbose) {
                 printf("TestSuite '%s' produced these errors:\n", $suite->getName());
                 print_r($errors);
             }
-            $this->app[ 'errors' ]->clear();
+            self::$app[ 'errors' ]->clear();
         }
     }
 }
