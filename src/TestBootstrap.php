@@ -89,6 +89,7 @@ class TestBootstrap implements PHPUnit_Framework_TestListener
             }
         }
 
+        // TODO custom listeners should be allowed
         // CUSTOM
         $this->app[ 'config' ]->set('email.type', 'nop');
         if (class_exists('app\search\libs\SearchableModel')) {
@@ -98,8 +99,8 @@ class TestBootstrap implements PHPUnit_Framework_TestListener
 
     public function __destruct()
     {
-        if (class_exists('\\app\\users\\models\\User')) {
-            $user = $this->app[ 'user' ];
+        if (isset($this->app['user'])) {
+            $user = $this->app['user'];
             $user->grantAllPermissions();
             $deleted = $user->delete();
 
@@ -182,12 +183,8 @@ class TestBootstrap implements PHPUnit_Framework_TestListener
         }
 
         // nuke memcache in between test suites
-        $config = $this->app[ 'config' ];
-        if ($config->get('memcache.enabled')) {
-            $memcache_obj = new Memcache();
-            $memcache_obj->connect($config->get('memcache.host'), $config->get('memcache.port'));
-
-            $memcache_obj->flush();
+        if ($this->app['config']->get('memcache.enabled')) {
+            $this->app['memcache']->flush();
         }
 
         $errors = $this->app[ 'errors' ]->errors();
