@@ -12,8 +12,17 @@ trait InjectApp
 {
     protected $app;
 
+    /**
+     * Injects an app container
+     *
+     * @param App $app container
+     *
+     * @return self
+     */
     public function injectApp(App $app)
     {
         $this->app = $app;
+
+        return $this;
     }
 }

@@ -30,7 +30,7 @@
 		"smarty/smarty": ">=v3.1.19",
 		"predis/predis": ">=v1.0.0",
 		"robmorgan/phinx": "~0.3",
-		"symfony/console": "2.*"
+		"symfony/console": "2.6"
 	},
 	"require-dev": {
 		"satooshi/php-coveralls": "dev-master"
