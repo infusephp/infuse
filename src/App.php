@@ -370,7 +370,7 @@ class App extends Container
 
             $controller = '\\app\\'.$module.'\\Controller';
 
-            if (class_exists($controller)) {
+            if (class_exists($controller) && property_exists($controller, 'properties')) {
                 $moduleRoutes = (array) U::array_value($controller::$properties, 'routes');
 
                 $req->setParams([ 'controller' => $module.'\\Controller' ]);
