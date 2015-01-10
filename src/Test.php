@@ -8,7 +8,6 @@
  * @license MIT
  */
 
-use app\search\libs\SearchableModel;
 use app\users\models\User;
 
 class Test implements PHPUnit_Framework_TestListener
@@ -90,11 +89,8 @@ class Test implements PHPUnit_Framework_TestListener
             }
         }
 
-        // TODO custom listeners should be allowed
+        // TODO custom listeners should be used instead
         self::$app[ 'config' ]->set('email.type', 'nop');
-        if (class_exists('app\search\libs\SearchableModel')) {
-            SearchableModel::disableIndexing();
-        }
     }
 
     public function __destruct()
