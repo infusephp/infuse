@@ -4,7 +4,7 @@
  * @package idealistsoft\framework-bootstrap
  * @author Jared King <j@jaredtking.com>
  * @link http://jaredtking.com
- * @copyright 2014 Jared King
+ * @copyright 2015 Jared King
  * @license MIT
  */
 
@@ -21,8 +21,8 @@ use infuse\Validate;
 use infuse\ViewEngine;
 use infuse\View;
 use infuse\Queue;
-use infuse\QueryBuilder;
 use infuse\Session;
+use JAQB\QueryBuilder;
 use Monolog\ErrorHandler;
 use Monolog\Handler\NullHandler;
 use Monolog\Handler\FirePHPHandler;

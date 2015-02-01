@@ -4,7 +4,7 @@
  * @package idealistsoft\framework-bootstrap
  * @author Jared King <j@jaredtking.com>
  * @link http://jaredtking.com
- * @copyright 2014 Jared King
+ * @copyright 2015 Jared King
  * @license MIT
  */
 
@@ -61,7 +61,7 @@ class AppTest extends \PHPUnit_Framework_TestCase
                 'password' => '', ], ]);
 
         $db = $app['db'];
-        $this->assertInstanceOf('\\infuse\\QueryBuilder', $db);
+        $this->assertInstanceOf('\\JAQB\\QueryBuilder', $db);
 
         $pdo = $db->getPDO();
         $this->assertInstanceOf('\\PDO', $pdo);
@@ -76,7 +76,7 @@ class AppTest extends \PHPUnit_Framework_TestCase
                 'password' => '', ], ]);
 
         $db = $app['db'];
-        $this->assertInstanceOf('\\infuse\\QueryBuilder', $db);
+        $this->assertInstanceOf('\\JAQB\\QueryBuilder', $db);
         $pdo = $db->getPDO();
         $this->assertInstanceOf('\\PDO', $pdo);
         $this->assertEquals(PDO::ERRMODE_WARNING, $pdo->getAttribute(PDO::ATTR_ERRMODE));
