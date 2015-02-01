@@ -24,7 +24,7 @@
     },
 	"require": {
 		"php": ">=5.4.0",
-		"jaredtking/jaqb": "1.0",
+		"jaredtking/jaqb": "dev-master",
 		"infuse/libs": "dev-master",
 		"pimple/pimple": ">=v2.1.0",
 		"monolog/monolog": "1.*",
