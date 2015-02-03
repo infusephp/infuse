@@ -1,8 +1,8 @@
 {
-	"name": "idealistsoft/framework-bootstrap",
-	"description": "Bootstrap for Idealist Framework",
+	"name": "infuse/bootstrap",
+	"description": "Bootstrap for Infuse Framework",
 	"type": "library",
-	"keywords": ["idealist","framework","bootstrap"],
+	"keywords": ["infuse","framework","bootstrap"],
 	"license": "MIT",
 	"authors": [
 		{
@@ -12,8 +12,8 @@
 		}
 	],
 	"support": {
-		"issues": "https://github.com/idealistsoft/framework-bootstrap/issues",
-		"source": "https://github.com/idealistsoft/framework-bootstrap"
+		"issues": "https://github.com/infusephp/bootstrap/issues",
+		"source": "https://github.com/infusephp/bootstrap"
 	},
     "autoload": {
         "psr-4": {

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * @package idealistsoft\framework-bootstrap
+ * @package infuse\bootstrap
  * @author Jared King <j@jaredtking.com>
  * @link http://jaredtking.com
  * @copyright 2015 Jared King
