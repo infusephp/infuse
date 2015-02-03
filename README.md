@@ -1,9 +1,11 @@
-bootstrap  [![Build Status](https://travis-ci.org/infusephp/bootstrap.png?branch=master)](https://travis-ci.org/infusephp/bootstrap)
+bootstrap
 ===================
 
+[![Build Status](https://travis-ci.org/infusephp/bootstrap.png?branch=master)](https://travis-ci.org/infusephp/bootstrap)
 [![Coverage Status](https://coveralls.io/repos/infusephp/bootstrap/badge.png)](https://coveralls.io/r/infusephp/bootstrap)
-[![Latest Stable Version](https://poser.pugx.org/infusephp/bootstrap/v/stable.png)](https://packagist.org/packages/infusephp/bootstrap)
-[![Total Downloads](https://poser.pugx.org/infusephp/bootstrap/downloads.png)](https://packagist.org/packages/infusephp/bootstrap)
+[![Latest Stable Version](https://poser.pugx.org/infuse/bootstrap/v/stable.png)](https://packagist.org/packages/infuse/bootstrap)
+[![Total Downloads](https://poser.pugx.org/infuse/bootstrap/downloads.png)](https://packagist.org/packages/infuse/bootstrap)
+[![HHVM Status](http://hhvm.h4cc.de/badge/infuse/bootstrap.svg)](http://hhvm.h4cc.de/package/infuse/bootstrap)
 
 Bootstrap for Infuse Framework
 
