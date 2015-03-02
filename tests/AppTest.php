@@ -94,10 +94,14 @@ class AppTest extends \PHPUnit_Framework_TestCase
 
     public function testStash()
     {
-        $app = new App();
-        $app['stash_driver'] = null;
+        $app = new App([
+            'cache' => [
+                'namespace' => 'namespace', ], ]);
 
-        $this->assertInstanceOf('\\Stash\\Pool', $app['stash']);
+        $stash = $app['stash'];
+        $this->assertInstanceOf('\\Stash\\Pool', $stash);
+        $this->assertEquals('namespace', $stash->getNamespace());
+        $this->assertInstanceOf('\\Stash\\Driver\\Ephemeral', $app['stash_driver']);
     }
 
     public function testReq()

@@ -31,7 +31,6 @@ use Monolog\Processor\WebProcessor;
 use Monolog\Logger;
 use Pimple\Container;
 use Stash\Pool as StashPool;
-use Stash\Driver\Ephemeral as StashEphemeral;
 
 if (!defined('INFUSE_BASE_DIR')) {
     die('INFUSE_BASE_DIR has not been defined!');
@@ -208,12 +207,24 @@ class App extends Container
 
         /* Stash */
 
-        $this['stash_driver'] = function () {
-            return new StashEphemeral();
+        $this['stash_driver'] = function () use ($config) {
+            $driverClass = $config->get('cache.driver');
+            if (!$driverClass) {
+                $driverClass = '\\Stash\\Driver\\Ephemeral';
+            }
+
+            $driver = new $driverClass();
+            $driver->setOptions((array) $config->get('cache.options'));
+
+            return $driver;
         };
 
-        $this['stash'] = function ($c) {
-            return new StashPool($c['stash_driver']);
+        $this['stash'] = function ($c) use ($config) {
+            $pool = new StashPool($c['stash_driver']);
+            $pool->setLogger($c['logger']);
+            $pool->setNamespace($config->get('cache.namespace'));
+
+            return $pool;
         };
 
         /* Request + Response */
@@ -222,7 +233,7 @@ class App extends Container
             return new Request();
         };
 
-        $this['res'] = function () use ($app) {
+        $this['res'] = function () {
             return new Response();
         };
 
