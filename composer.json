@@ -18,20 +18,20 @@
     "autoload": {
         "psr-4": {
         	"App\\Console\\": "src/App/Console/", 
-        	"Monolog\\Processor\\": "src/Monolog/Processor/",
         	"": "src/"
        	}
     },
 	"require": {
 		"php": ">=5.4.0",
 		"jaredtking/jaqb": "dev-master",
-		"infuse/libs": "dev-master",
+		"infuse/libs": "dev-stash",
 		"pimple/pimple": ">=v2.1.0",
 		"monolog/monolog": "1.*",
 		"smarty/smarty": ">=v3.1.19",
 		"predis/predis": ">=v1.0.0",
 		"robmorgan/phinx": "~0.3",
-		"symfony/console": "2.6"
+		"symfony/console": "2.6",
+		"tedivm/stash": "0.12.*"
 	},
 	"require-dev": {
 		"satooshi/php-coveralls": "dev-master"

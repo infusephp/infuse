@@ -30,6 +30,8 @@ use Monolog\Processor\IntrospectionProcessor;
 use Monolog\Processor\WebProcessor;
 use Monolog\Logger;
 use Pimple\Container;
+use Stash\Pool as StashPool;
+use Stash\Driver\Ephemeral as StashEphemeral;
 
 if (!defined('INFUSE_BASE_DIR')) {
     die('INFUSE_BASE_DIR has not been defined!');
@@ -187,7 +189,7 @@ class App extends Container
 
         $redisConfig = $config->get('redis');
         if ($redisConfig) {
-            $this[ 'redis' ] = function () use ($redisConfig) {
+            $this['redis'] = function () use ($redisConfig) {
                 return new Predis\Client($redisConfig);
             };
         }
@@ -196,21 +198,31 @@ class App extends Container
 
         $memcacheConfig = $config->get('memcache');
         if ($memcacheConfig) {
-            $this[ 'memcache' ] = function () use ($memcacheConfig) {
+            $this['memcache'] = function () use ($memcacheConfig) {
                 $memcache = new Memcache();
-                $memcache->connect($memcacheConfig[ 'host' ], $memcacheConfig[ 'port' ]);
+                $memcache->connect($memcacheConfig['host'], $memcacheConfig['port']);
 
                 return $memcache;
             };
         }
 
+        /* Stash */
+
+        $this['stash_driver'] = function () {
+            return new StashEphemeral();
+        };
+
+        $this['stash'] = function ($c) {
+            return new StashPool($c['stash_driver']);
+        };
+
         /* Request + Response */
 
-        $this[ 'req' ] = function () {
+        $this['req'] = function () {
             return new Request();
         };
 
-        $this[ 'res' ] = function () use ($app) {
+        $this['res'] = function () use ($app) {
             return new Response();
         };
 

@@ -92,6 +92,14 @@ class AppTest extends \PHPUnit_Framework_TestCase
         $this->markTestIncomplete();
     }
 
+    public function testStash()
+    {
+        $app = new App();
+        $app['stash_driver'] = null;
+
+        $this->assertInstanceOf('\\Stash\\Pool', $app['stash']);
+    }
+
     public function testReq()
     {
         $app = new App();
