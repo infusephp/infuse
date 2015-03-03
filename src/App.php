@@ -30,7 +30,6 @@ use Monolog\Processor\IntrospectionProcessor;
 use Monolog\Processor\WebProcessor;
 use Monolog\Logger;
 use Pimple\Container;
-use Stash\Pool as StashPool;
 
 if (!defined('INFUSE_BASE_DIR')) {
     die('INFUSE_BASE_DIR has not been defined!');
@@ -205,28 +204,6 @@ class App extends Container
             };
         }
 
-        /* Stash */
-
-        $this['stash_driver'] = function () use ($config) {
-            $driverClass = $config->get('cache.driver');
-            if (!$driverClass) {
-                $driverClass = '\\Stash\\Driver\\Ephemeral';
-            }
-
-            $driver = new $driverClass();
-            $driver->setOptions((array) $config->get('cache.options'));
-
-            return $driver;
-        };
-
-        $this['stash'] = function ($c) use ($config) {
-            $pool = new StashPool($c['stash_driver']);
-            $pool->setLogger($c['logger']);
-            $pool->setNamespace($config->get('cache.namespace'));
-
-            return $pool;
-        };
-
         /* Request + Response */
 
         $this['req'] = function () {
@@ -251,13 +228,14 @@ class App extends Container
 
         /* Queue */
 
-        $this[ 'queue' ] = function () use ($app, $config) {
-            Queue::configure(array_merge([
-                'namespace' => '\\app', ], (array) $config->get('queue')));
+        $this['queue'] = function () use ($app, $config) {
+            Queue::configure(array_merge(['namespace' => '\\app'],
+                (array) $config->get('queue')));
 
             Queue::inject($app);
 
-            return new Queue($config->get('queue.type'), (array) $config->get('queue.listeners'));
+            return new Queue($config->get('queue.type'),
+                (array) $config->get('queue.listeners'));
         };
 
         /* Models */
@@ -267,13 +245,13 @@ class App extends Container
 
         /* Error Stack */
 
-        $this[ 'errors' ] = function () use ($app) {
+        $this['errors'] = function () use ($app) {
             return new ErrorStack($app);
         };
 
         /* Views  */
 
-        $this[ 'view_engine' ] = function () use ($app, $config) {
+        $this['view_engine'] = function () use ($app, $config) {
             $type = $config->get('views.engine');
             if ($type == 'smarty') {
                 $engine = new ViewEngine\Smarty(INFUSE_VIEWS_DIR, INFUSE_TEMP_DIR.'/smarty', INFUSE_TEMP_DIR.'/smarty/cache');

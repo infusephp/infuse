@@ -21,12 +21,6 @@
         	"": "src/"
        	}
     },
-    "repositories": [
-        {
-            "type": "vcs",
-            "url": "https://github.com/jaredtking/Stash"
-        }
-    ],
 	"require": {
 		"php": ">=5.4.0",
 		"jaredtking/jaqb": "dev-master",
@@ -36,8 +30,7 @@
 		"smarty/smarty": ">=v3.1.19",
 		"predis/predis": "1.0.*",
 		"robmorgan/phinx": "~0.3",
-		"symfony/console": "2.6",
-		"tedivm/stash": "dev-predis_driver"
+		"symfony/console": "2.6"
 	},
 	"require-dev": {
 		"satooshi/php-coveralls": "dev-master"

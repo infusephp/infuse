@@ -92,18 +92,6 @@ class AppTest extends \PHPUnit_Framework_TestCase
         $this->markTestIncomplete();
     }
 
-    public function testStash()
-    {
-        $app = new App([
-            'cache' => [
-                'namespace' => 'namespace', ], ]);
-
-        $stash = $app['stash'];
-        $this->assertInstanceOf('\\Stash\\Pool', $stash);
-        $this->assertEquals('namespace', $stash->getNamespace());
-        $this->assertInstanceOf('\\Stash\\Driver\\Ephemeral', $app['stash_driver']);
-    }
-
     public function testReq()
     {
         $app = new App();
