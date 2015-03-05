@@ -21,7 +21,8 @@ use infuse\Validate;
 use infuse\ViewEngine;
 use infuse\View;
 use infuse\Queue;
-use infuse\Session;
+use infuse\Session\Redis as RedisSession;
+use JAQB\Session as DatabaseSession;
 use JAQB\QueryBuilder;
 use Monolog\ErrorHandler;
 use Monolog\Handler\NullHandler;
@@ -299,10 +300,14 @@ class App extends Container
 
             $sessionAdapter = $config->get('sessions.adapter');
             if ($sessionAdapter == 'redis') {
-                Session\Redis::start($app, $config->get('sessions.prefix'));
+                $handler = new RedisSession($app, $config->get('sessions.prefix'));
+                RedisSession::registerHandler($handler);
+                session_start();
             } elseif ($sessionAdapter == 'database') {
-                Session\Database::start();
-            } else {
+                $handler = new DatabaseSession($app);
+                DatabaseSession::registerHandler($handler);
+                session_start();
+            } elseif (empty($sessionAdapter) || $sessionAdapter == 'php') {
                 session_start();
             }
 
@@ -326,14 +331,13 @@ class App extends Container
         if ($req->isCli()) {
             global $argc, $argv;
             if ($argc >= 2) {
-                $req->setPath($argv[ 1 ]);
+                $req->setPath($argv[1]);
             }
         }
 
         /* Router */
 
-        Router::configure([
-            'namespace' => '\\app', ]);
+        Router::configure(['namespace' => '\\app']);
 
         /* Middleware */
 
