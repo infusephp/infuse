@@ -9,7 +9,6 @@
  */
 
 use infuse\Config;
-use infuse\Database;
 use infuse\ErrorStack;
 use infuse\Locale;
 use infuse\Model;
@@ -149,10 +148,6 @@ class App extends Container
         /* Database */
 
         $dbSettings = (array) $config->get('database');
-
-        // WARNING the static Database class is deprecated
-        // and will be removed in the future
-        Database::inject($this);
 
         $this['pdo'] = function () use ($dbSettings, $config, $app) {
             if (isset($dbSettings['dsn'])) {
