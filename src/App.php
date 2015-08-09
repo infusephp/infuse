@@ -393,12 +393,12 @@ class App extends Container
     /**
      * Adds a handler to the routing table for a given GET route.
      *
-     * @param string   $route   path pattern
-     * @param callable $handler route handler
+     * @param string $route   path pattern
+     * @param mixed  $handler route handler
      *
      * @return self
      */
-    public function get($route, callable $handler)
+    public function get($route, $handler)
     {
         $this->map('get', $route, $handler);
 
@@ -408,12 +408,12 @@ class App extends Container
     /**
      * Adds a handler to the routing table for a given POST route.
      *
-     * @param string   $route   path pattern
-     * @param callable $handler route handler
+     * @param string $route   path pattern
+     * @param mixed  $handler route handler
      *
      * @return self
      */
-    public function post($route, callable $handler)
+    public function post($route, $handler)
     {
         $this->map('post', $route, $handler);
 
@@ -423,12 +423,12 @@ class App extends Container
     /**
      * Adds a handler to the routing table for a given PUT route.
      *
-     * @param string   $route   path pattern
-     * @param callable $handler route handler
+     * @param string $route   path pattern
+     * @param mixed  $handler route handler
      *
      * @return self
      */
-    public function put($route, callable $handler)
+    public function put($route, $handler)
     {
         $this->map('put', $route, $handler);
 
@@ -438,12 +438,12 @@ class App extends Container
     /**
      * Adds a handler to the routing table for a given DELETE route.
      *
-     * @param string   $route   path pattern
-     * @param callable $handler route handler
+     * @param string $route   path pattern
+     * @param mixed  $handler route handler
      *
      * @return self
      */
-    public function delete($route, callable $handler)
+    public function delete($route, $handler)
     {
         $this->map('delete', $route, $handler);
 
@@ -453,12 +453,12 @@ class App extends Container
     /**
      * Adds a handler to the routing table for a given PATCH route.
      *
-     * @param string   $route   path pattern
-     * @param callable $handler route handler
+     * @param string $route   path pattern
+     * @param mixed  $handler route handler
      *
      * @return self
      */
-    public function patch($route, callable $handler)
+    public function patch($route, $handler)
     {
         $this->map('patch', $route, $handler);
 
@@ -468,12 +468,12 @@ class App extends Container
     /**
      * Adds a handler to the routing table for a given OPTIONS route.
      *
-     * @param string   $route   path pattern
-     * @param callable $handler route handler
+     * @param string $route   path pattern
+     * @param mixed  $handler route handler
      *
      * @return self
      */
-    public function options($route, callable $handler)
+    public function options($route, $handler)
     {
         $this->map('options', $route, $handler);
 
@@ -483,13 +483,13 @@ class App extends Container
     /**
      * Adds a handler to the routing table for a given route.
      *
-     * @param string   $method  HTTP method
-     * @param string   $route   path pattern
-     * @param callable $handler route handler
+     * @param string $method  HTTP method
+     * @param string $route   path pattern
+     * @param mixed  $handler route handler
      *
      * @return self
      */
-    public function map($method, $route, callable $handler)
+    public function map($method, $route, $handler)
     {
         $method = strtolower($method);
         $this->routes[$method.' '.$route] = $handler;
