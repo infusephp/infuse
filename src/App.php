@@ -339,7 +339,7 @@ class App extends Container
 
         Router::configure(['namespace' => '\\app']);
 
-        $routes = (array) $this['config']->get('routes');
+        $this->routes = (array) $this['config']->get('routes');
 
         /* Middleware */
 

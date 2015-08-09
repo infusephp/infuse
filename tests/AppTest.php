@@ -142,6 +142,14 @@ class AppTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($thrown);
     }
 
+    public function testRoutes()
+    {
+        $config = ['routes' => ['test']];
+        $app = new App($config);
+
+        $this->assertEquals(['test'], $app->getRoutes());
+    }
+
     public function testMiddleware()
     {
         $this->markTestIncomplete();
