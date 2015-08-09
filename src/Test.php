@@ -1,13 +1,13 @@
 <?php
 
 /**
- * @package infuse\bootstrap
  * @author Jared King <j@jaredtking.com>
+ *
  * @link http://jaredtking.com
+ *
  * @copyright 2015 Jared King
  * @license MIT
  */
-
 use app\users\models\User;
 
 class Test implements PHPUnit_Framework_TestListener
@@ -39,6 +39,9 @@ class Test implements PHPUnit_Framework_TestListener
         $config['logger']['enabled'] = $verbose;
 
         self::$app = new App($config);
+
+        // execute middleware
+        self::$app->executeMiddleware();
 
         $this->verbose = $verbose;
 

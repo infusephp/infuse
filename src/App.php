@@ -354,20 +354,12 @@ class App extends Container
 
     public function go()
     {
-        $req = $this['req'];
-        $res = $this['res'];
-
         /* 1. Middleware */
-        foreach ($this->middleware as $module) {
-            $class = 'app\\'.$module.'\\Controller';
-            $controller = new $class();
-            if (method_exists($controller, 'injectApp')) {
-                $controller->injectApp($this);
-            }
-            $controller->middleware($req, $res);
-        }
+        $this->executeMiddleware();
 
         /* 2. Attempt to route the request */
+        $req = $this['req'];
+        $res = $this['res'];
         $routed = Router::route($this->routes, $this, $req, $res);
 
         /* 3. Not Found */
@@ -505,6 +497,28 @@ class App extends Container
     public function getMiddleware()
     {
         return $this->middleware;
+    }
+
+    /**
+     * Executes the middleware.
+     *
+     * @return self
+     */
+    public function executeMiddleware()
+    {
+        $req = $this['req'];
+        $res = $this['res'];
+
+        foreach ($this->middleware as $module) {
+            $class = 'app\\'.$module.'\\Controller';
+            $controller = new $class();
+            if (method_exists($controller, 'injectApp')) {
+                $controller->injectApp($this);
+            }
+            $controller->middleware($req, $res);
+        }
+
+        return $this;
     }
 
     /**
