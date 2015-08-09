@@ -1,13 +1,13 @@
 <?php
 
 /**
- * @package infuse\bootstrap
  * @author Jared King <j@jaredtking.com>
+ *
  * @link http://jaredtking.com
+ *
  * @copyright 2015 Jared King
  * @license MIT
  */
-
 class AppTest extends \PHPUnit_Framework_TestCase
 {
     public static function setUpBeforeClass()
@@ -154,36 +154,43 @@ class AppTest extends \PHPUnit_Framework_TestCase
 
     public function testGet()
     {
-        $this->markTestIncomplete();
+        $app = new App();
+        $this->assertEquals($app, $app->get('/users/:id', function () {}));
     }
 
     public function testPost()
     {
-        $this->markTestIncomplete();
+        $app = new App();
+        $this->assertEquals($app, $app->post('/users', function () {}));
     }
 
     public function testPut()
     {
-        $this->markTestIncomplete();
+        $app = new App();
+        $this->assertEquals($app, $app->put('/users/:id', function () {}));
     }
 
     public function testDelete()
     {
-        $this->markTestIncomplete();
+        $app = new App();
+        $this->assertEquals($app, $app->delete('/users/:id', function () {}));
     }
 
     public function testPatch()
     {
-        $this->markTestIncomplete();
+        $app = new App();
+        $this->assertEquals($app, $app->patch('/users/:id', function () {}));
     }
 
     public function testOptions()
     {
-        $this->markTestIncomplete();
+        $app = new App();
+        $this->assertEquals($app, $app->options('/users/:id', function () {}));
     }
 
     public function testMap()
     {
-        $this->markTestIncomplete();
+        $app = new App();
+        $this->assertEquals($app, $app->map('GET', '/users/:id', function () {}));
     }
 }

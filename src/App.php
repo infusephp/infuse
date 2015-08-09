@@ -1,13 +1,13 @@
 <?php
 
 /**
- * @package infuse\bootstrap
  * @author Jared King <j@jaredtking.com>
+ *
  * @link http://jaredtking.com
+ *
  * @copyright 2015 Jared King
  * @license MIT
  */
-
 use infuse\Config;
 use infuse\ErrorStack;
 use infuse\Locale;
@@ -73,6 +73,11 @@ if (!defined('SKIP_ROUTE')) {
 
 class App extends Container
 {
+    /**
+     * @var array
+     */
+    private $routes;
+
     public function __construct(array $configValues = [])
     {
         parent::__construct();
@@ -334,6 +339,8 @@ class App extends Container
 
         Router::configure(['namespace' => '\\app']);
 
+        $routes = (array) $this['config']->get('routes');
+
         /* Middleware */
 
         foreach ((array) $config->get('modules.middleware') as $module) {
@@ -354,11 +361,11 @@ class App extends Container
     {
         $routed = false;
 
-        $req = $this[ 'req' ];
-        $res = $this[ 'res' ];
+        $req = $this['req'];
+        $res = $this['res'];
 
         /* 1. Global Routes */
-        $routed = Router::route($this[ 'config' ]->get('routes'), $this, $req, $res);
+        $routed = Router::route($this->routes, $this, $req, $res);
 
         /* 2. Module Routes */
         if (!$routed) {
@@ -392,7 +399,7 @@ class App extends Container
                 $res->render(new View('error', [
                     'message' => Response::$codes[$code],
                     'code' => $code,
-                    'title' => $code]));
+                    'title' => $code, ]));
             }
         }
 
@@ -400,83 +407,109 @@ class App extends Container
     }
 
     /**
-     * Adds a handler to the routing table for a given GET route
+     * Adds a handler to the routing table for a given GET route.
      *
      * @param string   $route   path pattern
      * @param callable $handler route handler
+     *
+     * @return self
      */
     public function get($route, callable $handler)
     {
         $this->map('get', $route, $handler);
+
+        return $this;
     }
 
     /**
-     * Adds a handler to the routing table for a given POST route
+     * Adds a handler to the routing table for a given POST route.
      *
      * @param string   $route   path pattern
      * @param callable $handler route handler
+     *
+     * @return self
      */
     public function post($route, callable $handler)
     {
         $this->map('post', $route, $handler);
+
+        return $this;
     }
 
     /**
-     * Adds a handler to the routing table for a given PUT route
+     * Adds a handler to the routing table for a given PUT route.
      *
      * @param string   $route   path pattern
      * @param callable $handler route handler
+     *
+     * @return self
      */
     public function put($route, callable $handler)
     {
         $this->map('put', $route, $handler);
+
+        return $this;
     }
 
     /**
-     * Adds a handler to the routing table for a given DELETE route
+     * Adds a handler to the routing table for a given DELETE route.
      *
      * @param string   $route   path pattern
      * @param callable $handler route handler
+     *
+     * @return self
      */
     public function delete($route, callable $handler)
     {
         $this->map('delete', $route, $handler);
+
+        return $this;
     }
 
     /**
-     * Adds a handler to the routing table for a given PATCH route
+     * Adds a handler to the routing table for a given PATCH route.
      *
      * @param string   $route   path pattern
      * @param callable $handler route handler
+     *
+     * @return self
      */
     public function patch($route, callable $handler)
     {
         $this->map('patch', $route, $handler);
+
+        return $this;
     }
 
     /**
-     * Adds a handler to the routing table for a given OPTIONS route
+     * Adds a handler to the routing table for a given OPTIONS route.
      *
      * @param string   $route   path pattern
      * @param callable $handler route handler
+     *
+     * @return self
      */
     public function options($route, callable $handler)
     {
         $this->map('options', $route, $handler);
+
+        return $this;
     }
 
     /**
-     * Adds a handler to the routing table for a given route
+     * Adds a handler to the routing table for a given route.
      *
      * @param string   $method  HTTP method
      * @param string   $route   path pattern
      * @param callable $handler route handler
+     *
+     * @return self
      */
     public function map($method, $route, callable $handler)
     {
-        $config = $this[ 'config' ];
-        $routes = $config->get('routes');
-        $routes[ $method.' '.$route ] = $handler;
-        $config->set('routes', $routes);
+        $method = strtolower($method);
+        $this->routes[$method.' '.$route] = $handler;
+
+        return $this;
     }
 }
