@@ -155,42 +155,70 @@ class AppTest extends \PHPUnit_Framework_TestCase
     public function testGet()
     {
         $app = new App();
-        $this->assertEquals($app, $app->get('/users/:id', function () {}));
+        $handler = function () {};
+
+        $this->assertEquals($app, $app->get('/users/:id', $handler));
+
+        $this->assertEquals(['get /users/:id' => $handler], $app->getRoutes());
     }
 
     public function testPost()
     {
         $app = new App();
-        $this->assertEquals($app, $app->post('/users', function () {}));
+        $handler = function () {};
+
+        $this->assertEquals($app, $app->post('/users', $handler));
+
+        $this->assertEquals(['post /users' => $handler], $app->getRoutes());
     }
 
     public function testPut()
     {
         $app = new App();
-        $this->assertEquals($app, $app->put('/users/:id', function () {}));
+        $handler = function () {};
+
+        $this->assertEquals($app, $app->put('/users/:id', $handler));
+
+        $this->assertEquals(['put /users/:id' => $handler], $app->getRoutes());
     }
 
     public function testDelete()
     {
         $app = new App();
-        $this->assertEquals($app, $app->delete('/users/:id', function () {}));
+        $handler = function () {};
+
+        $this->assertEquals($app, $app->delete('/users/:id', $handler));
+
+        $this->assertEquals(['delete /users/:id' => $handler], $app->getRoutes());
     }
 
     public function testPatch()
     {
         $app = new App();
-        $this->assertEquals($app, $app->patch('/users/:id', function () {}));
+        $handler = function () {};
+
+        $this->assertEquals($app, $app->patch('/users/:id', $handler));
+
+        $this->assertEquals(['patch /users/:id' => $handler], $app->getRoutes());
     }
 
     public function testOptions()
     {
         $app = new App();
-        $this->assertEquals($app, $app->options('/users/:id', function () {}));
+        $handler = function () {};
+
+        $this->assertEquals($app, $app->options('/users/:id', $handler));
+
+        $this->assertEquals(['options /users/:id' => $handler], $app->getRoutes());
     }
 
     public function testMap()
     {
         $app = new App();
-        $this->assertEquals($app, $app->map('GET', '/users/:id', function () {}));
+        $handler = function () {};
+
+        $this->assertEquals($app, $app->map('GET', '/users/:id', $handler));
+
+        $this->assertEquals(['get /users/:id' => $handler], $app->getRoutes());
     }
 }

@@ -493,4 +493,14 @@ class App extends Container
 
         return $this;
     }
+
+    /**
+     * Gets the routing table.
+     *
+     * @return array
+     */
+    public function getRoutes()
+    {
+        return $this->routes;
+    }
 }
