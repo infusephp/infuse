@@ -367,31 +367,12 @@ class App extends Container
         /* 1. Global Routes */
         $routed = Router::route($this->routes, $this, $req, $res);
 
-        /* 2. Module Routes */
-        if (!$routed) {
-            // check if the first part of the path is a controller
-            $module = $req->params('module');
-            if (!$module) {
-                $module = $req->paths(0);
-            }
-
-            $controller = '\\app\\'.$module.'\\Controller';
-
-            if (class_exists($controller) && property_exists($controller, 'properties')) {
-                $moduleRoutes = (array) U::array_value($controller::$properties, 'routes');
-
-                $req->setParams([ 'controller' => $module.'\\Controller' ]);
-
-                $routed = Router::route($moduleRoutes, $this, $req, $res);
-            }
-        }
-
-        /* 3. Not Found */
+        /* 2. Not Found */
         if (!$routed) {
             $res->setCode(404);
         }
 
-        /* 4. HTML Error Pages for 4xx and 5xx responses */
+        /* 3. HTML Error Pages for 4xx and 5xx responses */
         $code = $res->getCode();
         if ($req->isHtml() && $code >= 400) {
             $body = $res->getBody();
