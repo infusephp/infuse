@@ -152,7 +152,10 @@ class AppTest extends \PHPUnit_Framework_TestCase
 
     public function testMiddleware()
     {
-        $this->markTestIncomplete();
+        $config = ['modules' => ['middleware' => ['test']]];
+        $app = new App($config);
+
+        $this->assertEquals(['test'], $app->getMiddleware());
     }
 
     public function testGo()

@@ -76,6 +76,11 @@ class App extends Container
     /**
      * @var array
      */
+    private $middleware;
+
+    /**
+     * @var array
+     */
     private $routes;
 
     public function __construct(array $configValues = [])
@@ -230,7 +235,7 @@ class App extends Container
         /* Queue */
 
         $this['queue'] = function () use ($app, $config) {
-            Queue::configure(array_merge(['namespace' => '\\app'],
+            Queue::configure(array_merge(['namespace' => 'app'],
                 (array) $config->get('queue')));
 
             Queue::inject($app);
@@ -337,20 +342,10 @@ class App extends Container
 
         /* Router */
 
-        Router::configure(['namespace' => '\\app']);
+        Router::configure(['namespace' => 'app']);
 
+        $this->middleware = (array) $config->get('modules.middleware');
         $this->routes = (array) $this['config']->get('routes');
-
-        /* Middleware */
-
-        foreach ((array) $config->get('modules.middleware') as $module) {
-            $class = '\\app\\'.$module.'\\Controller';
-            $controller = new $class();
-            if (method_exists($controller, 'injectApp')) {
-                $controller->injectApp($app);
-            }
-            $controller->middleware($req, $res);
-        }
     }
 
     ////////////////////////
@@ -359,20 +354,28 @@ class App extends Container
 
     public function go()
     {
-        $routed = false;
-
         $req = $this['req'];
         $res = $this['res'];
 
-        /* 1. Global Routes */
+        /* 1. Middleware */
+        foreach ($this->middleware as $module) {
+            $class = 'app\\'.$module.'\\Controller';
+            $controller = new $class();
+            if (method_exists($controller, 'injectApp')) {
+                $controller->injectApp($this);
+            }
+            $controller->middleware($req, $res);
+        }
+
+        /* 2. Attempt to route the request */
         $routed = Router::route($this->routes, $this, $req, $res);
 
-        /* 2. Not Found */
+        /* 3. Not Found */
         if (!$routed) {
             $res->setCode(404);
         }
 
-        /* 3. HTML Error Pages for 4xx and 5xx responses */
+        /* 4. HTML Error Pages for 4xx and 5xx responses */
         $code = $res->getCode();
         if ($req->isHtml() && $code >= 400) {
             $body = $res->getBody();
@@ -492,6 +495,16 @@ class App extends Container
         $this->routes[$method.' '.$route] = $handler;
 
         return $this;
+    }
+
+    /**
+     * Gets the middleware modules.
+     *
+     * @return array
+     */
+    public function getMiddleware()
+    {
+        return $this->middleware;
     }
 
     /**
