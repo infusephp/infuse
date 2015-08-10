@@ -1,9 +1,10 @@
 <?php
 
 /**
- * @package infuse\bootstrap
  * @author Jared King <j@jaredtking.com>
+ *
  * @link http://jaredtking.com
+ *
  * @copyright 2015 Jared King
  * @license MIT
  */
@@ -17,6 +18,9 @@ class Application extends \Symfony\Component\Console\Application
     public function __construct(App $app)
     {
         parent::__construct();
+
+        // run middleware
+        $app->executeMiddleware();
 
         // add commands
         $this->add(new MigrateCommand($app));
