@@ -12,7 +12,7 @@
 namespace App\Console;
 
 use App;
-use infuse\Session;
+use JAQB\Session as DatabaseSession;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -80,7 +80,8 @@ class MigrateCommand extends Command
         if (empty($module) && $this->app[ 'config' ]->get('sessions.adapter') == 'database') {
             $output->writeln('-- Migrating Database Sessions');
 
-            $result = Session\Database::install();
+            $session = new DatabaseSession($this->app);
+            $result = $session->install();
 
             if ($result) {
                 $output->writeln(' == Database Sessions Installed');
