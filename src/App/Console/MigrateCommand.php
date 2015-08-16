@@ -1,9 +1,10 @@
 <?php
 
 /**
- * @package infuse\bootstrap
  * @author Jared King <j@jaredtking.com>
+ *
  * @link http://jaredtking.com
+ *
  * @copyright 2015 Jared King
  * @license MIT
  */
@@ -55,7 +56,7 @@ class MigrateCommand extends Command
 
     /**
      * Runs migrations for all app modules or a specified module.
-     * Also, will setup database sessions if enabled
+     * Also, will setup database sessions if enabled.
      *
      * @param string          $module      optional module
      * @param string          $migrateArgs optional arguments to pass to phinx
@@ -125,10 +126,10 @@ class MigrateCommand extends Command
     private function migrateWithPath($path, $migrateArgs, OutputInterface $output)
     {
         $result = 1;
-        putenv("PHINX_MIGRATION_PATH=$path");
+        $command = "PHINX_MIGRATION_PATH=$path php ".INFUSE_BASE_DIR."/vendor/bin/phinx $migrateArgs -c ".INFUSE_BASE_DIR."/phinx.php";
 
         ob_start();
-        system('php '.INFUSE_BASE_DIR.'/vendor/bin/phinx '.$migrateArgs.' -c '.INFUSE_BASE_DIR.'/phinx.php', $result);
+        system($command, $result);
         $phinxOutput = ob_get_contents();
         ob_end_clean();
 
