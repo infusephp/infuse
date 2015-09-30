@@ -8,7 +8,6 @@
  * @copyright 2015 Jared King
  * @license MIT
  */
-
 namespace App\Console;
 
 use App;
@@ -62,7 +61,7 @@ class MigrateCommand extends Command
      * @param string          $migrateArgs optional arguments to pass to phinx
      * @param OutputInterface $output
      *
-     * @return boolean success
+     * @return bool success
      */
     private function migrate($module = '', $migrateArgs, OutputInterface $output)
     {
@@ -77,7 +76,7 @@ class MigrateCommand extends Command
         }
 
         // database sessions
-        if (empty($module) && $this->app[ 'config' ]->get('sessions.adapter') == 'database') {
+        if (empty($module) && $this->app['config']->get('sessions.adapter') == 'database') {
             $output->writeln('-- Migrating Database Sessions');
 
             $session = new DatabaseSession($this->app);
@@ -93,11 +92,11 @@ class MigrateCommand extends Command
         }
 
         // module migrations
-        $modules = (empty($module)) ? $this->app[ 'config' ]->get('modules.all') : [ $module ];
+        $modules = (empty($module)) ? $this->app['config']->get('modules.all') : [$module];
 
         foreach ((array) $modules as $mod) {
             // determine module directory
-            $controller = '\\app\\'.$mod.'\\Controller';
+            $controller = 'app\\'.$mod.'\Controller';
 
             if (class_exists($controller)) {
                 $reflection = new \ReflectionClass($controller);
@@ -127,7 +126,7 @@ class MigrateCommand extends Command
     private function migrateWithPath($path, $migrateArgs, OutputInterface $output)
     {
         $result = 1;
-        $command = "PHINX_MIGRATION_PATH=$path php ".INFUSE_BASE_DIR."/vendor/bin/phinx $migrateArgs -c ".INFUSE_BASE_DIR."/phinx.php";
+        $command = "PHINX_MIGRATION_PATH=$path php ".INFUSE_BASE_DIR."/vendor/bin/phinx $migrateArgs -c ".INFUSE_BASE_DIR.'/phinx.php';
 
         ob_start();
         system($command, $result);

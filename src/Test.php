@@ -46,7 +46,7 @@ class Test implements PHPUnit_Framework_TestListener
         $this->verbose = $verbose;
 
         /* Create a test user and sign in */
-        if (class_exists('\\app\\users\\models\\User')) {
+        if (class_exists('app\users\models\User')) {
             if ($this->verbose) {
                 echo "Logging in a test user to run the test suite.\n";
             }
@@ -62,10 +62,11 @@ class Test implements PHPUnit_Framework_TestListener
                     'ip' => '127.0.0.1', ];
             }
 
-            $testInfo[ 'user_email' ] = self::$userEmail;
-            $testInfo[ 'user_password' ] = [ self::$userPassword, self::$userPassword ];
+            $testInfo['user_email'] = self::$userEmail;
+            $testInfo['user_password'] = [self::$userPassword, self::$userPassword];
 
-            $existingUser = User::findOne([ 'where' => [ 'user_email' => $testInfo[ 'user_email' ] ] ]);
+            $existingUser = User::where('user_email', $testInfo['user_email'])
+                ->first();
             if ($existingUser) {
                 $existingUser->grantAllPermissions();
                 $existingUser->delete();
@@ -75,17 +76,17 @@ class Test implements PHPUnit_Framework_TestListener
 
             if ($this->verbose) {
                 if ($success) {
-                    echo "User #".$user->id()." created.\n";
+                    echo 'User #'.$user->id()." created.\n";
                 } else {
                     echo "Could not create test user.\n";
                 }
             }
 
-            $loggedIn = self::$app[ 'auth' ]->login(self::$userEmail, self::$userPassword);
+            $loggedIn = self::$app['auth']->login(self::$userEmail, self::$userPassword);
 
             if ($this->verbose) {
                 if ($loggedIn) {
-                    echo "User #".self::$app[ 'user' ]->id()." logged in.\n";
+                    echo 'User #'.self::$app['user']->id()." logged in.\n";
                 } else {
                     echo " Could not log test user in.\n";
                 }
@@ -93,7 +94,7 @@ class Test implements PHPUnit_Framework_TestListener
         }
 
         // TODO custom listeners should be used instead
-        self::$app[ 'config' ]->set('email.type', 'nop');
+        self::$app['config']->set('email.type', 'nop');
     }
 
     public function __destruct()
@@ -105,9 +106,9 @@ class Test implements PHPUnit_Framework_TestListener
 
             if ($this->verbose) {
                 if ($deleted) {
-                    echo "User #".$user->id()." deleted.\n";
+                    echo 'User #'.$user->id()." deleted.\n";
                 } else {
-                    echo "User #".$user->id()." NOT deleted.\n";
+                    echo 'User #'.$user->id()." NOT deleted.\n";
                 }
             }
         }
@@ -154,8 +155,8 @@ class Test implements PHPUnit_Framework_TestListener
             printf("Test '%s' started.\n", $test->getName());
         }
 
-        if (class_exists('\\app\\users\\models\\User')) {
-            self::$app[ 'user' ]->disableSU();
+        if (class_exists('app\users\models\User')) {
+            self::$app['user']->disableSU();
         }
     }
 
@@ -186,14 +187,14 @@ class Test implements PHPUnit_Framework_TestListener
             self::$app['memcache']->flush();
         }
 
-        $errors = self::$app[ 'errors' ]->errors();
+        $errors = self::$app['errors']->errors();
 
         if (count($errors) > 0) {
             if ($this->verbose) {
                 printf("TestSuite '%s' produced these errors:\n", $suite->getName());
                 print_r($errors);
             }
-            self::$app[ 'errors' ]->clear();
+            self::$app['errors']->clear();
         }
     }
 }

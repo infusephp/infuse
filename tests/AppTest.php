@@ -28,7 +28,7 @@ class AppTest extends \PHPUnit_Framework_TestCase
                     '/public', ], ], ];
 
         $config = $app['config'];
-        $this->assertInstanceOf('\\infuse\\Config', $config);
+        $this->assertInstanceOf('Infuse\Config', $config);
         $this->assertEquals($expected, $config->get());
     }
 
@@ -36,7 +36,7 @@ class AppTest extends \PHPUnit_Framework_TestCase
     {
         $app = new App(['logger' => ['enabled' => true]]);
 
-        $this->assertInstanceOf('\\Monolog\\Logger', $app['logger']);
+        $this->assertInstanceOf('Monolog\Logger', $app['logger']);
     }
 
     public function testLocale()
@@ -46,7 +46,7 @@ class AppTest extends \PHPUnit_Framework_TestCase
                 'language' => 'french', ], ]);
 
         $locale = $app['locale'];
-        $this->assertInstanceOf('\\infuse\\Locale', $locale);
+        $this->assertInstanceOf('Infuse\Locale', $locale);
         $this->assertEquals('french', $locale->getLocale());
     }
 
@@ -61,10 +61,10 @@ class AppTest extends \PHPUnit_Framework_TestCase
                 'password' => '', ], ]);
 
         $db = $app['db'];
-        $this->assertInstanceOf('\\JAQB\\QueryBuilder', $db);
+        $this->assertInstanceOf('JAQB\QueryBuilder', $db);
 
         $pdo = $db->getPDO();
-        $this->assertInstanceOf('\\PDO', $pdo);
+        $this->assertInstanceOf('PDO', $pdo);
         $this->assertEquals(PDO::ERRMODE_EXCEPTION, $pdo->getAttribute(PDO::ATTR_ERRMODE));
 
         $app = new App([
@@ -76,9 +76,9 @@ class AppTest extends \PHPUnit_Framework_TestCase
                 'password' => '', ], ]);
 
         $db = $app['db'];
-        $this->assertInstanceOf('\\JAQB\\QueryBuilder', $db);
+        $this->assertInstanceOf('JAQB\QueryBuilder', $db);
         $pdo = $db->getPDO();
-        $this->assertInstanceOf('\\PDO', $pdo);
+        $this->assertInstanceOf('PDO', $pdo);
         $this->assertEquals(PDO::ERRMODE_WARNING, $pdo->getAttribute(PDO::ATTR_ERRMODE));
     }
 
@@ -96,39 +96,39 @@ class AppTest extends \PHPUnit_Framework_TestCase
     {
         $app = new App();
 
-        $this->assertInstanceOf('\\infuse\\Request', $app['req']);
+        $this->assertInstanceOf('Infuse\Request', $app['req']);
     }
 
     public function testResponse()
     {
         $app = new App();
 
-        $this->assertInstanceOf('\\infuse\\Response', $app['res']);
+        $this->assertInstanceOf('Infuse\Response', $app['res']);
     }
 
     public function testQueue()
     {
         $app = new App();
 
-        $this->assertInstanceOf('\\infuse\\Queue', $app['queue']);
+        $this->assertInstanceOf('Infuse\Queue', $app['queue']);
     }
 
     public function testErrorStack()
     {
         $app = new App();
 
-        $this->assertInstanceOf('\\infuse\\ErrorStack', $app['errors']);
+        $this->assertInstanceOf('Infuse\ErrorStack', $app['errors']);
     }
 
     public function testViewEngine()
     {
         $app = new App();
 
-        $this->assertInstanceOf('\\infuse\\ViewEngine\\PHP', $app['view_engine']);
+        $this->assertInstanceOf('Infuse\ViewEngine\PHP', $app['view_engine']);
 
         $app = new App(['views' => ['engine' => 'smarty']]);
 
-        $this->assertInstanceOf('\\infuse\\ViewEngine\\Smarty', $app['view_engine']);
+        $this->assertInstanceOf('Infuse\ViewEngine\Smarty', $app['view_engine']);
 
         // invalid engine
         $thrown = false;

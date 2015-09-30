@@ -1,13 +1,13 @@
 <?php
 
 /**
- * @package infuse\bootstrap
  * @author Jared King <j@jaredtking.com>
+ *
  * @link http://jaredtking.com
+ *
  * @copyright 2015 Jared King
  * @license MIT
  */
-
 namespace App\Console;
 
 use Symfony\Component\Console\Command\Command;

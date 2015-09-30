@@ -1,13 +1,13 @@
 <?php
 
 /**
- * @package infuse\bootstrap
  * @author Jared King <j@jaredtking.com>
+ *
  * @link http://jaredtking.com
+ *
  * @copyright 2015 Jared King
  * @license MIT
  */
-
 namespace App\Console;
 
 use Symfony\Component\Console\Command\Command;
@@ -32,7 +32,7 @@ class RouteCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $result = 1;
-        system("php ".INFUSE_BASE_DIR."/public/index.php ".$input->getArgument('route'), $result);
+        system('php '.INFUSE_BASE_DIR.'/public/index.php '.$input->getArgument('route'), $result);
 
         return $result;
     }

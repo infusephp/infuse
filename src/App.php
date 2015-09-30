@@ -8,19 +8,20 @@
  * @copyright 2015 Jared King
  * @license MIT
  */
-use infuse\Config;
-use infuse\ErrorStack;
-use infuse\Locale;
-use infuse\Model;
-use infuse\Response;
-use infuse\Request;
-use infuse\Router;
-use infuse\Utility as U;
-use infuse\Validate;
-use infuse\ViewEngine;
-use infuse\View;
-use infuse\Queue;
-use infuse\Session\Redis as RedisSession;
+use Infuse\Config;
+use Infuse\ErrorStack;
+use Infuse\Locale;
+use Infuse\Model;
+use Infuse\Model\Driver\DatabaseDriver;
+use Infuse\Response;
+use Infuse\Request;
+use Infuse\Router;
+use Infuse\Utility as U;
+use Infuse\Validate;
+use Infuse\ViewEngine;
+use Infuse\View;
+use Infuse\Queue;
+use Infuse\Session\Redis as RedisSession;
 use JAQB\Session as DatabaseSession;
 use JAQB\QueryBuilder;
 use Monolog\ErrorHandler;
@@ -50,20 +51,6 @@ if (!defined('INFUSE_TEMP_DIR')) {
 }
 if (!defined('INFUSE_VIEWS_DIR')) {
     define('INFUSE_VIEWS_DIR', INFUSE_BASE_DIR.'/views');
-}
-
-/* error codes */
-if (!defined('ERROR_NO_PERMISSION')) {
-    define('ERROR_NO_PERMISSION', 'no_permission');
-}
-if (!defined('VALIDATION_FAILED')) {
-    define('VALIDATION_FAILED', 'validation_failed');
-}
-if (!defined('VALIDATION_REQUIRED_FIELD_MISSING')) {
-    define('VALIDATION_REQUIRED_FIELD_MISSING', 'required_field_missing');
-}
-if (!defined('VALIDATION_NOT_UNIQUE')) {
-    define('VALIDATION_NOT_UNIQUE', 'not_unique');
 }
 
 /* useful constants */
@@ -220,8 +207,8 @@ class App extends Container
             return new Response();
         };
 
-        $req = $this[ 'req' ];
-        $res = $this[ 'res' ];
+        $req = $this['req'];
+        $res = $this['res'];
 
         // set host name if one is not provided
         if (!$config->get('site.hostname')) {
@@ -247,7 +234,12 @@ class App extends Container
         /* Models */
 
         Model::inject($this);
-        Model::configure((array) $config->get('models'));
+        $driver = new DatabaseDriver($this);
+
+        $modelConfig = (array) $config->get('models');
+        if (isset($modelConfig['cache']) && isset($modelConfig['cache']['expires'])) {
+            Model::$cacheTTL = $modelConfig['cache']['expires'];
+        }
 
         /* Error Stack */
 
@@ -276,7 +268,7 @@ class App extends Container
 
         View::inject($this);
 
-        $config->set('assets.dirs', [ INFUSE_PUBLIC_DIR ]);
+        $config->set('assets.dirs', [INFUSE_PUBLIC_DIR]);
 
         /* Session */
 
@@ -291,7 +283,7 @@ class App extends Container
 
             // set the session name
             $sessionTitle = $config->get('site.title').'-'.$hostname;
-            $safeSessionTitle = str_replace([ '.', ' ', "'", '"' ], [ '', '_', '', '' ], $sessionTitle);
+            $safeSessionTitle = str_replace(['.', ' ', "'", '"'], ['', '_', '', ''], $sessionTitle);
             session_name($safeSessionTitle);
 
             // set the session cookie parameters
@@ -510,7 +502,7 @@ class App extends Container
         $res = $this['res'];
 
         foreach ($this->middleware as $module) {
-            $class = 'app\\'.$module.'\\Controller';
+            $class = 'app\\'.$module.'\Controller';
             $controller = new $class();
             if (method_exists($controller, 'injectApp')) {
                 $controller->injectApp($this);
