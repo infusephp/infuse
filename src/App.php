@@ -238,7 +238,7 @@ class App extends Container
 
         $modelConfig = (array) $config->get('models');
         if (isset($modelConfig['cache']) && isset($modelConfig['cache']['expires'])) {
-            Model::$cacheTTL = $modelConfig['cache']['expires'];
+            Model::setDefaultCacheTTL($modelConfig['cache']['expires']);
         }
 
         /* Error Stack */
