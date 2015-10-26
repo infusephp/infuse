@@ -60,16 +60,6 @@ if (!defined('SKIP_ROUTE')) {
 
 class App extends Container
 {
-    /**
-     * @var array
-     */
-    private $middleware;
-
-    /**
-     * @var array
-     */
-    private $routes;
-
     public function __construct(array $configValues = [])
     {
         parent::__construct();
@@ -334,10 +324,9 @@ class App extends Container
 
         /* Router */
 
-        Router::configure(['namespace' => 'app']);
-
-        $this->middleware = (array) $config->get('modules.middleware');
-        $this->routes = (array) $this['config']->get('routes');
+        $this['router'] = function () use ($app) {
+            return new Router($app['config']->get('routes'), ['namespace' => 'app']);
+        };
     }
 
     ////////////////////////
@@ -352,7 +341,7 @@ class App extends Container
         /* 2. Attempt to route the request */
         $req = $this['req'];
         $res = $this['res'];
-        $routed = Router::route($this->routes, $this, $req, $res);
+        $routed = $this['router']->route($this, $req, $res);
 
         /* 3. Not Found */
         if (!$routed) {
@@ -384,7 +373,7 @@ class App extends Container
      */
     public function get($route, $handler)
     {
-        $this->map('get', $route, $handler);
+        $this['router']->map('get', $route, $handler);
 
         return $this;
     }
@@ -399,7 +388,7 @@ class App extends Container
      */
     public function post($route, $handler)
     {
-        $this->map('post', $route, $handler);
+        $this['router']->map('post', $route, $handler);
 
         return $this;
     }
@@ -414,7 +403,7 @@ class App extends Container
      */
     public function put($route, $handler)
     {
-        $this->map('put', $route, $handler);
+        $this['router']->map('put', $route, $handler);
 
         return $this;
     }
@@ -429,7 +418,7 @@ class App extends Container
      */
     public function delete($route, $handler)
     {
-        $this->map('delete', $route, $handler);
+        $this['router']->map('delete', $route, $handler);
 
         return $this;
     }
@@ -444,7 +433,7 @@ class App extends Container
      */
     public function patch($route, $handler)
     {
-        $this->map('patch', $route, $handler);
+        $this['router']->map('patch', $route, $handler);
 
         return $this;
     }
@@ -459,7 +448,7 @@ class App extends Container
      */
     public function options($route, $handler)
     {
-        $this->map('options', $route, $handler);
+        $this['router']->map('options', $route, $handler);
 
         return $this;
     }
@@ -475,8 +464,7 @@ class App extends Container
      */
     public function map($method, $route, $handler)
     {
-        $method = strtolower($method);
-        $this->routes[$method.' '.$route] = $handler;
+        $this['router']->map($method, $route, $handler);
 
         return $this;
     }
@@ -488,7 +476,7 @@ class App extends Container
      */
     public function getMiddleware()
     {
-        return $this->middleware;
+        return (array) $this['config']->get('modules.middleware');
     }
 
     /**
@@ -501,7 +489,7 @@ class App extends Container
         $req = $this['req'];
         $res = $this['res'];
 
-        foreach ($this->middleware as $module) {
+        foreach ($this->getMiddleware() as $module) {
             $class = 'app\\'.$module.'\Controller';
             $controller = new $class();
             if (method_exists($controller, 'injectApp')) {
@@ -520,6 +508,6 @@ class App extends Container
      */
     public function getRoutes()
     {
-        return $this->routes;
+        return $this['router']->getRoutes();
     }
 }

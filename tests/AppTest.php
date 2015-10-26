@@ -142,6 +142,13 @@ class AppTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($thrown);
     }
 
+    public function testRouter()
+    {
+        $app = new App();
+
+        $this->assertInstanceOf('Infuse\Router', $app['router']);
+    }
+
     public function testRoutes()
     {
         $config = ['routes' => ['test']];
