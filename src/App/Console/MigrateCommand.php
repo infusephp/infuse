@@ -19,14 +19,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class MigrateCommand extends Command
 {
-    private $app;
-
-    public function __construct(App $app)
-    {
-        parent::__construct();
-
-        $this->app = $app;
-    }
+    use \InjectApp;
 
     protected function configure()
     {

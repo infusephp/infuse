@@ -21,9 +21,28 @@ class Application extends \Symfony\Component\Console\Application
         // run middleware
         $app->executeMiddleware();
 
-        // add commands
-        $this->add(new MigrateCommand($app));
-        $this->add(new TestCommand());
-        $this->add(new RouteCommand());
+        // add built-in commands
+        $commands = [
+            'App\Console\MigrateCommand',
+            'App\Console\TestCommand',
+            'App\Console\RouteCommand',
+        ];
+
+        // add app-specific commands
+        $commands = array_merge($commands, (array) $app['config']->get('modules.commands'));
+
+        foreach ($commands as $class) {
+            $this->addCommand($class, $app);
+        }
+    }
+
+    private function addCommand($class, $app)
+    {
+        $command = new $class();
+        if (method_exists($class, 'injectApp')) {
+            $command->injectApp($app);
+        }
+
+        $this->add($command);
     }
 }
