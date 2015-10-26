@@ -200,7 +200,7 @@ class App extends Container
         /* Request + Response */
 
         $this['req'] = function () {
-            return new Request();
+            return Request::createFromGlobals();
         };
 
         $this['res'] = function () {
