@@ -190,6 +190,19 @@ class App extends Container
         /* Request + Response */
 
         $this['req'] = function () {
+            // build a special request object for CLI
+            if (defined('STDIN')) {
+                $uri = '/';
+
+                global $argc, $argv;
+                if ($argc >= 2) {
+                    $uri = $argv[1];
+                }
+
+                return Request::create($uri, 'GET', [], [], [], $_SERVER);
+            }
+
+            // otherwise, create a request using PHP superglobals
             return Request::createFromGlobals();
         };
 
@@ -311,15 +324,6 @@ class App extends Container
 
             // update the session in our request
             $req->setSession($_SESSION);
-        }
-
-        /* CLI Requests */
-
-        if ($req->isCli()) {
-            global $argc, $argv;
-            if ($argc >= 2) {
-                $req->setPath($argv[1]);
-            }
         }
 
         /* Router */
