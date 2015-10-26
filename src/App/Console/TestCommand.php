@@ -17,6 +17,8 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class TestCommand extends Command
 {
+    use \InjectApp;
+
     protected function configure()
     {
         $this
@@ -31,6 +33,12 @@ class TestCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        if ($this->app['config']->get('site.production-level')) {
+            $output->writeln('Cannot run tests in production mode!');
+
+            return 1;
+        }
+
         $args = [];
         if ($module = $input->getArgument('module')) {
             $args[] = 'app/'.$module.'/tests/';
