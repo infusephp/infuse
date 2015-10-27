@@ -5,13 +5,11 @@ set_include_path(get_include_path() . PATH_SEPARATOR . INFUSE_BASE_DIR);
 
 require_once 'vendor/autoload.php';
 
-use App\Console\Application;
-
 // bootstrap an App instance
 $config = (array)@include 'config.php';
 $config['sessions']['enabled'] = false;
 $config['logger']['enabled'] = false;
 $app = new App($config);
 
-$application = new Application($app);
-return $application->run();
+// run the console application
+return $app->getConsole()->run();

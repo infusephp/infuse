@@ -8,6 +8,7 @@
  * @copyright 2015 Jared King
  * @license MIT
  */
+use App\Console\Application;
 use Infuse\Config;
 use Infuse\ErrorStack;
 use Infuse\Locale;
@@ -513,5 +514,15 @@ class App extends Container
     public function getRoutes()
     {
         return $this['router']->getRoutes();
+    }
+
+    /**
+     * Gets a console application instance for this app.
+     *
+     * @return \App\Console\Application
+     */
+    public function getConsole()
+    {
+        return new Application($this);
     }
 }

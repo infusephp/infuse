@@ -239,4 +239,12 @@ class AppTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals(['get /users/:id' => $handler], $app->getRoutes());
     }
+
+    public function testGetConsole()
+    {
+        $app = new App();
+
+        $console = $app->getConsole();
+        $this->assertInstanceOf('App\Console\Application', $console);
+    }
 }
