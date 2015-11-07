@@ -21,8 +21,6 @@ use Infuse\Validate;
 use Infuse\ViewEngine;
 use Infuse\View;
 use Infuse\Queue;
-use Infuse\Session\Redis as RedisSession;
-use JAQB\Session as DatabaseSession;
 use JAQB\QueryBuilder;
 use Monolog\ErrorHandler;
 use Monolog\Handler\NullHandler;
@@ -274,54 +272,7 @@ class App extends Container
         /* Session */
 
         if (!$req->isApi() && $config->get('sessions.enabled')) {
-            // initialize sessions
-            ini_set('session.use_trans_sid', false);
-            ini_set('session.use_only_cookies', true);
-            ini_set('url_rewriter.tags', '');
-            ini_set('session.gc_maxlifetime', $config->get('sessions.lifetime'));
-
-            $hostname = $config->get('site.hostname');
-
-            // set the session name
-            $sessionTitle = $config->get('site.title').'-'.$hostname;
-            $safeSessionTitle = str_replace(['.', ' ', "'", '"'], ['', '_', '', ''], $sessionTitle);
-            session_name($safeSessionTitle);
-
-            // set the session cookie parameters
-            session_set_cookie_params(
-                $config->get('sessions.lifetime'), // lifetime
-                '/', // path
-                '.'.$hostname, // domain
-                $req->isSecure(), // secure
-                true // http only
-            );
-
-            $sessionAdapter = $config->get('sessions.adapter');
-            if ($sessionAdapter == 'redis') {
-                $handler = new RedisSession($app, $config->get('sessions.prefix'));
-                RedisSession::registerHandler($handler);
-                session_start();
-            } elseif ($sessionAdapter == 'database') {
-                $handler = new DatabaseSession($app);
-                DatabaseSession::registerHandler($handler);
-                session_start();
-            } elseif (empty($sessionAdapter) || $sessionAdapter == 'php') {
-                session_start();
-            }
-
-            // set the cookie by sending it in a header.
-            U::set_cookie_fix_domain(
-                session_name(),
-                session_id(),
-                time() + $config->get('sessions.lifetime'),
-                '/',
-                $hostname,
-                $req->isSecure(),
-                true
-            );
-
-            // update the session in our request
-            $req->setSession($_SESSION);
+            $this->startSession();
         }
 
         /* Router */
@@ -329,6 +280,53 @@ class App extends Container
         $this['router'] = function () use ($app) {
             return new Router($app['config']->get('routes'), ['namespace' => 'app']);
         };
+    }
+
+    public function startSession()
+    {
+        $lifetime = $config->get('sessions.lifetime');
+        $hostname = $config->get('site.hostname');
+        ini_set('session.use_trans_sid', false);
+        ini_set('session.use_only_cookies', true);
+        ini_set('url_rewriter.tags', '');
+        ini_set('session.gc_maxlifetime', $lifetime);
+
+        // set the session name
+        $sessionTitle = $config->get('site.title').'-'.$hostname;
+        $safeSessionTitle = str_replace(['.', ' ', "'", '"'], ['', '_', '', ''], $sessionTitle);
+        session_name($safeSessionTitle);
+
+        // set the session cookie parameters
+        session_set_cookie_params(
+            $lifetime, // lifetime
+            '/', // path
+            '.'.$hostname, // domain
+            $req->isSecure(), // secure
+            true // http only
+        );
+
+        // install any custom session handlers
+        $class = $config->get('sessions.driver');
+        if ($class) {
+            $handler = new $class($this, $config->get('sessions.prefix'));
+            $handler::registerHandler($handler);
+        }
+
+        session_start();
+
+        // fix the session cookie
+        U::set_cookie_fix_domain(
+            session_name(),
+            session_id(),
+            time() + $lifetime,
+            '/',
+            $hostname,
+            $req->isSecure(),
+            true
+        );
+
+        // make the newly started session in our request
+        $req->setSession($_SESSION);
     }
 
     ////////////////////////
