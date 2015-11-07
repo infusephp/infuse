@@ -289,6 +289,9 @@ class App extends Container
 
     public function startSession()
     {
+        $config = $this['config'];
+        $req = $this['req'];
+
         $lifetime = $config->get('sessions.lifetime');
         $hostname = $config->get('site.hostname');
         ini_set('session.use_trans_sid', false);
