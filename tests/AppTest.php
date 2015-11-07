@@ -133,23 +133,11 @@ class AppTest extends \PHPUnit_Framework_TestCase
     public function testViewEngine()
     {
         $app = new App();
-
         $this->assertInstanceOf('Infuse\ViewEngine\PHP', $app['view_engine']);
 
-        $app = new App(['views' => ['engine' => 'smarty']]);
-
+        $app = new App(['views' => [
+            'engine' => 'Infuse\ViewEngine\Smarty', ]]);
         $this->assertInstanceOf('Infuse\ViewEngine\Smarty', $app['view_engine']);
-
-        // invalid engine
-        $thrown = false;
-        try {
-            $app = new App(['views' => ['engine' => 'whatever']]);
-            $engine = $app['view_engine'];
-        } catch (Exception $e) {
-            $thrown = true;
-        }
-
-        $this->assertTrue($thrown);
     }
 
     public function testRouter()

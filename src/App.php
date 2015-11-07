@@ -18,7 +18,6 @@ use Infuse\Request;
 use Infuse\Router;
 use Infuse\Utility as U;
 use Infuse\Validate;
-use Infuse\ViewEngine;
 use Infuse\View;
 use Infuse\Queue;
 use JAQB\QueryBuilder;
@@ -249,15 +248,21 @@ class App extends Container
         /* Views  */
 
         $this['view_engine'] = function () use ($app, $config) {
-            $type = $config->get('views.engine');
-            if ($type == 'smarty') {
-                $engine = new ViewEngine\Smarty(INFUSE_VIEWS_DIR, INFUSE_TEMP_DIR.'/smarty', INFUSE_TEMP_DIR.'/smarty/cache');
-            } elseif ($type == 'php' || !$type) {
-                $engine = new ViewEngine\PHP(INFUSE_VIEWS_DIR);
-            } else {
-                throw new Exception("'$type' is not a valid view engine");
+            $class = $config->get('views.engine');
+
+            // use PHP view engine by default
+            if (!$class) {
+                $class = 'Infuse\ViewEngine\PHP';
             }
 
+            // Smarty needs special parameters
+            if ($class === 'Infuse\ViewEngine\Smarty') {
+                $engine = new $class(INFUSE_VIEWS_DIR, INFUSE_TEMP_DIR.'/smarty', INFUSE_TEMP_DIR.'/smarty/cache');
+            } else {
+                $engine = new $class(INFUSE_VIEWS_DIR);
+            }
+
+            // static assets
             $engine->setAssetMapFile(INFUSE_ASSETS_DIR.'/static.assets.json')
                    ->setAssetBaseUrl($config->get('assets.base_url'))
                    ->setGlobalParameters(['app' => $app]);
