@@ -287,6 +287,11 @@ class App extends Container
         };
     }
 
+    /**
+     * Starts a session.
+     *
+     * @return self
+     */
     public function startSession()
     {
         $config = $this['config'];
@@ -335,12 +340,19 @@ class App extends Container
 
         // make the newly started session in our request
         $req->setSession($_SESSION);
+
+        return $this;
     }
 
     ////////////////////////
     // ROUTING
     ////////////////////////
 
+    /**
+     * Runs the app.
+     *
+     * @return self
+     */
     public function go()
     {
         /* 1. Middleware */
@@ -369,6 +381,8 @@ class App extends Container
         }
 
         $res->send();
+
+        return $this;
     }
 
     /**
