@@ -13,7 +13,6 @@ use Infuse\Config;
 use Infuse\ErrorStack;
 use Infuse\Locale;
 use Infuse\Model;
-use Infuse\Model\Driver\DatabaseDriver;
 use Infuse\Response;
 use Infuse\Request;
 use Infuse\Router;
@@ -225,24 +224,22 @@ class App extends Container
 
         /* Queue */
 
-        $this['queue'] = function () use ($app, $config) {
-            Queue::configure(array_merge(['namespace' => 'app'],
-                (array) $config->get('queue')));
-
-            Queue::inject($app);
-
-            return new Queue($config->get('queue.type'),
-                (array) $config->get('queue.listeners'));
-        };
+        $class = $config->get('queue.driver');
+        if ($class) {
+            Queue::setDriver(new $class($this));
+        }
 
         /* Models */
 
-        Model::inject($this);
-        $driver = new DatabaseDriver($this);
+        $class = $config->get('models.driver');
+        if ($class) {
+            Model::inject($this);
+            Model::setDriver(new $class($this));
 
-        $modelConfig = (array) $config->get('models');
-        if (isset($modelConfig['cache']) && isset($modelConfig['cache']['expires'])) {
-            Model::setDefaultCacheTTL($modelConfig['cache']['expires']);
+            $ttl = $config->get('models.cache_ttl');
+            if ($ttl) {
+                Model::setDefaultCacheTTL($ttl);
+            }
         }
 
         /* Error Stack */

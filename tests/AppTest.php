@@ -108,9 +108,19 @@ class AppTest extends \PHPUnit_Framework_TestCase
 
     public function testQueue()
     {
-        $app = new App();
+        $app = new App(['queue' => [
+            'driver' => 'Infuse\Queue\Driver\SynchronousDriver', ]]);
 
-        $this->assertInstanceOf('Infuse\Queue', $app['queue']);
+        $this->assertInstanceOf('Infuse\Queue\Driver\SynchronousDriver', Queue::getDriver());
+    }
+
+    public function testModel()
+    {
+        $app = new App(['models' => [
+            'driver' => 'Infuse\Model\Driver\DatabaseDriver',
+            'cache_ttl' => 30, ]]);
+
+        $this->assertInstanceOf('Infuse\Model\Driver\DatabaseDriver', Model::getDriver());
     }
 
     public function testErrorStack()
