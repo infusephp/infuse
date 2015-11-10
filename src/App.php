@@ -283,7 +283,7 @@ class App extends Container
         /* Router */
 
         $this['router'] = function () use ($app) {
-            return new Router($app['config']->get('routes'), ['namespace' => 'app']);
+            return new Router((array) $app['config']->get('routes'), ['namespace' => 'app']);
         };
     }
 
