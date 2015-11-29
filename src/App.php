@@ -186,19 +186,6 @@ class App extends Container
         /* Request + Response */
 
         $this['req'] = function () {
-            // build a special request object for CLI
-            if (defined('STDIN')) {
-                $uri = '/';
-
-                global $argc, $argv;
-                if ($argc >= 2) {
-                    $uri = $argv[1];
-                }
-
-                return Request::create($uri, 'GET', [], [], [], $_SERVER);
-            }
-
-            // otherwise, create a request using PHP superglobals
             return Request::createFromGlobals();
         };
 
