@@ -50,11 +50,6 @@ if (!defined('INFUSE_VIEWS_DIR')) {
     define('INFUSE_VIEWS_DIR', INFUSE_BASE_DIR.'/views');
 }
 
-/* useful constants */
-if (!defined('SKIP_ROUTE')) {
-    define('SKIP_ROUTE', -1);
-}
-
 class App extends Container
 {
     public function __construct(array $configValues = [])
@@ -287,7 +282,7 @@ class App extends Container
         /* Router */
 
         $this['router'] = function () use ($app) {
-            return new Router((array) $app['config']->get('routes'), ['namespace' => 'app']);
+            return new Router([], ['namespace' => 'app']);
         };
     }
 
@@ -359,20 +354,30 @@ class App extends Container
      */
     public function go()
     {
-        /* 1. Middleware */
+        /* 1. Install Routes */
+        $router = $this['router'];
+        $routes = (array) $this['config']->get('routes');
+        foreach ($routes as $route => $handler) {
+            $parts = explode(' ', $route);
+            list($method, $endpoint) = $parts;
+
+            $router->map($method, $endpoint, $handler);
+        }
+
+        /* 2. Middleware */
         $this->executeMiddleware();
 
-        /* 2. Attempt to route the request */
+        /* 3. Attempt to route the request */
         $req = $this['req'];
         $res = $this['res'];
-        $routed = $this['router']->route($this, $req, $res);
+        $routed = $router->route($this, $req, $res);
 
-        /* 3. Not Found */
+        /* 4. Not Found */
         if (!$routed) {
             $res->setCode(404);
         }
 
-        /* 4. HTML Error Pages for 4xx and 5xx responses */
+        /* 5. HTML Error Pages for 4xx and 5xx responses */
         $code = $res->getCode();
         if ($req->isHtml() && $code >= 400) {
             $body = $res->getBody();
