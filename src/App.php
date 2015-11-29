@@ -391,7 +391,7 @@ class App extends Container
      */
     public function get($route, $handler)
     {
-        $this['router']->map('get', $route, $handler);
+        $this['router']->map('GET', $route, $handler);
 
         return $this;
     }
@@ -406,7 +406,7 @@ class App extends Container
      */
     public function post($route, $handler)
     {
-        $this['router']->map('post', $route, $handler);
+        $this['router']->map('POST', $route, $handler);
 
         return $this;
     }
@@ -421,7 +421,7 @@ class App extends Container
      */
     public function put($route, $handler)
     {
-        $this['router']->map('put', $route, $handler);
+        $this['router']->map('PUT', $route, $handler);
 
         return $this;
     }
@@ -436,7 +436,7 @@ class App extends Container
      */
     public function delete($route, $handler)
     {
-        $this['router']->map('delete', $route, $handler);
+        $this['router']->map('DELETE', $route, $handler);
 
         return $this;
     }
@@ -451,7 +451,7 @@ class App extends Container
      */
     public function patch($route, $handler)
     {
-        $this['router']->map('patch', $route, $handler);
+        $this['router']->map('PATCH', $route, $handler);
 
         return $this;
     }
@@ -466,7 +466,7 @@ class App extends Container
      */
     public function options($route, $handler)
     {
-        $this['router']->map('options', $route, $handler);
+        $this['router']->map('OPTIONS', $route, $handler);
 
         return $this;
     }
