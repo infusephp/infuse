@@ -359,12 +359,7 @@ class App extends Container
         $res = $this['res'];
         $routed = $router->route($this, $req, $res);
 
-        /* 4. Not Found */
-        if (!$routed) {
-            $res->setCode(404);
-        }
-
-        /* 5. HTML Error Pages for 4xx and 5xx responses */
+        /* 4. HTML Error Pages for 4xx and 5xx responses */
         $code = $res->getCode();
         if ($req->isHtml() && $code >= 400) {
             $body = $res->getBody();
@@ -391,7 +386,7 @@ class App extends Container
      */
     public function get($route, $handler)
     {
-        $this['router']->map('GET', $route, $handler);
+        $this['router']->get($route, $handler);
 
         return $this;
     }
@@ -406,7 +401,7 @@ class App extends Container
      */
     public function post($route, $handler)
     {
-        $this['router']->map('POST', $route, $handler);
+        $this['router']->post($route, $handler);
 
         return $this;
     }
@@ -421,7 +416,7 @@ class App extends Container
      */
     public function put($route, $handler)
     {
-        $this['router']->map('PUT', $route, $handler);
+        $this['router']->put($route, $handler);
 
         return $this;
     }
@@ -436,7 +431,7 @@ class App extends Container
      */
     public function delete($route, $handler)
     {
-        $this['router']->map('DELETE', $route, $handler);
+        $this['router']->delete($route, $handler);
 
         return $this;
     }
@@ -451,7 +446,7 @@ class App extends Container
      */
     public function patch($route, $handler)
     {
-        $this['router']->map('PATCH', $route, $handler);
+        $this['router']->patch($route, $handler);
 
         return $this;
     }
@@ -466,7 +461,7 @@ class App extends Container
      */
     public function options($route, $handler)
     {
-        $this['router']->map('OPTIONS', $route, $handler);
+        $this['router']->options($route, $handler);
 
         return $this;
     }
