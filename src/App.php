@@ -168,7 +168,11 @@ class App extends Container
         $redisConfig = $config->get('redis');
         if ($redisConfig) {
             $this['redis'] = function () use ($redisConfig) {
-                return new Predis\Client($redisConfig);
+                $options = [
+                    'prefix' => U::array_value($redisConfig, 'prefix'),
+                ];
+
+                return new Predis\Client($redisConfig, $options);
             };
         }
 
