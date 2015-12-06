@@ -218,11 +218,6 @@ class App extends Container
         if ($class) {
             Model::inject($this);
             Model::setDriver(new $class($this));
-
-            $ttl = $config->get('models.cache_ttl');
-            if ($ttl) {
-                Model::setDefaultCacheTTL($ttl);
-            }
         }
 
         /* Error Stack */
