@@ -105,12 +105,6 @@ class App extends Container
             date_default_timezone_set($tz);
         }
 
-        /* Constants */
-
-        if (!defined('SITE_TITLE')) {
-            define('SITE_TITLE', $config->get('site.title'));
-        }
-
         /* Locale */
 
         $this['locale'] = function () use ($app, $config) {
