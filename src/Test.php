@@ -8,7 +8,7 @@
  * @copyright 2015 Jared King
  * @license MIT
  */
-use app\users\models\User;
+use App\Users\Models\User;
 
 class Test implements PHPUnit_Framework_TestListener
 {
@@ -46,7 +46,7 @@ class Test implements PHPUnit_Framework_TestListener
         $this->verbose = $verbose;
 
         /* Create a test user and sign in */
-        if (class_exists('app\users\models\User')) {
+        if (class_exists('App\Users\Models\User')) {
             if ($this->verbose) {
                 echo "Logging in a test user to run the test suite.\n";
             }
@@ -155,7 +155,7 @@ class Test implements PHPUnit_Framework_TestListener
             printf("Test '%s' started.\n", $test->getName());
         }
 
-        if (class_exists('app\users\models\User')) {
+        if (class_exists('App\Users\Models\User')) {
             self::$app['user']->disableSU();
         }
     }

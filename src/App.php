@@ -498,7 +498,7 @@ class App extends Container
         $res = $this['res'];
 
         foreach ($this->getMiddleware() as $module) {
-            $class = 'app\\'.$module.'\Controller';
+            $class = 'App\\'.$module.'\Controller';
             $controller = new $class();
             if (method_exists($controller, 'injectApp')) {
                 $controller->injectApp($this);

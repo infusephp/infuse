@@ -89,7 +89,7 @@ class MigrateCommand extends Command
 
         foreach ((array) $modules as $mod) {
             // determine module directory
-            $controller = 'app\\'.$mod.'\Controller';
+            $controller = 'App\\'.$mod.'\Controller';
 
             if (class_exists($controller)) {
                 $reflection = new \ReflectionClass($controller);
