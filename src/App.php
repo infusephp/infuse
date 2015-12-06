@@ -264,7 +264,7 @@ class App extends Container
         /* Router */
 
         $this['router'] = function () use ($app) {
-            return new Router([], ['namespace' => 'app']);
+            return new Router();
         };
     }
 
