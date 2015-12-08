@@ -85,7 +85,7 @@ class MigrateCommand extends Command
         }
 
         // module migrations
-        $modules = (empty($module)) ? $this->app['config']->get('modules.all') : [$module];
+        $modules = (empty($module)) ? $this->app['config']->get('modules.migrations') : [$module];
 
         foreach ((array) $modules as $mod) {
             // determine module directory
