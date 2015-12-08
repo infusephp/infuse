@@ -157,11 +157,10 @@ class App extends Container
         $redisConfig = $config->get('redis');
         if ($redisConfig) {
             $this['redis'] = function () use ($redisConfig) {
-                $options = [
-                    'prefix' => U::array_value($redisConfig, 'prefix'),
-                ];
+                $redis = new Redis();
+                $redis->connect($redisConfig['host'], $redisConfig['port']);
 
-                return new Predis\Client($redisConfig, $options);
+                return $redis;
             };
         }
 

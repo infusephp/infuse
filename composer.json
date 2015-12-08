@@ -28,11 +28,13 @@
 		"pimple/pimple": ">=v2.1.0",
 		"monolog/monolog": "1.*",
 		"smarty/smarty": ">=v3.1.19",
-		"predis/predis": "1.0.*",
 		"robmorgan/phinx": "~0.4",
 		"symfony/console": "~2.7"
 	},
 	"require-dev": {
 		"satooshi/php-coveralls": "dev-master"
+	},
+	"suggest": {
+		"ext-redis": "*"
 	}
 }
