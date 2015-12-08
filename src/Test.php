@@ -97,23 +97,6 @@ class Test implements PHPUnit_Framework_TestListener
         self::$app['config']->set('email.type', 'nop');
     }
 
-    public function __destruct()
-    {
-        if (isset(self::$app['user'])) {
-            $user = self::$app['user'];
-            $user->grantAllPermissions();
-            $deleted = $user->delete();
-
-            if ($this->verbose) {
-                if ($deleted) {
-                    echo 'User #'.$user->id()." deleted.\n";
-                } else {
-                    echo 'User #'.$user->id()." NOT deleted.\n";
-                }
-            }
-        }
-    }
-
     public function addError(PHPUnit_Framework_Test $test, Exception $e, $time)
     {
         if ($this->verbose) {
