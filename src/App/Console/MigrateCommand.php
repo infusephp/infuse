@@ -12,6 +12,7 @@ namespace App\Console;
 
 use App;
 use JAQB\Session as DatabaseSession;
+use ReflectionClass;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -88,21 +89,17 @@ class MigrateCommand extends Command
         $modules = (empty($module)) ? $this->app['config']->get('modules.migrations') : [$module];
 
         foreach ((array) $modules as $mod) {
-            // determine module directory
-            $controller = 'App\\'.$mod.'\Controller';
+            $migrationPath = $this->getMigrationsDir($mod);
 
-            if (class_exists($controller)) {
-                $reflection = new \ReflectionClass($controller);
-                $migrationPath = dirname($reflection->getFileName()).'/migrations';
-
-                if (is_dir($migrationPath)) {
-                    if ($migrateArgs == 'migrate') {
-                        $output->writeln("-- Migrating $mod");
-                    }
-
-                    $success = $this->migrateWithPath($migrationPath, $migrateArgs, $output) && $success;
-                }
+            if (!$migrationPath) {
+                continue;
             }
+
+            if ($migrateArgs == 'migrate') {
+                $output->writeln("-- Migrating $mod");
+            }
+
+            $success = $this->migrateWithPath($migrationPath, $migrateArgs, $output) && $success;
         }
 
         if ($migrateArgs == 'migrate') {
@@ -114,6 +111,31 @@ class MigrateCommand extends Command
         }
 
         return $success;
+    }
+
+    private function getMigrationsDir($module)
+    {
+        // first check for the migrations directory in the
+        // main app folder
+        $migrationPath = INFUSE_APP_DIR."/$module/migrations";
+
+        // if the app folder did not work then attempt to use
+        // reflection to determine the location of the module
+        // in case it was installed via composer
+        if (!is_dir($migrationPath)) {
+            $controller = 'App\\'.$module.'\Controller';
+
+            if (class_exists($controller)) {
+                $reflection = new ReflectionClass($controller);
+                $migrationPath = dirname($reflection->getFileName()).'/migrations';
+            }
+        }
+
+        if (is_dir($migrationPath)) {
+            return $migrationPath;
+        }
+
+        return false;
     }
 
     private function migrateWithPath($path, $migrateArgs, OutputInterface $output)
