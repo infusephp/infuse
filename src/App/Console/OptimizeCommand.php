@@ -28,6 +28,8 @@ class OptimizeCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        $output->writeln('Optimizing app');
+
         if ($this->app['config']->get('router.cacheFile')) {
             $this->cacheRouteTable($output);
         } else {
@@ -45,5 +47,7 @@ class OptimizeCommand extends Command
         @unlink($cacheFile);
 
         $this->app['router']->getDispatcher();
+
+        $output->writeln('Success!');
     }
 }

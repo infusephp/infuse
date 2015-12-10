@@ -66,7 +66,7 @@ class MigrateCommand extends Command
         }
 
         if ($migrateArgs == 'migrate') {
-            $output->writeln('-- Running migrations');
+            $output->writeln('Running migrations');
         }
 
         // database sessions
