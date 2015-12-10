@@ -256,8 +256,11 @@ class App extends Container
 
         /* Router */
 
-        $this['router'] = function () use ($app) {
-            return new Router();
+        $this['router'] = function () use ($config) {
+            $routes = (array) $this['config']->get('routes');
+            $settings = (array) $config->get('router');
+
+            return new Router($routes, $settings);
         };
     }
 
@@ -329,25 +332,15 @@ class App extends Container
      */
     public function go()
     {
-        /* 1. Install Routes */
-        $router = $this['router'];
-        $routes = (array) $this['config']->get('routes');
-        foreach ($routes as $route => $handler) {
-            $parts = explode(' ', $route);
-            list($method, $endpoint) = $parts;
-
-            $router->map($method, $endpoint, $handler);
-        }
-
-        /* 2. Middleware */
+        /* 1. Middleware */
         $this->executeMiddleware();
 
-        /* 3. Attempt to route the request */
+        /* 2. Attempt to route the request */
         $req = $this['req'];
         $res = $this['res'];
-        $routed = $router->route($this, $req, $res);
+        $routed = $this['router']->route($this, $req, $res);
 
-        /* 4. HTML Error Pages for 4xx and 5xx responses */
+        /* 3. HTML Error Pages for 4xx and 5xx responses */
         $code = $res->getCode();
         if ($req->isHtml() && $code >= 400) {
             $body = $res->getBody();
