@@ -7,8 +7,6 @@ require_once 'vendor/autoload.php';
 
 // bootstrap an App instance
 $config = (array)@include 'config.php';
-$config['sessions']['enabled'] = false;
-$config['logger']['enabled'] = false;
 $app = new App($config);
 
 // run the console application

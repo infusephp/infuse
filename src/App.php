@@ -66,7 +66,13 @@ class App extends Container
 
         $config = $app['config'];
 
-        /* Logging */
+        /* Error Reporting */
+
+        ini_set('display_errors', !$config->get('site.production-level'));
+        ini_set('log_errors', 1);
+        error_reporting(E_ALL | E_STRICT);
+
+        /* Logger */
 
         $this['logger'] = function () use ($app, $config) {
             $handlers = [];
@@ -90,12 +96,6 @@ class App extends Container
 
             return new Logger($config->get('site.hostname'), $handlers, $processors);
         };
-
-        /* Error Reporting */
-
-        ini_set('display_errors', !$config->get('site.production-level'));
-        ini_set('log_errors', 1);
-        error_reporting(E_ALL | E_STRICT);
 
         ErrorHandler::register($this['logger']);
 
@@ -176,28 +176,6 @@ class App extends Container
             };
         }
 
-        /* Request + Response */
-
-        $this['req'] = function () {
-            return Request::createFromGlobals();
-        };
-
-        $this['res'] = function () {
-            return new Response();
-        };
-
-        $req = $this['req'];
-        $res = $this['res'];
-
-        // set host name if one is not provided
-        if (!$config->get('site.hostname')) {
-            $config->set('site.hostname', $req->host());
-        }
-
-        $port = $config->get('site.port');
-        $this['base_url'] = (($config->get('site.ssl')) ? 'https' : 'http').'://'.
-            $config->get('site.hostname').((!in_array($port, [0, 80, 443])) ? ':'.$port : '').'/';
-
         /* Queue */
 
         $class = $config->get('queue.driver');
@@ -219,7 +197,7 @@ class App extends Container
             return new ErrorStack($app);
         };
 
-        /* Views  */
+        /* View Engine  */
 
         $this['view_engine'] = function () use ($app, $config) {
             $class = $config->get('views.engine');
@@ -248,12 +226,6 @@ class App extends Container
 
         $config->set('assets.dirs', [INFUSE_PUBLIC_DIR]);
 
-        /* Session */
-
-        if (!$req->isApi() && $config->get('sessions.enabled')) {
-            $this->startSession();
-        }
-
         /* Router */
 
         $this['router'] = function () use ($config) {
@@ -262,100 +234,22 @@ class App extends Container
 
             return new Router($routes, $settings);
         };
-    }
 
-    /**
-     * Starts a session.
-     *
-     * @return self
-     */
-    public function startSession()
-    {
-        $config = $this['config'];
-        $req = $this['req'];
+        /* Base URL */
 
-        $lifetime = $config->get('sessions.lifetime');
-        $hostname = $config->get('site.hostname');
-        ini_set('session.use_trans_sid', false);
-        ini_set('session.use_only_cookies', true);
-        ini_set('url_rewriter.tags', '');
-        ini_set('session.gc_maxlifetime', $lifetime);
+        $this['base_url'] = function () use ($config) {
+            $url = (($config->get('site.ssl')) ? 'https' : 'http').'://';
+            $url .= $config->get('site.hostname');
+            $port = $config->get('site.port');
+            $url .= ((!in_array($port, [0, 80, 443])) ? ':'.$port : '').'/';
 
-        // set the session name
-        $sessionTitle = $config->get('site.title').'-'.$hostname;
-        $safeSessionTitle = str_replace(['.', ' ', "'", '"'], ['', '_', '', ''], $sessionTitle);
-        session_name($safeSessionTitle);
-
-        // set the session cookie parameters
-        session_set_cookie_params(
-            $lifetime, // lifetime
-            '/', // path
-            '.'.$hostname, // domain
-            $req->isSecure(), // secure
-            true // http only
-        );
-
-        // install any custom session handlers
-        $class = $config->get('sessions.driver');
-        if ($class) {
-            $handler = new $class($this, $config->get('sessions.prefix'));
-            $handler::registerHandler($handler);
-        }
-
-        session_start();
-
-        // fix the session cookie
-        U::set_cookie_fix_domain(
-            session_name(),
-            session_id(),
-            time() + $lifetime,
-            '/',
-            $hostname,
-            $req->isSecure(),
-            true
-        );
-
-        // make the newly started session in our request
-        $req->setSession($_SESSION);
-
-        return $this;
+            return $url;
+        };
     }
 
     ////////////////////////
     // ROUTING
     ////////////////////////
-
-    /**
-     * Runs the app.
-     *
-     * @return self
-     */
-    public function go()
-    {
-        /* 1. Middleware */
-        $this->executeMiddleware();
-
-        /* 2. Attempt to route the request */
-        $req = $this['req'];
-        $res = $this['res'];
-        $routed = $this['router']->route($this, $req, $res);
-
-        /* 3. HTML Error Pages for 4xx and 5xx responses */
-        $code = $res->getCode();
-        if ($req->isHtml() && $code >= 400) {
-            $body = $res->getBody();
-            if (empty($body)) {
-                $res->render(new View('error', [
-                    'message' => Response::$codes[$code],
-                    'code' => $code,
-                    'title' => $code, ]));
-            }
-        }
-
-        $res->send();
-
-        return $this;
-    }
 
     /**
      * Adds a handler to the routing table for a given GET route.
@@ -463,6 +357,136 @@ class App extends Container
         return $this;
     }
 
+    ////////////////////////
+    // REQUESTS
+    ////////////////////////
+
+    /**
+     * Runs the app.
+     *
+     * @return self
+     */
+    public function run()
+    {
+        $req = Request::createFromGlobals();
+
+        $this->handleRequest($req)->send();
+
+        return $this;
+    }
+
+    /**
+     * @deprecated
+     */
+    public function go()
+    {
+        return $this->run();
+    }
+
+    /**
+     * Builds a response to an incoming request by routing
+     * it through the app.
+     *
+     * @param Request $req
+     *
+     * @return Response
+     */
+    public function handleRequest(Request $req)
+    {
+        // set host name from request if not already set
+        $config = $this['config'];
+        if (!$config->get('site.hostname')) {
+            $config->set('site.hostname', $req->host());
+        }
+
+        // start a new session
+        $this->startSession($req);
+
+        // create a blank response
+        $res = new Response();
+
+        // middleware
+        $this->executeMiddleware($req, $res);
+
+        // route the request
+        $routed = $this['router']->route($this, $req, $res);
+
+        // HTML Error Pages for 4xx and 5xx responses
+        $code = $res->getCode();
+        if ($req->isHtml() && $code >= 400) {
+            $body = $res->getBody();
+            if (empty($body)) {
+                $res->render(new View('error', [
+                    'message' => Response::$codes[$code],
+                    'code' => $code,
+                    'title' => $code, ]));
+            }
+        }
+
+        return $res;
+    }
+
+    /**
+     * Starts a session.
+     *
+     * @param Request $req
+     *
+     * @return self
+     */
+    public function startSession(Request $req)
+    {
+        $config = $this['config'];
+        if (!$config->get('sessions.enabled') || $req->isApi()) {
+            return $this;
+        }
+
+        $lifetime = $config->get('sessions.lifetime');
+        $hostname = $config->get('site.hostname');
+        ini_set('session.use_trans_sid', false);
+        ini_set('session.use_only_cookies', true);
+        ini_set('url_rewriter.tags', '');
+        ini_set('session.gc_maxlifetime', $lifetime);
+
+        // set the session name
+        $sessionTitle = $config->get('site.title').'-'.$hostname;
+        $safeSessionTitle = str_replace(['.', ' ', "'", '"'], ['', '_', '', ''], $sessionTitle);
+        session_name($safeSessionTitle);
+
+        // set the session cookie parameters
+        session_set_cookie_params(
+            $lifetime, // lifetime
+            '/', // path
+            '.'.$hostname, // domain
+            $req->isSecure(), // secure
+            true // http only
+        );
+
+        // install any custom session handlers
+        $class = $config->get('sessions.driver');
+        if ($class) {
+            $handler = new $class($this, $config->get('sessions.prefix'));
+            $handler::registerHandler($handler);
+        }
+
+        session_start();
+
+        // fix the session cookie
+        U::set_cookie_fix_domain(
+            session_name(),
+            session_id(),
+            time() + $lifetime,
+            '/',
+            $hostname,
+            $req->isSecure(),
+            true
+        );
+
+        // make the newly started session in our request
+        $req->setSession($_SESSION);
+
+        return $this;
+    }
+
     /**
      * Gets the middleware modules.
      *
@@ -474,15 +498,15 @@ class App extends Container
     }
 
     /**
-     * Executes the middleware.
+     * Executes the app's middleware.
+     *
+     * @param Request  $req
+     * @param Response $res
      *
      * @return self
      */
-    public function executeMiddleware()
+    public function executeMiddleware(Request $req, Response $res)
     {
-        $req = $this['req'];
-        $res = $this['res'];
-
         foreach ($this->getMiddleware() as $module) {
             $class = 'App\\'.$module.'\Controller';
             $controller = new $class();
@@ -495,15 +519,9 @@ class App extends Container
         return $this;
     }
 
-    /**
-     * Gets the routing table.
-     *
-     * @return array
-     */
-    public function getRoutes()
-    {
-        return $this['router']->getRoutes();
-    }
+    ////////////////////////
+    // CONSOLE
+    ////////////////////////
 
     /**
      * Gets a console application instance for this app.

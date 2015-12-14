@@ -11,6 +11,8 @@
 namespace App\Console;
 
 use App;
+use Infuse\Request;
+use Infuse\Response;
 
 class Application extends \Symfony\Component\Console\Application
 {
@@ -19,7 +21,9 @@ class Application extends \Symfony\Component\Console\Application
         parent::__construct();
 
         // run middleware
-        $app->executeMiddleware();
+        $req = new Request();
+        $res = new Response();
+        $app->executeMiddleware($req, $res);
 
         // add app-specific commands
         $commands = (array) $app['config']->get('modules.commands');

@@ -9,6 +9,8 @@
  * @license MIT
  */
 use App\Users\Models\User;
+use Infuse\Request;
+use Infuse\Response;
 
 class Test implements PHPUnit_Framework_TestListener
 {
@@ -41,7 +43,9 @@ class Test implements PHPUnit_Framework_TestListener
         self::$app = new App($config);
 
         // execute middleware
-        self::$app->executeMiddleware();
+        $req = new Request();
+        $res = new Response();
+        self::$app->executeMiddleware($req, $res);
 
         $this->verbose = $verbose;
 

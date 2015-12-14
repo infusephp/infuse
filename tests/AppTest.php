@@ -152,7 +152,7 @@ class AppTest extends \PHPUnit_Framework_TestCase
         $config = ['routes' => ['test']];
         $app = new App($config);
 
-        $this->assertEquals(['test'], $app->getRoutes());
+        $this->assertEquals(['test'], $app['router']->getRoutes());
     }
 
     public function testMiddleware()
@@ -175,7 +175,7 @@ class AppTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals($app, $app->get('/users/{id}', $handler));
 
-        $this->assertEquals(['get /users/{id}' => $handler], $app->getRoutes());
+        $this->assertEquals(['get /users/{id}' => $handler], $app['router']->getRoutes());
     }
 
     public function testPost()
@@ -185,7 +185,7 @@ class AppTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals($app, $app->post('/users', $handler));
 
-        $this->assertEquals(['post /users' => $handler], $app->getRoutes());
+        $this->assertEquals(['post /users' => $handler], $app['router']->getRoutes());
     }
 
     public function testPut()
@@ -195,7 +195,7 @@ class AppTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals($app, $app->put('/users/{id}', $handler));
 
-        $this->assertEquals(['put /users/{id}' => $handler], $app->getRoutes());
+        $this->assertEquals(['put /users/{id}' => $handler], $app['router']->getRoutes());
     }
 
     public function testDelete()
@@ -205,7 +205,7 @@ class AppTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals($app, $app->delete('/users/{id}', $handler));
 
-        $this->assertEquals(['delete /users/{id}' => $handler], $app->getRoutes());
+        $this->assertEquals(['delete /users/{id}' => $handler], $app['router']->getRoutes());
     }
 
     public function testPatch()
@@ -215,7 +215,7 @@ class AppTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals($app, $app->patch('/users/{id}', $handler));
 
-        $this->assertEquals(['patch /users/{id}' => $handler], $app->getRoutes());
+        $this->assertEquals(['patch /users/{id}' => $handler], $app['router']->getRoutes());
     }
 
     public function testOptions()
@@ -225,7 +225,7 @@ class AppTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals($app, $app->options('/users/{id}', $handler));
 
-        $this->assertEquals(['options /users/{id}' => $handler], $app->getRoutes());
+        $this->assertEquals(['options /users/{id}' => $handler], $app['router']->getRoutes());
     }
 
     public function testMap()
@@ -235,7 +235,7 @@ class AppTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals($app, $app->map('GET', '/users/{id}', $handler));
 
-        $this->assertEquals(['get /users/{id}' => $handler], $app->getRoutes());
+        $this->assertEquals(['get /users/{id}' => $handler], $app['router']->getRoutes());
     }
 
     public function testGetConsole()
