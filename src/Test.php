@@ -22,7 +22,7 @@ class Test implements PHPUnit_Framework_TestListener
     /**
      * @var string
      */
-    public static $userEmail;
+    public static $userEmail = 'test@example.com';
 
     /**
      * @var string
@@ -38,9 +38,11 @@ class Test implements PHPUnit_Framework_TestListener
             $config = [];
         }
 
-        $config['logger']['enabled'] = $verbose;
+        $config['logger']['enabled'] = false;
 
         self::$app = new App($config);
+
+        ini_set('display_errors', 1);
 
         // execute middleware
         $req = new Request();
@@ -55,25 +57,23 @@ class Test implements PHPUnit_Framework_TestListener
                 echo "Logging in a test user to run the test suite.\n";
             }
 
-            self::$userEmail = 'test@exmaple.com';
-
             $user = new User();
+            $testInfo = [
+                'user_email' => self::$userEmail,
+                'user_password' => [self::$userPassword, self::$userPassword],
+            ];
             if (property_exists($user, 'testUser')) {
-                $testInfo = $user::$testUser;
+                $testInfo = array_replace($testInfo, $user::$testUser);
             } else {
-                $testInfo = [
+                $testInfo = array_replace($testInfo, [
                     'first_name' => 'Bob',
-                    'ip' => '127.0.0.1', ];
+                    'ip' => '127.0.0.1', ]);
             }
-
-            $testInfo['user_email'] = self::$userEmail;
-            $testInfo['user_password'] = [self::$userPassword, self::$userPassword];
 
             $existingUser = User::where('user_email', $testInfo['user_email'])
                 ->first();
             if ($existingUser) {
-                $existingUser->grantAllPermissions();
-                $existingUser->delete();
+                $existingUser->grantAllPermissions()->delete();
             }
 
             $success = $user->create($testInfo);
@@ -86,15 +86,7 @@ class Test implements PHPUnit_Framework_TestListener
                 }
             }
 
-            $loggedIn = self::$app['auth']->login(self::$userEmail, self::$userPassword);
-
-            if ($this->verbose) {
-                if ($loggedIn) {
-                    echo 'User #'.self::$app['user']->id()." logged in.\n";
-                } else {
-                    echo " Could not log test user in.\n";
-                }
-            }
+            self::$app['user'] = new User($user->id(), true);
         }
 
         // TODO custom listeners should be used instead

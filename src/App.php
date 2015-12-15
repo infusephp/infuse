@@ -11,22 +11,13 @@
 use App\Console\Application;
 use Infuse\Config;
 use Infuse\ErrorStack;
-use Infuse\Locale;
 use Infuse\Model;
 use Infuse\Response;
 use Infuse\Request;
-use Infuse\Router;
 use Infuse\Utility as U;
 use Infuse\Validate;
 use Infuse\View;
 use Infuse\Queue;
-use JAQB\QueryBuilder;
-use Monolog\ErrorHandler;
-use Monolog\Handler\NullHandler;
-use Monolog\Handler\FirePHPHandler;
-use Monolog\Processor\IntrospectionProcessor;
-use Monolog\Processor\WebProcessor;
-use Monolog\Logger;
 use Pimple\Container;
 
 if (!defined('INFUSE_BASE_DIR')) {
@@ -72,109 +63,42 @@ class App extends Container
         ini_set('log_errors', 1);
         error_reporting(E_ALL | E_STRICT);
 
-        /* Logger */
-
-        $this['logger'] = function () use ($app, $config) {
-            $handlers = [];
-
-            if ($config->get('logger.enabled')) {
-                $webProcessor = new WebProcessor();
-                $webProcessor->addExtraField('user_agent', 'HTTP_USER_AGENT');
-
-                $processors = [
-                    $webProcessor,
-                    new IntrospectionProcessor(), ];
-
-                // firephp
-                if (!$config->get('site.production-level')) {
-                    $handlers[] = new FirePHPHandler();
-                }
-            } else {
-                $processors = [];
-                $handlers[] = new NullHandler();
-            }
-
-            return new Logger($config->get('site.hostname'), $handlers, $processors);
-        };
-
-        ErrorHandler::register($this['logger']);
-
         /* Time Zone */
 
         if ($tz = $config->get('site.time-zone')) {
             date_default_timezone_set($tz);
         }
 
-        /* Locale */
+        /* Assets */
 
-        $this['locale'] = function () use ($app, $config) {
-            $locale = new Locale($config->get('site.language'));
-            $locale->setLocaleDataDir(INFUSE_ASSETS_DIR.'/locales');
+        $config->set('assets.dirs', [INFUSE_PUBLIC_DIR]);
 
-            return $locale;
+        /* Services  */
+
+        $services = [
+            'logger' => 'App\Services\Logger',
+            'locale' => 'App\Services\Locale',
+            'pdo' => 'App\Services\Pdo',
+            'db' => 'App\Services\Database',
+            'redis' => 'App\Services\Redis',
+            'memcache' => 'App\Services\Memcache',
+            'view_engine' => 'App\Services\ViewEngine',
+            'router' => 'App\Services\Router',
+        ];
+
+        foreach ($services as $name => $class) {
+            $this[$name] = new $class($this);
+        }
+
+        /* Error Stack */
+
+        $this['errors'] = function () use ($app) {
+            return new ErrorStack($app);
         };
 
         /* Validator */
 
         Validate::configure(['salt' => $config->get('site.salt')]);
-
-        /* Database */
-
-        $dbSettings = (array) $config->get('database');
-
-        $this['pdo'] = function () use ($dbSettings, $config, $app) {
-            if (isset($dbSettings['dsn'])) {
-                $dsn = $dbSettings['dsn'];
-            } else { // generate the dsn
-                $dsn = $dbSettings['type'].':host='.$dbSettings['host'].';dbname='.$dbSettings['name'];
-            }
-
-            $user = U::array_value($dbSettings, 'user');
-            $password = U::array_value($dbSettings, 'password');
-
-            try {
-                $pdo = new PDO($dsn, $user, $password);
-            } catch (\Exception $e) {
-                $app['logger']->emergency($e);
-                die('Could not connect to database.');
-            }
-
-            if ($config->get('site.production-level')) {
-                $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_WARNING);
-            } else {
-                $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-            }
-
-            return $pdo;
-        };
-
-        $this['db'] = function () use ($app) {
-            return new QueryBuilder($app['pdo']);
-        };
-
-        /* Redis */
-
-        $redisConfig = $config->get('redis');
-        if ($redisConfig) {
-            $this['redis'] = function () use ($redisConfig) {
-                $redis = new Redis();
-                $redis->connect($redisConfig['host'], $redisConfig['port']);
-
-                return $redis;
-            };
-        }
-
-        /* Memcache */
-
-        $memcacheConfig = $config->get('memcache');
-        if ($memcacheConfig) {
-            $this['memcache'] = function () use ($memcacheConfig) {
-                $memcache = new Memcache();
-                $memcache->connect($memcacheConfig['host'], $memcacheConfig['port']);
-
-                return $memcache;
-            };
-        }
 
         /* Queue */
 
@@ -190,50 +114,6 @@ class App extends Container
             Model::inject($this);
             Model::setDriver(new $class($this));
         }
-
-        /* Error Stack */
-
-        $this['errors'] = function () use ($app) {
-            return new ErrorStack($app);
-        };
-
-        /* View Engine  */
-
-        $this['view_engine'] = function () use ($app, $config) {
-            $class = $config->get('views.engine');
-
-            // use PHP view engine by default
-            if (!$class) {
-                $class = 'Infuse\ViewEngine\PHP';
-            }
-
-            // Smarty needs special parameters
-            if ($class === 'Infuse\ViewEngine\Smarty') {
-                $engine = new $class(INFUSE_VIEWS_DIR, INFUSE_TEMP_DIR.'/smarty', INFUSE_TEMP_DIR.'/smarty/cache');
-            } else {
-                $engine = new $class(INFUSE_VIEWS_DIR);
-            }
-
-            // static assets
-            $engine->setAssetMapFile(INFUSE_ASSETS_DIR.'/static.assets.json')
-                   ->setAssetBaseUrl($config->get('assets.base_url'))
-                   ->setGlobalParameters(['app' => $app]);
-
-            return $engine;
-        };
-
-        View::inject($this);
-
-        $config->set('assets.dirs', [INFUSE_PUBLIC_DIR]);
-
-        /* Router */
-
-        $this['router'] = function () use ($config) {
-            $routes = (array) $this['config']->get('routes');
-            $settings = (array) $config->get('router');
-
-            return new Router($routes, $settings);
-        };
 
         /* Base URL */
 
