@@ -6,7 +6,7 @@ set_include_path(get_include_path() . PATH_SEPARATOR . INFUSE_BASE_DIR);
 require_once 'vendor/autoload.php';
 
 // bootstrap an App instance
-$config = (array)@include 'config.php';
+$config = @include 'config.php';
 $app = new App($config);
 
 // run the console application
