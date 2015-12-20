@@ -24,23 +24,6 @@ if (!defined('INFUSE_BASE_DIR')) {
     die('INFUSE_BASE_DIR has not been defined!');
 }
 
-/* app constants */
-if (!defined('INFUSE_APP_DIR')) {
-    define('INFUSE_APP_DIR', INFUSE_BASE_DIR.'/app');
-}
-if (!defined('INFUSE_ASSETS_DIR')) {
-    define('INFUSE_ASSETS_DIR', INFUSE_BASE_DIR.'/assets');
-}
-if (!defined('INFUSE_PUBLIC_DIR')) {
-    define('INFUSE_PUBLIC_DIR', INFUSE_BASE_DIR.'/public');
-}
-if (!defined('INFUSE_TEMP_DIR')) {
-    define('INFUSE_TEMP_DIR', INFUSE_BASE_DIR.'/temp');
-}
-if (!defined('INFUSE_VIEWS_DIR')) {
-    define('INFUSE_VIEWS_DIR', INFUSE_BASE_DIR.'/views');
-}
-
 class App extends Container
 {
     protected static $baseConfig = [
