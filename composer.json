@@ -17,7 +17,7 @@
 	},
     "autoload": {
         "psr-4": {
-        	"App\\Console\\": "src/App/Console/", 
+        	"App\\": "src/App/", 
         	"": "src/"
        	}
     },
