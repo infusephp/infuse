@@ -43,19 +43,46 @@ if (!defined('INFUSE_VIEWS_DIR')) {
 
 class App extends Container
 {
-    public function __construct(array $configValues = [])
+    protected static $baseConfig = [
+        'site' => [
+            'ssl' => false,
+            'port' => 80,
+            'production-level' => false,
+            'environment' => 'development',
+            'language' => 'en',
+        ],
+        'services' => [
+            'db' => 'App\Services\Database',
+            'locale' => 'App\Services\Locale',
+            'logger' => 'App\Services\Logger',
+            'memcache' => 'App\Services\Memcache',
+            'pdo' => 'App\Services\Pdo',
+            'redis' => 'App\Services\Redis',
+            'router' => 'App\Services\Router',
+            'view_engine' => 'App\Services\ViewEngine',
+        ],
+        'sessions' => [
+            'enabled' => false,
+        ],
+        'dirs' => [
+            'app' => INFUSE_BASE_DIR.'/app',
+            'assets' => INFUSE_BASE_DIR.'/assets',
+            'public' => INFUSE_BASE_DIR.'/public',
+            'temp' => INFUSE_BASE_DIR.'/temp',
+            'views' => INFUSE_BASE_DIR.'/views',
+        ],
+    ];
+
+    public function __construct(array $settings = [])
     {
         parent::__construct();
 
-        $app = $this;
-
         /* Load Configuration */
 
-        $this['config'] = function () use ($configValues) {
-            return new Config($configValues);
-        };
+        $settings = array_replace_recursive(static::$baseConfig, $settings);
 
-        $config = $app['config'];
+        $config = new Config($settings);
+        $this['config'] = $config;
 
         /* Error Reporting */
 
@@ -69,30 +96,19 @@ class App extends Container
             date_default_timezone_set($tz);
         }
 
-        /* Assets */
-
-        $config->set('assets.dirs', [INFUSE_PUBLIC_DIR]);
-
         /* Services  */
 
-        $services = [
-            'logger' => 'App\Services\Logger',
-            'locale' => 'App\Services\Locale',
-            'pdo' => 'App\Services\Pdo',
-            'db' => 'App\Services\Database',
-            'redis' => 'App\Services\Redis',
-            'memcache' => 'App\Services\Memcache',
-            'view_engine' => 'App\Services\ViewEngine',
-            'router' => 'App\Services\Router',
-        ];
+        foreach ($config->get('services') as $name => $class) {
+            if (!$class) {
+                continue;
+            }
 
-        foreach ($services as $name => $class) {
             $this[$name] = new $class($this);
         }
 
         /* Error Stack */
 
-        $this['errors'] = function () use ($app) {
+        $this['errors'] = function ($app) {
             return new ErrorStack($app);
         };
 

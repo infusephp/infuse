@@ -6,8 +6,11 @@ class Locale
 {
     public function __invoke($app)
     {
-        $locale = new \Infuse\Locale($app['config']->get('site.language'));
-        $locale->setLocaleDataDir(INFUSE_ASSETS_DIR.'/locales');
+        $config = $app['config'];
+        $assetsDir = $config->get('dirs.assets');
+
+        $locale = new \Infuse\Locale($config->get('site.language'));
+        $locale->setLocaleDataDir("$assetsDir/locales");
 
         return $locale;
     }

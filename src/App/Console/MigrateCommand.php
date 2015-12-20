@@ -117,7 +117,8 @@ class MigrateCommand extends Command
     {
         // first check for the migrations directory in the
         // main app folder
-        $migrationPath = INFUSE_APP_DIR."/$module/migrations";
+        $appDir = $this->app['config']->get('dirs.app');
+        $migrationPath = "$appDir/$module/migrations";
 
         // if the app folder did not work then attempt to use
         // reflection to determine the location of the module

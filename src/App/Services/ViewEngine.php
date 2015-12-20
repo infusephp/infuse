@@ -14,23 +14,30 @@ class ViewEngine
     public function __invoke($app)
     {
         $config = $app['config'];
-        $class = $config->get('views.engine');
+
+        // get the view-related directories
+        $assetsDir = $config->get('dirs.assets');
+        $tempDir = $config->get('dirs.temp');
+        $viewsDir = $config->get('dirs.views');
 
         // use PHP view engine by default
+        $class = $config->get('views.engine');
         if (!$class) {
             $class = 'Infuse\ViewEngine\PHP';
         }
 
         // Smarty needs special parameters
         if ($class === 'Infuse\ViewEngine\Smarty') {
-            $engine = new $class(INFUSE_VIEWS_DIR, INFUSE_TEMP_DIR.'/smarty', INFUSE_TEMP_DIR.'/smarty/cache');
+            $smartyTemp = "$tempDir/smarty";
+            $engine = new $class($viewsDir, $smartyTemp, "$smartyTemp/cache");
         } else {
-            $engine = new $class(INFUSE_VIEWS_DIR);
+            $engine = new $class($viewsDir);
         }
 
         // static assets
-        $engine->setAssetMapFile(INFUSE_ASSETS_DIR.'/static.assets.json')
-               ->setAssetBaseUrl($config->get('assets.base_url'))
+        $assetsUrl = $config->get('assets.base_url');
+        $engine->setAssetMapFile("$assetsDir/static.assets.json")
+               ->setAssetBaseUrl($assetsUrl)
                ->setGlobalParameters(['app' => $app]);
 
         return $engine;
