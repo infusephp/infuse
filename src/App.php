@@ -255,14 +255,6 @@ class App extends Container
     }
 
     /**
-     * @deprecated
-     */
-    public function go()
-    {
-        return $this->run();
-    }
-
-    /**
      * Builds a response to an incoming request by routing
      * it through the app.
      *
