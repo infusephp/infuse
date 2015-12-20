@@ -428,4 +428,18 @@ class App extends Container
     {
         return new Application($this);
     }
+
+    ////////////////////////
+    // Magic Methods
+    ////////////////////////
+
+    public function __get($k)
+    {
+        return $this[$k];
+    }
+
+    public function __isset($k)
+    {
+        return isset($this[$k]);
+    }
 }
