@@ -23,8 +23,8 @@
     },
 	"require": {
 		"php": ">=5.4.0",
-		"jaredtking/jaqb": "~1.1",
 		"infuse/libs": "~0.4",
+		"pulsar/pulsar": "*",
 		"pimple/pimple": ">=v2.1.0",
 		"monolog/monolog": "1.*",
 		"smarty/smarty": ">=v3.1.19",

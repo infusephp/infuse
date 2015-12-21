@@ -11,11 +11,9 @@
 use App\Console\Application;
 use Infuse\Config;
 use Infuse\ErrorStack;
-use Infuse\Model;
 use Infuse\Response;
 use Infuse\Request;
 use Infuse\Utility as U;
-use Infuse\Validate;
 use Infuse\View;
 use Infuse\Queue;
 use Pimple\Container;
@@ -95,23 +93,11 @@ class App extends Container
             return new ErrorStack($app);
         };
 
-        /* Validator */
-
-        Validate::configure(['salt' => $config->get('site.salt')]);
-
         /* Queue */
 
         $class = $config->get('queue.driver');
         if ($class) {
             Queue::setDriver(new $class($this));
-        }
-
-        /* Models */
-
-        $class = $config->get('models.driver');
-        if ($class) {
-            Model::inject($this);
-            Model::setDriver(new $class($this));
         }
 
         /* Base URL */
@@ -335,7 +321,7 @@ class App extends Container
         // install any custom session handlers
         $class = $config->get('sessions.driver');
         if ($class) {
-            $handler = new $class($this, $config->get('sessions.prefix'));
+            $handler = new $class($this);
             $handler::registerHandler($handler);
         }
 
