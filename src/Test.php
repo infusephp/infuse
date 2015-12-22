@@ -15,7 +15,7 @@ use App\Users\Models\User;
 class Test implements PHPUnit_Framework_TestListener
 {
     /**
-     * @var App
+     * @var Application
      */
     public static $app;
 
@@ -40,7 +40,7 @@ class Test implements PHPUnit_Framework_TestListener
 
         $config['logger']['enabled'] = false;
 
-        self::$app = new App($config);
+        self::$app = new Application($config);
 
         ini_set('display_errors', 1);
 

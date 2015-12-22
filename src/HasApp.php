@@ -10,18 +10,18 @@
  */
 namespace Infuse;
 
-trait InjectApp
+trait HasApp
 {
     protected $app;
 
     /**
-     * Injects an app container.
+     * Injects an application instance.
      *
-     * @param App $app container
+     * @param Application $app container
      *
      * @return self
      */
-    public function injectApp(App $app)
+    public function injectApp(Application $app)
     {
         $this->app = $app;
 
