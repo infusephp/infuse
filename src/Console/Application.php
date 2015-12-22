@@ -19,8 +19,7 @@ class Application extends \Symfony\Component\Console\Application
         parent::__construct();
 
         // add app-specific commands
-        $commands = (array) $app['config']->get('modules.commands');
-
+        $commands = $app['config']->get('console.commands');
         foreach ($commands as $class) {
             $this->addCommand($class, $app);
         }

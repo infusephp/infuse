@@ -47,6 +47,9 @@ class ApplicationTest extends PHPUnit_Framework_TestCase
                 'temp' => INFUSE_BASE_DIR.'/temp',
                 'views' => INFUSE_BASE_DIR.'/views',
             ],
+            'console' => [
+                'commands' => [],
+            ],
         ];
 
         $config = $app['config'];

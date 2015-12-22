@@ -44,6 +44,9 @@ class Application extends Container
             'temp' => INFUSE_BASE_DIR.'/temp',
             'views' => INFUSE_BASE_DIR.'/views',
         ],
+        'console' => [
+            'commands' => [],
+        ],
     ];
 
     public function __construct(array $settings = [])
