@@ -8,9 +8,9 @@
  * @copyright 2015 Jared King
  * @license MIT
  */
-namespace App\Console;
+namespace Infuse\Console;
 
-use App;
+use Infuse\Application as App;
 
 class Application extends \Symfony\Component\Console\Application
 {

@@ -8,20 +8,16 @@
  * @copyright 2015 Jared King
  * @license MIT
  */
-use App\Console\Application;
-use Infuse\Config;
-use Infuse\ErrorStack;
-use Infuse\Response;
-use Infuse\Request;
+namespace Infuse;
+
 use Infuse\Utility as U;
-use Infuse\View;
 use Pimple\Container;
 
 if (!defined('INFUSE_BASE_DIR')) {
     die('INFUSE_BASE_DIR has not been defined!');
 }
 
-class App extends Container
+class Application extends Container
 {
     protected static $baseConfig = [
         'site' => [
@@ -32,14 +28,14 @@ class App extends Container
             'language' => 'en',
         ],
         'services' => [
-            'db' => 'App\Services\Database',
-            'locale' => 'App\Services\Locale',
-            'logger' => 'App\Services\Logger',
-            'memcache' => 'App\Services\Memcache',
-            'pdo' => 'App\Services\Pdo',
-            'redis' => 'App\Services\Redis',
-            'router' => 'App\Services\Router',
-            'view_engine' => 'App\Services\ViewEngine',
+            'db' => 'Infuse\Services\Database',
+            'locale' => 'Infuse\Services\Locale',
+            'logger' => 'Infuse\Services\Logger',
+            'memcache' => 'Infuse\Services\Memcache',
+            'pdo' => 'Infuse\Services\Pdo',
+            'redis' => 'Infuse\Services\Redis',
+            'router' => 'Infuse\Services\Router',
+            'view_engine' => 'Infuse\Services\ViewEngine',
         ],
         'sessions' => [
             'enabled' => false,
@@ -219,7 +215,7 @@ class App extends Container
     ////////////////////////
 
     /**
-     * Runs the app.
+     * Runs the application.
      *
      * @return self
      */
@@ -234,7 +230,7 @@ class App extends Container
 
     /**
      * Builds a response to an incoming request by routing
-     * it through the app.
+     * it through the application.
      *
      * @param Request $req
      *
@@ -347,7 +343,7 @@ class App extends Container
     }
 
     /**
-     * Executes the app's middleware.
+     * Executes the middleware.
      *
      * @param Request  $req
      * @param Response $res
@@ -373,13 +369,13 @@ class App extends Container
     ////////////////////////
 
     /**
-     * Gets a console application instance for this app.
+     * Gets a console instance for this application.
      *
-     * @return \App\Console\Application
+     * @return \Infuse\Console\Application
      */
     public function getConsole()
     {
-        return new Application($this);
+        return new Console\Application($this);
     }
 
     ////////////////////////

@@ -8,6 +8,8 @@
  * @copyright 2015 Jared King
  * @license MIT
  */
+namespace Infuse;
+
 use App\Users\Models\User;
 
 class Test implements PHPUnit_Framework_TestListener

@@ -8,6 +8,8 @@
  * @copyright 2015 Jared King
  * @license MIT
  */
+namespace Infuse;
+
 trait InjectApp
 {
     protected $app;

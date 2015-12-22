@@ -8,7 +8,9 @@
  * @copyright 2015 Jared King
  * @license MIT
  */
-class AppTest extends \PHPUnit_Framework_TestCase
+use Infuse\Application;
+
+class ApplicationTest extends PHPUnit_Framework_TestCase
 {
     public static function setUpBeforeClass()
     {
@@ -17,7 +19,7 @@ class AppTest extends \PHPUnit_Framework_TestCase
 
     public function testConfig()
     {
-        $app = new App(['test' => true]);
+        $app = new Application(['test' => true]);
 
         $expected = [
             'test' => true,
@@ -34,14 +36,14 @@ class AppTest extends \PHPUnit_Framework_TestCase
 
     public function testLogger()
     {
-        $app = new App(['logger' => ['enabled' => true]]);
+        $app = new Application(['logger' => ['enabled' => true]]);
 
         $this->assertInstanceOf('Monolog\Logger', $app['logger']);
     }
 
     public function testLocale()
     {
-        $app = new App([
+        $app = new Application([
             'site' => [
                 'language' => 'french', ], ]);
 
@@ -52,7 +54,7 @@ class AppTest extends \PHPUnit_Framework_TestCase
 
     public function testDatabase()
     {
-        $app = new App([
+        $app = new Application([
             'database' => [
                 'type' => 'mysql',
                 'host' => 'localhost',
@@ -67,7 +69,7 @@ class AppTest extends \PHPUnit_Framework_TestCase
         $this->assertInstanceOf('PDO', $pdo);
         $this->assertEquals(PDO::ERRMODE_EXCEPTION, $pdo->getAttribute(PDO::ATTR_ERRMODE));
 
-        $app = new App([
+        $app = new Application([
             'site' => [
                 'production-level' => true, ],
             'database' => [
@@ -94,21 +96,21 @@ class AppTest extends \PHPUnit_Framework_TestCase
 
     public function testReq()
     {
-        $app = new App();
+        $app = new Application();
 
         $this->assertInstanceOf('Infuse\Request', $app['req']);
     }
 
     public function testResponse()
     {
-        $app = new App();
+        $app = new Application();
 
         $this->assertInstanceOf('Infuse\Response', $app['res']);
     }
 
     public function testQueue()
     {
-        $app = new App(['queue' => [
+        $app = new Application(['queue' => [
             'driver' => 'Infuse\Queue\Driver\SynchronousDriver', ]]);
 
         $this->assertInstanceOf('Infuse\Queue\Driver\SynchronousDriver', Queue::getDriver());
@@ -116,7 +118,7 @@ class AppTest extends \PHPUnit_Framework_TestCase
 
     public function testModel()
     {
-        $app = new App(['models' => [
+        $app = new Application(['models' => [
             'driver' => 'Infuse\Model\Driver\DatabaseDriver',
             'cache_ttl' => 30, ]]);
 
@@ -125,24 +127,24 @@ class AppTest extends \PHPUnit_Framework_TestCase
 
     public function testErrorStack()
     {
-        $app = new App();
+        $app = new Application();
 
         $this->assertInstanceOf('Infuse\ErrorStack', $app['errors']);
     }
 
     public function testViewEngine()
     {
-        $app = new App();
+        $app = new Application();
         $this->assertInstanceOf('Infuse\ViewEngine\PHP', $app['view_engine']);
 
-        $app = new App(['views' => [
+        $app = new Application(['views' => [
             'engine' => 'Infuse\ViewEngine\Smarty', ]]);
         $this->assertInstanceOf('Infuse\ViewEngine\Smarty', $app['view_engine']);
     }
 
     public function testRouter()
     {
-        $app = new App();
+        $app = new Application();
 
         $this->assertInstanceOf('Infuse\Router', $app['router']);
     }
@@ -150,7 +152,7 @@ class AppTest extends \PHPUnit_Framework_TestCase
     public function testRoutes()
     {
         $config = ['routes' => ['test']];
-        $app = new App($config);
+        $app = new Application($config);
 
         $this->assertEquals(['test'], $app['router']->getRoutes());
     }
@@ -158,7 +160,7 @@ class AppTest extends \PHPUnit_Framework_TestCase
     public function testMiddleware()
     {
         $config = ['modules' => ['middleware' => ['test']]];
-        $app = new App($config);
+        $app = new Application($config);
 
         $this->assertEquals(['test'], $app->getMiddleware());
     }
@@ -170,7 +172,7 @@ class AppTest extends \PHPUnit_Framework_TestCase
 
     public function testGet()
     {
-        $app = new App();
+        $app = new Application();
         $handler = function () {};
 
         $this->assertEquals($app, $app->get('/users/{id}', $handler));
@@ -180,7 +182,7 @@ class AppTest extends \PHPUnit_Framework_TestCase
 
     public function testPost()
     {
-        $app = new App();
+        $app = new Application();
         $handler = function () {};
 
         $this->assertEquals($app, $app->post('/users', $handler));
@@ -190,7 +192,7 @@ class AppTest extends \PHPUnit_Framework_TestCase
 
     public function testPut()
     {
-        $app = new App();
+        $app = new Application();
         $handler = function () {};
 
         $this->assertEquals($app, $app->put('/users/{id}', $handler));
@@ -200,7 +202,7 @@ class AppTest extends \PHPUnit_Framework_TestCase
 
     public function testDelete()
     {
-        $app = new App();
+        $app = new Application();
         $handler = function () {};
 
         $this->assertEquals($app, $app->delete('/users/{id}', $handler));
@@ -210,7 +212,7 @@ class AppTest extends \PHPUnit_Framework_TestCase
 
     public function testPatch()
     {
-        $app = new App();
+        $app = new Application();
         $handler = function () {};
 
         $this->assertEquals($app, $app->patch('/users/{id}', $handler));
@@ -220,7 +222,7 @@ class AppTest extends \PHPUnit_Framework_TestCase
 
     public function testOptions()
     {
-        $app = new App();
+        $app = new Application();
         $handler = function () {};
 
         $this->assertEquals($app, $app->options('/users/{id}', $handler));
@@ -230,7 +232,7 @@ class AppTest extends \PHPUnit_Framework_TestCase
 
     public function testMap()
     {
-        $app = new App();
+        $app = new Application();
         $handler = function () {};
 
         $this->assertEquals($app, $app->map('GET', '/users/{id}', $handler));
@@ -240,9 +242,9 @@ class AppTest extends \PHPUnit_Framework_TestCase
 
     public function testGetConsole()
     {
-        $app = new App();
+        $app = new Application();
 
         $console = $app->getConsole();
-        $this->assertInstanceOf('App\Console\Application', $console);
+        $this->assertInstanceOf('Infuse\Console\Application', $console);
     }
 }

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services;
+namespace Infuse\Services;
 
 use Pulsar\Model;
 use Pulsar\Validate;
