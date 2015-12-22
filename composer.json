@@ -22,19 +22,20 @@
     },
 	"require": {
 		"php": ">=5.4.0",
-		"infuse/libs": "~0.5",
-		"pulsar/pulsar": "~0.1",
 		"pimple/pimple": ">=v2.1.0",
+		"infuse/libs": "~0.5",
 		"monolog/monolog": "1.*",
-		"smarty/smarty": ">=v3.1.19",
-		"robmorgan/phinx": "~0.4",
 		"symfony/console": "~2.7"
 	},
 	"require-dev": {
-		"satooshi/php-coveralls": "dev-master",
-		"mockery/mockery": "~0.9"
+		"smarty/smarty": ">=v3.1.19",
+		"pulsar/pulsar": "~0.1",
+		"robmorgan/phinx": "~0.4",
+		"mockery/mockery": "~0.9",
+		"satooshi/php-coveralls": "dev-master"
 	},
 	"suggest": {
-		"ext-redis": "*"
+		"ext-redis": "*",
+		"ext-memcache": "*"
 	}
 }
