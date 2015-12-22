@@ -1,17 +1,17 @@
-bootstrap
+Infuse Framework
 ===================
 
-[![Build Status](https://travis-ci.org/infusephp/bootstrap.png?branch=master)](https://travis-ci.org/infusephp/bootstrap)
-[![Coverage Status](https://coveralls.io/repos/infusephp/bootstrap/badge.png)](https://coveralls.io/r/infusephp/bootstrap)
-[![Latest Stable Version](https://poser.pugx.org/infuse/bootstrap/v/stable.png)](https://packagist.org/packages/infuse/bootstrap)
-[![Total Downloads](https://poser.pugx.org/infuse/bootstrap/downloads.png)](https://packagist.org/packages/infuse/bootstrap)
-[![HHVM Status](http://hhvm.h4cc.de/badge/infuse/bootstrap.svg)](http://hhvm.h4cc.de/package/infuse/bootstrap)
+[![Build Status](https://travis-ci.org/infusephp/bootstrap.svg?branch=master&style=flat)](https://travis-ci.org/infusephp/bootstrap)
+[![Coverage Status](https://coveralls.io/repos/infusephp/bootstrap/badge.svg?style=flat)](https://coveralls.io/r/infusephp/bootstrap)
+[![Latest Stable Version](https://poser.pugx.org/infuse/bootstrap/v/stable.svg?style=flat)](https://packagist.org/packages/infuse/bootstrap)
+[![Total Downloads](https://poser.pugx.org/infuse/bootstrap/downloads.svg?style=flat)](https://packagist.org/packages/infuse/bootstrap)
+[![HHVM Status](http://hhvm.h4cc.de/badge/infuse/bootstrap.svg?style=flat)](http://hhvm.h4cc.de/package/infuse/bootstrap)
 
-Bootstrap for Infuse Framework
+Infuse Framework is a modular framework for building modern applications in PHP
 
 ## Requirements
 
-- PHP 5.4+ or HHVM 3.3+
+- PHP 5.4+, PHP 7, or HHVM 3.3+
 
 ## Installation
 
@@ -19,6 +19,14 @@ Install the package with [composer](http://getcomposer.org):
 
 ```
 composer require infuse/bootstrap
+```
+
+## Tests
+
+Use phpunit to run the included tests:
+
+```
+phpunit
 ```
 
 ## Contributing
