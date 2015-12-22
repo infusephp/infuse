@@ -36,13 +36,15 @@ class Test implements PHPUnit_Framework_TestListener
             $config = [];
         }
 
+        // TODO a test environment configuration should be used instead
         $config['logger']['enabled'] = false;
+        ini_set('display_errors', 1);
 
         self::$app = new Application($config);
 
-        ini_set('display_errors', 1);
-
         /* Create a test user and sign in */
+        // TODO this should be moved to a separate listener
+        // in the auth module
         if (class_exists('App\Users\Models\User')) {
             $user = new User();
             $testInfo = [
@@ -68,7 +70,7 @@ class Test implements PHPUnit_Framework_TestListener
             self::$app['user'] = new User($user->id(), true);
         }
 
-        // TODO custom listeners should be used instead
+        // TODO a test environment configuration should be used instead
         self::$app['config']->set('email.type', 'nop');
     }
 
