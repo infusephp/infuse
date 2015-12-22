@@ -12,10 +12,6 @@ namespace Infuse;
 
 use Pimple\Container;
 
-if (!defined('INFUSE_BASE_DIR')) {
-    die('INFUSE_BASE_DIR has not been defined!');
-}
-
 class Application extends Container
 {
     protected static $baseConfig = [
@@ -37,13 +33,6 @@ class Application extends Container
         'sessions' => [
             'enabled' => false,
         ],
-        'dirs' => [
-            'app' => INFUSE_BASE_DIR.'/app',
-            'assets' => INFUSE_BASE_DIR.'/assets',
-            'public' => INFUSE_BASE_DIR.'/public',
-            'temp' => INFUSE_BASE_DIR.'/temp',
-            'views' => INFUSE_BASE_DIR.'/views',
-        ],
         'console' => [
             'commands' => [],
         ],
@@ -55,7 +44,24 @@ class Application extends Container
 
         /* Load Configuration */
 
-        $settings = array_replace_recursive(static::$baseConfig, $settings);
+        if (!defined('INFUSE_BASE_DIR')) {
+            die('INFUSE_BASE_DIR has not been defined!');
+        }
+
+        $configWithDirs = [
+            'dirs' => [
+                'app' => INFUSE_BASE_DIR.'/app',
+                'assets' => INFUSE_BASE_DIR.'/assets',
+                'public' => INFUSE_BASE_DIR.'/public',
+                'temp' => INFUSE_BASE_DIR.'/temp',
+                'views' => INFUSE_BASE_DIR.'/views',
+            ],
+        ];
+
+        $settings = array_replace_recursive(
+            static::$baseConfig,
+            $configWithDirs,
+            $settings);
 
         $config = new Config($settings);
         $this['config'] = $config;
