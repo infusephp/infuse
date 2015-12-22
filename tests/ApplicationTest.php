@@ -24,150 +24,58 @@ class ApplicationTest extends PHPUnit_Framework_TestCase
         $expected = [
             'test' => true,
             'site' => [
-                'hostname' => 'localhost', ],
-            'assets' => [
-                'dirs' => [
-                    '/public', ], ], ];
+                'ssl' => false,
+                'port' => 80,
+                'production-level' => false,
+                'environment' => 'development',
+                'language' => 'en',
+            ],
+            'services' => [
+                'errors' => 'Infuse\Services\ErrorStack',
+                'locale' => 'Infuse\Services\Locale',
+                'logger' => 'Infuse\Services\Logger',
+                'router' => 'Infuse\Services\Router',
+                'view_engine' => 'Infuse\Services\ViewEngine',
+            ],
+            'sessions' => [
+                'enabled' => false,
+            ],
+            'dirs' => [
+                'app' => INFUSE_BASE_DIR.'/app',
+                'assets' => INFUSE_BASE_DIR.'/assets',
+                'public' => INFUSE_BASE_DIR.'/public',
+                'temp' => INFUSE_BASE_DIR.'/temp',
+                'views' => INFUSE_BASE_DIR.'/views',
+            ],
+        ];
 
         $config = $app['config'];
         $this->assertInstanceOf('Infuse\Config', $config);
-        $this->assertEquals($expected, $config->get());
+        $this->assertEquals($expected, $config->all());
     }
 
-    public function testLogger()
+    public function testDefaultServices()
     {
-        $app = new Application(['logger' => ['enabled' => true]]);
-
-        $this->assertInstanceOf('Monolog\Logger', $app['logger']);
-    }
-
-    public function testLocale()
-    {
-        $app = new Application([
+        $config = [
             'site' => [
-                'language' => 'french', ], ]);
+                'hostname' => 'example.com',
+                'ssl' => true,
+            ],
+        ];
 
-        $locale = $app['locale'];
-        $this->assertInstanceOf('Infuse\Locale', $locale);
-        $this->assertEquals('french', $locale->getLocale());
-    }
+        $app = new Application($config);
 
-    public function testDatabase()
-    {
-        $app = new Application([
-            'database' => [
-                'type' => 'mysql',
-                'host' => 'localhost',
-                'name' => 'mydb',
-                'user' => 'root',
-                'password' => '', ], ]);
-
-        $db = $app['db'];
-        $this->assertInstanceOf('JAQB\QueryBuilder', $db);
-
-        $pdo = $db->getPDO();
-        $this->assertInstanceOf('PDO', $pdo);
-        $this->assertEquals(PDO::ERRMODE_EXCEPTION, $pdo->getAttribute(PDO::ATTR_ERRMODE));
-
-        $app = new Application([
-            'site' => [
-                'production-level' => true, ],
-            'database' => [
-                'dsn' => 'mysql:host=localhost;dbname=mydb',
-                'user' => 'root',
-                'password' => '', ], ]);
-
-        $db = $app['db'];
-        $this->assertInstanceOf('JAQB\QueryBuilder', $db);
-        $pdo = $db->getPDO();
-        $this->assertInstanceOf('PDO', $pdo);
-        $this->assertEquals(PDO::ERRMODE_WARNING, $pdo->getAttribute(PDO::ATTR_ERRMODE));
-    }
-
-    public function testRedis()
-    {
-        $this->markTestIncomplete();
-    }
-
-    public function testMemcache()
-    {
-        $this->markTestIncomplete();
-    }
-
-    public function testReq()
-    {
-        $app = new Application();
-
-        $this->assertInstanceOf('Infuse\Request', $app['req']);
-    }
-
-    public function testResponse()
-    {
-        $app = new Application();
-
-        $this->assertInstanceOf('Infuse\Response', $app['res']);
-    }
-
-    public function testQueue()
-    {
-        $app = new Application(['queue' => [
-            'driver' => 'Infuse\Queue\Driver\SynchronousDriver', ]]);
-
-        $this->assertInstanceOf('Infuse\Queue\Driver\SynchronousDriver', Queue::getDriver());
-    }
-
-    public function testModel()
-    {
-        $app = new Application(['models' => [
-            'driver' => 'Infuse\Model\Driver\DatabaseDriver',
-            'cache_ttl' => 30, ]]);
-
-        $this->assertInstanceOf('Infuse\Model\Driver\DatabaseDriver', Model::getDriver());
-    }
-
-    public function testErrorStack()
-    {
-        $app = new Application();
+        $this->assertEquals('https://example.com/', $app['base_url']);
 
         $this->assertInstanceOf('Infuse\ErrorStack', $app['errors']);
-    }
-
-    public function testViewEngine()
-    {
-        $app = new Application();
+        $this->assertInstanceOf('Monolog\Logger', $app['logger']);
+        $this->assertInstanceOf('Infuse\Locale', $app['locale']);
+        $this->assertInstanceOf('Infuse\Router', $app['router']);
         $this->assertInstanceOf('Infuse\ViewEngine\PHP', $app['view_engine']);
 
-        $app = new Application(['views' => [
-            'engine' => 'Infuse\ViewEngine\Smarty', ]]);
-        $this->assertInstanceOf('Infuse\ViewEngine\Smarty', $app['view_engine']);
-    }
-
-    public function testRouter()
-    {
-        $app = new Application();
-
-        $this->assertInstanceOf('Infuse\Router', $app['router']);
-    }
-
-    public function testRoutes()
-    {
-        $config = ['routes' => ['test']];
-        $app = new Application($config);
-
-        $this->assertEquals(['test'], $app['router']->getRoutes());
-    }
-
-    public function testMiddleware()
-    {
-        $config = ['modules' => ['middleware' => ['test']]];
-        $app = new Application($config);
-
-        $this->assertEquals(['test'], $app->getMiddleware());
-    }
-
-    public function testGo()
-    {
-        $this->markTestIncomplete();
+        // test magic methods
+        $this->assertTrue(isset($app->errors));
+        $this->assertInstanceOf('Infuse\ErrorStack', $app->errors);
     }
 
     public function testGet()
@@ -177,7 +85,7 @@ class ApplicationTest extends PHPUnit_Framework_TestCase
 
         $this->assertEquals($app, $app->get('/users/{id}', $handler));
 
-        $this->assertEquals(['get /users/{id}' => $handler], $app['router']->getRoutes());
+        $this->assertEquals([['GET', '/users/{id}', $handler]], $app['router']->getRoutes());
     }
 
     public function testPost()
@@ -187,7 +95,7 @@ class ApplicationTest extends PHPUnit_Framework_TestCase
 
         $this->assertEquals($app, $app->post('/users', $handler));
 
-        $this->assertEquals(['post /users' => $handler], $app['router']->getRoutes());
+        $this->assertEquals([['POST', '/users', $handler]], $app['router']->getRoutes());
     }
 
     public function testPut()
@@ -197,7 +105,7 @@ class ApplicationTest extends PHPUnit_Framework_TestCase
 
         $this->assertEquals($app, $app->put('/users/{id}', $handler));
 
-        $this->assertEquals(['put /users/{id}' => $handler], $app['router']->getRoutes());
+        $this->assertEquals([['PUT', '/users/{id}', $handler]], $app['router']->getRoutes());
     }
 
     public function testDelete()
@@ -207,7 +115,7 @@ class ApplicationTest extends PHPUnit_Framework_TestCase
 
         $this->assertEquals($app, $app->delete('/users/{id}', $handler));
 
-        $this->assertEquals(['delete /users/{id}' => $handler], $app['router']->getRoutes());
+        $this->assertEquals([['DELETE', '/users/{id}', $handler]], $app['router']->getRoutes());
     }
 
     public function testPatch()
@@ -217,7 +125,7 @@ class ApplicationTest extends PHPUnit_Framework_TestCase
 
         $this->assertEquals($app, $app->patch('/users/{id}', $handler));
 
-        $this->assertEquals(['patch /users/{id}' => $handler], $app['router']->getRoutes());
+        $this->assertEquals([['PATCH', '/users/{id}', $handler]], $app['router']->getRoutes());
     }
 
     public function testOptions()
@@ -227,7 +135,7 @@ class ApplicationTest extends PHPUnit_Framework_TestCase
 
         $this->assertEquals($app, $app->options('/users/{id}', $handler));
 
-        $this->assertEquals(['options /users/{id}' => $handler], $app['router']->getRoutes());
+        $this->assertEquals([['OPTIONS', '/users/{id}', $handler]], $app['router']->getRoutes());
     }
 
     public function testMap()
@@ -237,7 +145,25 @@ class ApplicationTest extends PHPUnit_Framework_TestCase
 
         $this->assertEquals($app, $app->map('GET', '/users/{id}', $handler));
 
-        $this->assertEquals(['get /users/{id}' => $handler], $app['router']->getRoutes());
+        $this->assertEquals([['GET', '/users/{id}', $handler]], $app['router']->getRoutes());
+    }
+
+    public function testGetMiddleware()
+    {
+        $config = ['modules' => ['middleware' => ['test']]];
+        $app = new Application($config);
+
+        $this->assertEquals(['test'], $app->getMiddleware());
+    }
+
+    public function testHandleRequest()
+    {
+        $this->markTestIncomplete();
+    }
+
+    public function testRun()
+    {
+        $this->markTestIncomplete();
     }
 
     public function testGetConsole()

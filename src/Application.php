@@ -10,7 +10,6 @@
  */
 namespace Infuse;
 
-use Infuse\Utility as U;
 use Pimple\Container;
 
 if (!defined('INFUSE_BASE_DIR')) {
@@ -28,12 +27,10 @@ class Application extends Container
             'language' => 'en',
         ],
         'services' => [
-            'db' => 'Infuse\Services\Database',
+            // these services are required but can be overriden
+            'errors' => 'Infuse\Services\ErrorStack',
             'locale' => 'Infuse\Services\Locale',
             'logger' => 'Infuse\Services\Logger',
-            'memcache' => 'Infuse\Services\Memcache',
-            'pdo' => 'Infuse\Services\Pdo',
-            'redis' => 'Infuse\Services\Redis',
             'router' => 'Infuse\Services\Router',
             'view_engine' => 'Infuse\Services\ViewEngine',
         ],
@@ -75,18 +72,8 @@ class Application extends Container
         /* Services  */
 
         foreach ($config->get('services') as $name => $class) {
-            if (!$class) {
-                continue;
-            }
-
             $this[$name] = new $class($this);
         }
-
-        /* Error Stack */
-
-        $this['errors'] = function ($app) {
-            return new ErrorStack($app);
-        };
 
         /* Base URL */
 
@@ -316,7 +303,7 @@ class Application extends Container
         session_start();
 
         // fix the session cookie
-        U::set_cookie_fix_domain(
+        Utility::set_cookie_fix_domain(
             session_name(),
             session_id(),
             time() + $lifetime,

@@ -2,7 +2,7 @@
 
 namespace Infuse\Services;
 
-use Infuse\Utility as U;
+use PDOException;
 
 class Pdo
 {
@@ -17,12 +17,12 @@ class Pdo
             $dsn = $dbSettings['type'].':host='.$dbSettings['host'].';dbname='.$dbSettings['name'];
         }
 
-        $user = U::array_value($dbSettings, 'user');
-        $password = U::array_value($dbSettings, 'password');
+        $user = array_value($dbSettings, 'user');
+        $password = array_value($dbSettings, 'password');
 
         try {
             $pdo = new \PDO($dsn, $user, $password);
-        } catch (\Exception $e) {
+        } catch (PDOException $e) {
             $app['logger']->emergency($e);
             die('Could not connect to database.');
         }

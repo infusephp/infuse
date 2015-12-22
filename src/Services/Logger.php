@@ -18,36 +18,51 @@ class Logger
 
     public function __construct($app)
     {
-        $config = $app['config'];
-        $handlers = [];
-        $loggingEnabled = $config->get('logger.enabled');
-
-        if ($loggingEnabled) {
-            $webProcessor = new WebProcessor();
-            $webProcessor->addExtraField('user_agent', 'HTTP_USER_AGENT');
-
-            $processors = [
-                $webProcessor,
-                new IntrospectionProcessor(), ];
-
-            // firephp
-            if (!$config->get('site.production-level')) {
-                $handlers[] = new FirePHPHandler();
-            }
-        } else {
-            $processors = [];
-            $handlers[] = new NullHandler();
-        }
-
-        $this->logger = new Monolog($config->get('site.hostname'), $handlers, $processors);
-
-        if ($loggingEnabled) {
-            ErrorHandler::register($this->logger);
+        // Install the PHP error handler now only if logging
+        // is enabled. Otherwise we don't need to instantiate the
+        // logger until it has been requested through the DI container.
+        if ($this->hasLogging($app)) {
+            ErrorHandler::register($this->getLogger($app));
         }
     }
 
-    public function __invoke()
+    public function __invoke($app)
     {
+        return $this->getLogger($app);
+    }
+
+    private function hasLogging($app)
+    {
+        return $app['config']->get('logger.enabled');
+    }
+
+    private function getLogger($app)
+    {
+        if (!$this->logger) {
+            $handlers = [];
+            $config = $app['config'];
+
+            if ($this->hasLogging($app)) {
+                $webProcessor = new WebProcessor();
+                $webProcessor->addExtraField('user_agent', 'HTTP_USER_AGENT');
+
+                $processors = [
+                    $webProcessor,
+                    new IntrospectionProcessor(),
+                ];
+
+                // firephp
+                if (!$config->get('site.production-level')) {
+                    $handlers[] = new FirePHPHandler();
+                }
+            } else {
+                $processors = [];
+                $handlers[] = new NullHandler();
+            }
+
+            $this->logger = new Monolog($config->get('site.hostname'), $handlers, $processors);
+        }
+
         return $this->logger;
     }
 }
