@@ -1,8 +1,8 @@
 {
-	"name": "infuse/bootstrap",
-	"description": "Bootstrap for Infuse Framework",
+	"name": "infuse/infuse",
+	"description": "Modular framework for building modern applications",
 	"type": "library",
-	"keywords": ["infuse","framework","bootstrap"],
+	"keywords": ["infuse","framework"],
 	"license": "MIT",
 	"authors": [
 		{
@@ -12,8 +12,8 @@
 		}
 	],
 	"support": {
-		"issues": "https://github.com/infusephp/bootstrap/issues",
-		"source": "https://github.com/infusephp/bootstrap"
+		"issues": "https://github.com/infusephp/infuse/issues",
+		"source": "https://github.com/infusephp/infuse"
 	},
     "autoload": {
         "psr-4": {
