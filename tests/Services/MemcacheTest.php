@@ -13,6 +13,15 @@ use Infuse\Services\Memcache;
 
 class MemcacheTest extends PHPUnit_Framework_TestCase
 {
+    protected function setUp()
+    {
+        if (!extension_loaded('memcache')) {
+            $this->markTestSkipped(
+              'The Memcache extension is not available.'
+            );
+        }
+    }
+
     public function testInvoke()
     {
         $config = [

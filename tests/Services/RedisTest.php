@@ -13,6 +13,15 @@ use Infuse\Services\Redis;
 
 class RedisTest extends PHPUnit_Framework_TestCase
 {
+    protected function setUp()
+    {
+        if (!extension_loaded('redis')) {
+            $this->markTestSkipped(
+              'The Redis extension is not available.'
+            );
+        }
+    }
+
     public function testInvoke()
     {
         $config = [
