@@ -15,7 +15,6 @@ use Infuse\Response;
 use Infuse\Request;
 use Infuse\Utility as U;
 use Infuse\View;
-use Infuse\Queue;
 use Pimple\Container;
 
 if (!defined('INFUSE_BASE_DIR')) {
@@ -92,13 +91,6 @@ class App extends Container
         $this['errors'] = function ($app) {
             return new ErrorStack($app);
         };
-
-        /* Queue */
-
-        $class = $config->get('queue.driver');
-        if ($class) {
-            Queue::setDriver(new $class($this));
-        }
 
         /* Base URL */
 
