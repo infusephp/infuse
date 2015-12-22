@@ -23,7 +23,7 @@
     <whitelist addUncoveredFilesFromWhitelist="true">
       <directory suffix=".php">src</directory>
       <exclude>
-        <directory suffix="TestBootstrap.php">src</directory>
+        <file>src/Test.php</file>
       </exclude>
     </whitelist>
   </filter>
