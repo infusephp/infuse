@@ -36,6 +36,8 @@ class OptimizeCommand extends Command
             $output->writeln('The route table could be cached with the router.cacheFile setting');
         }
 
+        $this->cacheConfig($output);
+
         return 0;
     }
 
@@ -55,11 +57,21 @@ class OptimizeCommand extends Command
     {
         $output->writeln('-- Caching configuration');
 
+        // build a hard-coded version of the application configuration
+        // that does not include any configuration building logic
         $config = "<?php\n// THIS FILE IS AUTO-GENERATED\n";
         $config .= 'return ';
-        $config .= var_export($this->app['config']->all());
+        $config .= var_export($this->app['config']->all(), true);
+        $config .= ';';
 
         $configFile = INFUSE_BASE_DIR.'/config.php';
+        $originalFile = INFUSE_BASE_DIR.'/config.original.php';
+        // move the original config file to a backup
+        if (file_exists($configFile) && !file_exists($originalFile)) {
+            rename($configFile, $originalFile);
+        }
+
+        // flush out 
         if (file_put_contents($configFile, $config)) {
             $output->writeln('Success!');
         } else {
