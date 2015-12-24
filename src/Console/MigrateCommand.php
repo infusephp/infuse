@@ -10,7 +10,7 @@
  */
 namespace Infuse\Console;
 
-use Infuse\Application as App;
+use Infuse\HasApp;
 use JAQB\Session as DatabaseSession;
 use ReflectionClass;
 use Symfony\Component\Console\Command\Command;
@@ -20,7 +20,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class MigrateCommand extends Command
 {
-    use \InjectApp;
+    use HasApp;
 
     protected function configure()
     {
