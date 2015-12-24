@@ -49,4 +49,20 @@ class OptimizeCommand extends Command
 
         $output->writeln('Success!');
     }
+
+    private function cacheConfig(OutputInterface $output)
+    {
+        $output->writeln('-- Caching configuration');
+
+        $config = "<?php\n// THIS FILE IS AUTO-GENERATED\n";
+        $config .= 'return ';
+        $config .= var_export($this->app['config']->all());
+
+        $configFile = INFUSE_BASE_DIR.'/config.php';
+        if (file_put_contents($configFile, $config)) {
+            $output->writeln('Success!');
+        } else {
+            $output->writeln('Could not write config.php');
+        }
+    }
 }
