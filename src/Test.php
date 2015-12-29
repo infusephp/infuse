@@ -11,6 +11,9 @@
 namespace Infuse;
 
 use App\Users\Models\User;
+use PHPUnit_Framework_Test;
+use PHPUnit_Framework_TestListener;
+use PHPUnit_Framework_TestSuite;
 
 class Test implements PHPUnit_Framework_TestListener
 {
