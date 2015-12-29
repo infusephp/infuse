@@ -14,13 +14,16 @@ use Pimple\Container;
 
 class Application extends Container
 {
+    const ENV_PRODUCTION = 'production';
+    const ENV_DEVELOPMENT = 'development';
+    const ENV_TEST = 'test';
+
     protected static $baseConfig = [
-        'site' => [
+        'app' => [
+            'environment' => self::ENV_DEVELOPMENT,
+            'title' => 'Infuse',
             'ssl' => false,
             'port' => 80,
-            'production-level' => false,
-            'environment' => 'development',
-            'language' => 'en',
         ],
         'services' => [
             // these services are required but can be overriden
@@ -32,6 +35,9 @@ class Application extends Container
         ],
         'sessions' => [
             'enabled' => false,
+        ],
+        'i18n' => [
+            'locale' => 'en',
         ],
         'console' => [
             'commands' => [],
@@ -66,34 +72,38 @@ class Application extends Container
         $config = new Config($settings);
         $this['config'] = $config;
 
+        /* Environment */
+
+        $this['environment'] = $environment = $config->get('app.environment');
+
         /* Error Reporting */
 
-        ini_set('display_errors', !$config->get('site.production-level'));
+        ini_set('display_errors', $environment !== self::ENV_PRODUCTION);
         ini_set('log_errors', 1);
         error_reporting(E_ALL | E_STRICT);
 
         /* Time Zone */
 
-        if ($tz = $config->get('site.time-zone')) {
+        if ($tz = $config->get('app.time-zone')) {
             date_default_timezone_set($tz);
         }
+
+        /* Base URL */
+
+        $this['base_url'] = function () use ($config) {
+            $url = (($config->get('app.ssl')) ? 'https' : 'http').'://';
+            $url .= $config->get('app.hostname');
+            $port = $config->get('app.port');
+            $url .= ((!in_array($port, [0, 80, 443])) ? ':'.$port : '').'/';
+
+            return $url;
+        };
 
         /* Services  */
 
         foreach ($config->get('services') as $name => $class) {
             $this[$name] = new $class($this);
         }
-
-        /* Base URL */
-
-        $this['base_url'] = function () use ($config) {
-            $url = (($config->get('site.ssl')) ? 'https' : 'http').'://';
-            $url .= $config->get('site.hostname');
-            $port = $config->get('site.port');
-            $url .= ((!in_array($port, [0, 80, 443])) ? ':'.$port : '').'/';
-
-            return $url;
-        };
     }
 
     ////////////////////////
@@ -236,8 +246,8 @@ class Application extends Container
     {
         // set host name from request if not already set
         $config = $this['config'];
-        if (!$config->get('site.hostname')) {
-            $config->set('site.hostname', $req->host());
+        if (!$config->get('app.hostname')) {
+            $config->set('app.hostname', $req->host());
         }
 
         // start a new session
@@ -282,14 +292,14 @@ class Application extends Container
         }
 
         $lifetime = $config->get('sessions.lifetime');
-        $hostname = $config->get('site.hostname');
+        $hostname = $config->get('app.hostname');
         ini_set('session.use_trans_sid', false);
         ini_set('session.use_only_cookies', true);
         ini_set('url_rewriter.tags', '');
         ini_set('session.gc_maxlifetime', $lifetime);
 
         // set the session name
-        $sessionTitle = $config->get('site.title').'-'.$hostname;
+        $sessionTitle = $config->get('app.title').'-'.$hostname;
         $safeSessionTitle = str_replace(['.', ' ', "'", '"'], ['', '_', '', ''], $sessionTitle);
         session_name($safeSessionTitle);
 

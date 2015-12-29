@@ -12,7 +12,6 @@ namespace Infuse\Services;
 
 use Monolog\ErrorHandler;
 use Monolog\Handler\NullHandler;
-use Monolog\Handler\FirePHPHandler;
 use Monolog\Processor\IntrospectionProcessor;
 use Monolog\Processor\WebProcessor;
 use Monolog\Logger as Monolog;
@@ -58,11 +57,6 @@ class Logger
                     $webProcessor,
                     new IntrospectionProcessor(),
                 ];
-
-                // firephp
-                if (!$config->get('site.production-level')) {
-                    $handlers[] = new FirePHPHandler();
-                }
             } else {
                 $processors = [];
                 $handlers[] = new NullHandler();

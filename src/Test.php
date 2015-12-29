@@ -36,9 +36,10 @@ class Test implements PHPUnit_Framework_TestListener
             $config = [];
         }
 
-        // TODO a test environment configuration should be used instead
+        $config['app']['environment'] = Application::ENV_TEST;
+
+        // TODO the test environment configuration should set this instead
         $config['logger']['enabled'] = false;
-        ini_set('display_errors', 1);
 
         self::$app = new Application($config);
 

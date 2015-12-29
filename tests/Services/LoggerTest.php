@@ -16,7 +16,7 @@ class LoggerTest extends PHPUnit_Framework_TestCase
     public function testInvoke()
     {
         $config = [
-            'site' => [
+            'app' => [
                 'hostname' => 'example.com',
             ],
             'logger' => [
@@ -33,7 +33,7 @@ class LoggerTest extends PHPUnit_Framework_TestCase
     public function testInvokeDisabled()
     {
         $config = [
-            'site' => [
+            'app' => [
                 'hostname' => 'example.com',
             ],
             'logger' => [

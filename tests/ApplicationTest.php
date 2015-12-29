@@ -23,12 +23,11 @@ class ApplicationTest extends PHPUnit_Framework_TestCase
 
         $expected = [
             'test' => true,
-            'site' => [
+            'app' => [
+                'title' => 'Infuse',
                 'ssl' => false,
                 'port' => 80,
-                'production-level' => false,
                 'environment' => 'development',
-                'language' => 'en',
             ],
             'services' => [
                 'errors' => 'Infuse\Services\ErrorStack',
@@ -47,6 +46,9 @@ class ApplicationTest extends PHPUnit_Framework_TestCase
                 'temp' => INFUSE_BASE_DIR.'/temp',
                 'views' => INFUSE_BASE_DIR.'/views',
             ],
+            'i18n' => [
+                'locale' => 'en',
+            ],
             'console' => [
                 'commands' => [],
             ],
@@ -60,7 +62,7 @@ class ApplicationTest extends PHPUnit_Framework_TestCase
     public function testDefaultServices()
     {
         $config = [
-            'site' => [
+            'app' => [
                 'hostname' => 'example.com',
                 'ssl' => true,
             ],
@@ -69,6 +71,7 @@ class ApplicationTest extends PHPUnit_Framework_TestCase
         $app = new Application($config);
 
         $this->assertEquals('https://example.com/', $app['base_url']);
+        $this->assertEquals('development', $app['environment']);
 
         $this->assertInstanceOf('Infuse\ErrorStack', $app['errors']);
         $this->assertInstanceOf('Monolog\Logger', $app['logger']);

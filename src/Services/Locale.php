@@ -17,7 +17,7 @@ class Locale
         $config = $app['config'];
         $assetsDir = $config->get('dirs.assets');
 
-        $locale = new \Infuse\Locale($config->get('site.language'));
+        $locale = new \Infuse\Locale($config->get('i18n.locale'));
         $locale->setLocaleDataDir("$assetsDir/locales");
 
         return $locale;

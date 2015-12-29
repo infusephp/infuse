@@ -15,11 +15,17 @@ class LocaleTest extends PHPUnit_Framework_TestCase
 {
     public function testInvoke()
     {
-        $app = new Application();
+        $config = [
+            'i18n' => [
+                'locale' => 'en-us',
+            ],
+        ];
+
+        $app = new Application($config);
         $service = new Locale();
         $locale = $service($app);
 
         $this->assertInstanceOf('Infuse\Locale', $locale);
-        $this->assertEquals('en', $locale->getLocale());
+        $this->assertEquals('en-us', $locale->getLocale());
     }
 }

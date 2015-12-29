@@ -10,6 +10,7 @@
  */
 namespace Infuse\Services;
 
+use Infuse\Application;
 use PDOException;
 
 class Pdo
@@ -35,7 +36,7 @@ class Pdo
             die('Could not connect to database.');
         }
 
-        if ($config->get('site.production-level')) {
+        if ($app->environment === Application::ENV_PRODUCTION) {
             $pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_WARNING);
         } else {
             $pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);

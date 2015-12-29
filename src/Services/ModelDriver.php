@@ -33,7 +33,7 @@ class ModelDriver
         Model::setDriver($this->driver);
 
         // used for password hasing
-        Validate::configure(['salt' => $config->get('site.salt')]);
+        Validate::configure(['salt' => $config->get('app.salt')]);
     }
 
     public function __invoke()
