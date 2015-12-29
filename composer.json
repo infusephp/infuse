@@ -28,11 +28,11 @@
 		"symfony/console": "~2.7"
 	},
 	"require-dev": {
-		"smarty/smarty": ">=v3.1.19",
+		"smarty/smarty": "~v3.1",
 		"pulsar/pulsar": "~0.1",
-		"robmorgan/phinx": "~0.4",
-		"mockery/mockery": "~0.9",
-		"satooshi/php-coveralls": "dev-master"
+		"robmorgan/phinx": "~0.5",
+		"mockery/mockery": "1.0.x-dev",
+		"satooshi/php-coveralls": "0.6.1"
 	},
 	"suggest": {
 		"ext-redis": "*",
