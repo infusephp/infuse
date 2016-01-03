@@ -322,7 +322,7 @@ class Application extends Container
         session_start();
 
         // fix the session cookie
-        Utility::set_cookie_fix_domain(
+        Utility::setCookieFixDomain(
             session_name(),
             session_id(),
             time() + $lifetime,
