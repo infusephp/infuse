@@ -22,7 +22,7 @@
     },
 	"require": {
 		"php": ">=5.4.0",
-		"pimple/pimple": ">=v2.1.0",
+		"pimple/pimple": "~3.0",
 		"infuse/libs": "~0.5",
 		"monolog/monolog": "1.*",
 		"symfony/console": "~2.7"
