@@ -62,7 +62,7 @@ class Logger
                 $handlers[] = new NullHandler();
             }
 
-            $this->logger = new Monolog($config->get('site.hostname'), $handlers, $processors);
+            $this->logger = new Monolog($config->get('app.hostname'), $handlers, $processors);
         }
 
         return $this->logger;
