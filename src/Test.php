@@ -10,7 +10,6 @@
  */
 namespace Infuse;
 
-use App\Users\Models\User;
 use Exception;
 use PHPUnit_Framework_AssertionFailedError;
 use PHPUnit_Framework_Test;
@@ -24,60 +23,16 @@ class Test implements PHPUnit_Framework_TestListener
      */
     public static $app;
 
-    /**
-     * @var string
-     */
-    public static $userEmail = 'test@example.com';
-
-    /**
-     * @var string
-     */
-    public static $userPassword = 'testpassword';
-
     public function __construct()
     {
-        $config = @include 'config.php';
-        if (!$config) {
-            $config = [];
+        $config = [];
+        if (file_exists('config.php')) {
+            $config = include 'config.php';
         }
 
-        $config['app']['environment'] = Application::ENV_TEST;
-
-        // TODO the test environment configuration should set this instead
-        $config['logger']['enabled'] = false;
+        array_set($config, 'app.environment', Application::ENV_TEST);
 
         self::$app = new Application($config);
-
-        /* Create a test user and sign in */
-        // TODO this should be moved to a separate listener
-        // in the auth module
-        if (class_exists('App\Users\Models\User')) {
-            $user = new User();
-            $testInfo = [
-                'user_email' => self::$userEmail,
-                'user_password' => [self::$userPassword, self::$userPassword],
-            ];
-            if (property_exists($user, 'testUser')) {
-                $testInfo = array_replace($testInfo, $user::$testUser);
-            } else {
-                $testInfo = array_replace($testInfo, [
-                    'first_name' => 'Bob',
-                    'ip' => '127.0.0.1', ]);
-            }
-
-            $existingUser = User::where('user_email', $testInfo['user_email'])
-                ->first();
-            if ($existingUser) {
-                $existingUser->grantAllPermissions()->delete();
-            }
-
-            $success = $user->create($testInfo);
-
-            self::$app['user'] = new User($user->id(), true);
-        }
-
-        // TODO a test environment configuration should be used instead
-        self::$app['config']->set('email.type', 'nop');
     }
 
     public function addError(PHPUnit_Framework_Test $test, Exception $e, $time)
@@ -102,11 +57,6 @@ class Test implements PHPUnit_Framework_TestListener
 
     public function startTest(PHPUnit_Framework_Test $test)
     {
-        // TODO this should be moved to a separate listener
-        // in the auth module
-        if (class_exists('App\Users\Models\User')) {
-            self::$app['user']->disableSU();
-        }
     }
 
     public function endTest(PHPUnit_Framework_Test $test, $time)
