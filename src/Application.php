@@ -27,7 +27,6 @@ class Application extends Container
         ],
         'services' => [
             // these services are required but can be overriden
-            'errors' => 'Infuse\Services\ErrorStack',
             'locale' => 'Infuse\Services\Locale',
             'logger' => 'Infuse\Services\Logger',
             'router' => 'Infuse\Services\Router',

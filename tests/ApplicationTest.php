@@ -30,7 +30,6 @@ class ApplicationTest extends PHPUnit_Framework_TestCase
                 'environment' => 'development',
             ],
             'services' => [
-                'errors' => 'Infuse\Services\ErrorStack',
                 'locale' => 'Infuse\Services\Locale',
                 'logger' => 'Infuse\Services\Logger',
                 'router' => 'Infuse\Services\Router',
@@ -73,15 +72,14 @@ class ApplicationTest extends PHPUnit_Framework_TestCase
         $this->assertEquals('https://example.com/', $app['base_url']);
         $this->assertEquals('development', $app['environment']);
 
-        $this->assertInstanceOf('Infuse\ErrorStack', $app['errors']);
         $this->assertInstanceOf('Monolog\Logger', $app['logger']);
         $this->assertInstanceOf('Infuse\Locale', $app['locale']);
         $this->assertInstanceOf('Infuse\Router', $app['router']);
         $this->assertInstanceOf('Infuse\ViewEngine\PHP', $app['view_engine']);
 
         // test magic methods
-        $this->assertTrue(isset($app->errors));
-        $this->assertInstanceOf('Infuse\ErrorStack', $app->errors);
+        $this->assertTrue(isset($app->logger));
+        $this->assertInstanceOf('Monolog\Logger', $app->logger);
     }
 
     public function testGet()
