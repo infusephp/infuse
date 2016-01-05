@@ -27,4 +27,14 @@ trait HasApp
 
         return $this;
     }
+
+    /**
+     * Gets the application instance.
+     *
+     * @return Application
+     */
+    public function getApp()
+    {
+        return $this->app;
+    }
 }
