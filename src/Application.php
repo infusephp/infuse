@@ -82,12 +82,6 @@ class Application extends Container
         ini_set('log_errors', 1);
         error_reporting(E_ALL | E_STRICT);
 
-        /* Time Zone */
-
-        if ($tz = $config->get('app.time-zone')) {
-            date_default_timezone_set($tz);
-        }
-
         /* Base URL */
 
         $this['base_url'] = function () use ($config) {
