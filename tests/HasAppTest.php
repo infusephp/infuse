@@ -8,11 +8,19 @@
  * @copyright 2015 Jared King
  * @license MIT
  */
+use Infuse\Application;
 use Infuse\HasApp;
 
 class HasAppTest extends PHPUnit_Framework_TestCase
 {
-    public function testInject()
+    public function testGetDefault()
+    {
+        $app = new Application();
+        $class = new SomeClass();
+        $this->assertEquals($app, $class->getApp());
+    }
+
+    public function testGetApp()
     {
         $app = Mockery::mock('Infuse\Application');
         $class = new SomeClass();
@@ -20,7 +28,6 @@ class HasAppTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($app, $class->getApp());
 
         $class2 = new SomeClass();
-        $this->assertNull($class2->getApp());
         $app2 = Mockery::mock('Infuse\Application');
         $class2->setApp($app2);
         $this->assertTrue($class->getApp() !== $class2->getApp());

@@ -12,6 +12,9 @@ namespace Infuse;
 
 trait HasApp
 {
+    /**
+     * @var Application
+     */
     protected $app;
 
     /**
@@ -43,6 +46,10 @@ trait HasApp
      */
     public function getApp()
     {
+        if (!$this->app) {
+            return Application::getDefault();
+        }
+
         return $this->app;
     }
 }
