@@ -22,3 +22,6 @@ script:
 
 after_script:
     - vendor/bin/coveralls
+
+notifications:
+    email: false
