@@ -17,6 +17,15 @@ class ApplicationTest extends PHPUnit_Framework_TestCase
         date_default_timezone_set('UTC');
     }
 
+    public function testGetDefault()
+    {
+        $app = new Application();
+        $this->assertEquals($app, Application::getDefault());
+
+        $app2 = new Application();
+        $this->assertEquals($app2, Application::getDefault());
+    }
+
     public function testConfig()
     {
         $app = new Application(['test' => true]);

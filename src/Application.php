@@ -18,6 +18,9 @@ class Application extends Container
     const ENV_DEVELOPMENT = 'development';
     const ENV_TEST = 'test';
 
+    /**
+     * @staticvar array
+     */
     protected static $baseConfig = [
         'app' => [
             'environment' => self::ENV_DEVELOPMENT,
@@ -43,6 +46,14 @@ class Application extends Container
         ],
     ];
 
+    /**
+     * @staticvar Application
+     */
+    private static $default;
+
+    /**
+     * @param array $settings
+     */
     public function __construct(array $settings = [])
     {
         parent::__construct();
@@ -97,6 +108,19 @@ class Application extends Container
         foreach ($config->get('services') as $name => $class) {
             $this[$name] = new $class($this);
         }
+
+        // set the last created app instance
+        self::$default = $this;
+    }
+
+    /**
+     * Gets the last created Application instance.
+     *
+     * @return Application
+     */
+    public static function getDefault()
+    {
+        return self::$default;
     }
 
     ////////////////////////
