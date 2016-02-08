@@ -9,6 +9,7 @@
  * @license MIT
  */
 use Infuse\Application;
+use Infuse\Request;
 
 class ApplicationTest extends PHPUnit_Framework_TestCase
 {
@@ -39,6 +40,7 @@ class ApplicationTest extends PHPUnit_Framework_TestCase
                 'environment' => 'development',
             ],
             'services' => [
+                'exception_handler' => 'Infuse\Services\ExceptionHandler',
                 'locale' => 'Infuse\Services\Locale',
                 'logger' => 'Infuse\Services\Logger',
                 'router' => 'Infuse\Services\Router',
@@ -171,7 +173,30 @@ class ApplicationTest extends PHPUnit_Framework_TestCase
 
     public function testHandleRequest()
     {
-        $this->markTestIncomplete();
+        $app = new Application();
+        $router = Mockery::mock();
+        $router->shouldReceive('route');
+        $app['router'] = $router;
+
+        $req = new Request();
+        $res = $app->handleRequest($req);
+        $this->assertInstanceOf('Infuse\Response', $res);
+
+        $this->assertEquals(200, $res->getCode());
+    }
+
+    public function testHandleRequestException()
+    {
+        $app = new Application();
+        $router = Mockery::mock();
+        $router->shouldReceive('route')
+               ->andThrow(new Exception());
+        $app['router'] = $router;
+
+        $req = new Request();
+        $res = $app->handleRequest($req);
+
+        $this->assertEquals(500, $res->getCode());
     }
 
     public function testRun()

@@ -30,6 +30,7 @@ class Application extends Container
         ],
         'services' => [
             // these services are required but can be overriden
+            'exception_handler' => 'Infuse\Services\ExceptionHandler',
             'locale' => 'Infuse\Services\Locale',
             'logger' => 'Infuse\Services\Logger',
             'router' => 'Infuse\Services\Router',
@@ -267,17 +268,17 @@ class Application extends Container
             $config->set('app.hostname', $req->host());
         }
 
-        // start a new session
         $this->startSession($req);
 
-        // create a blank response
         $res = new Response();
 
-        // middleware
-        $this->executeMiddleware($req, $res);
+        try {
+            $this->executeMiddleware($req, $res);
 
-        // route the request
-        $routed = $this['router']->route($this, $req, $res);
+            $this['router']->route($this, $req, $res);
+        } catch (\Exception $e) {
+            $this['exception_handler']($e, $req, $res);
+        }
 
         // HTML Error Pages for 4xx and 5xx responses
         $code = $res->getCode();
