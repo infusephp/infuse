@@ -15,17 +15,25 @@ trait HasApp
     protected $app;
 
     /**
-     * Injects an application instance.
+     * Sets the application instance.
      *
      * @param Application $app container
      *
      * @return self
      */
-    public function injectApp(Application $app)
+    public function setApp(Application $app)
     {
         $this->app = $app;
 
         return $this;
+    }
+
+    /**
+     * @deprecated
+     */
+    public function injectApp(Application $app)
+    {
+        return $this->setApp($app);
     }
 
     /**
