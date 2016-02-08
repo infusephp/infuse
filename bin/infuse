@@ -1,8 +1,19 @@
+#!/usr/bin/env php
 <?php
 
 use Infuse\Application;
 
-define('INFUSE_BASE_DIR', __DIR__);
+// recurse upwards until config.php is found
+$dir = __DIR__;
+while($dir != dirname($dir) && !file_exists("$dir/config.php")) {
+	$dir = dirname($dir);
+}
+
+if (!file_exists("$dir/config.php")) {
+	die("Could not find config.php in this directory or any parent directories.\n");
+}
+
+define('INFUSE_BASE_DIR', $dir);
 set_include_path(get_include_path() . PATH_SEPARATOR . INFUSE_BASE_DIR);
 
 require_once 'vendor/autoload.php';

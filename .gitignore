@@ -7,3 +7,4 @@ Desktop.ini
 ._.DS_Store
 /build
 composer.lock
+/config.php
