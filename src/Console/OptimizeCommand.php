@@ -57,22 +57,30 @@ class OptimizeCommand extends Command
     {
         $output->writeln('-- Caching configuration');
 
+        $configFile = INFUSE_BASE_DIR.'/config.php';
+        $originalConfigFile = INFUSE_BASE_DIR.'/config.original.php';
+
+        // we are going to cache the already loaded config,
+        // unless the loaded config comes from a cached version
+        $settings = $this->app['config']->all();
+        if (file_exists($originalConfigFile)) {
+            $settings = include $originalConfigFile;
+        }
+
         // build a hard-coded version of the application configuration
         // that does not include any configuration building logic
-        $config = "<?php\n// THIS FILE IS AUTO-GENERATED\n";
-        $config .= 'return ';
-        $config .= var_export($this->app['config']->all(), true);
-        $config .= ';';
+        $configStr = "<?php\n// THIS FILE IS AUTO-GENERATED\n";
+        $configStr .= 'return ';
+        $configStr .= var_export($settings, true);
+        $configStr .= ';';
 
-        $configFile = INFUSE_BASE_DIR.'/config.php';
-        $originalFile = INFUSE_BASE_DIR.'/config.original.php';
         // move the original config file to a backup
-        if (file_exists($configFile) && !file_exists($originalFile)) {
-            rename($configFile, $originalFile);
+        if (file_exists($configFile) && !file_exists($originalConfigFile)) {
+            rename($configFile, $originalConfigFile);
         }
 
         // flush out 
-        if (file_put_contents($configFile, $config)) {
+        if (file_put_contents($configFile, $configStr)) {
             $output->writeln('Success!');
         } else {
             $output->writeln('Could not write config.php');
