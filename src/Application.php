@@ -10,6 +10,7 @@
  */
 namespace Infuse;
 
+use FastRoute\Dispatcher;
 use Pimple\Container;
 
 class Application extends Container
@@ -33,7 +34,10 @@ class Application extends Container
             'exception_handler' => 'Infuse\Services\ExceptionHandler',
             'locale' => 'Infuse\Services\Locale',
             'logger' => 'Infuse\Services\Logger',
+            'method_not_allowed_handler' => 'Infuse\Services\MethodNotAllowedHandler',
+            'not_found_handler' => 'Infuse\Services\NotFoundHandler',
             'router' => 'Infuse\Services\Router',
+            'route_resolver' => 'Infuse\Services\RouteResolver',
             'view_engine' => 'Infuse\Services\ViewEngine',
         ],
         'sessions' => [
@@ -268,32 +272,41 @@ class Application extends Container
             $config->set('app.hostname', $req->host());
         }
 
-        $this->startSession($req);
-
         $res = new Response();
-
         try {
-            $this->executeMiddleware($req, $res);
+            // determine route by dispatching to router
+            $routeInfo = $this['router']->dispatch($req->method(), $req->path());
 
-            $this['router']->route($this, $req, $res);
-        } catch (\Exception $e) {
-            $this['exception_handler']($e, $req, $res);
-        }
-
-        // HTML Error Pages for 4xx and 5xx responses
-        $code = $res->getCode();
-        if ($req->isHtml() && $code >= 400) {
-            $body = $res->getBody();
-            if (empty($body)) {
-                $res->render(new View('error', [
-                    'message' => Response::$codes[$code],
-                    'code' => $code,
-                    'title' => $code, ]));
+            // set any route arguments on the request
+            if (isset($routeInfo[2])) {
+                $req->setParams($routeInfo[2]);
             }
-        }
 
-        return $res;
+            // start a session (TODO move to middleware)
+            $this->startSession($req);
+
+            $res = $this->executeMiddleware($req, $res);
+
+            // resolve the route (TODO move to middleware)
+            if ($routeInfo[0] === Dispatcher::FOUND) {
+                return $this['route_resolver']->resolve($routeInfo[1], $req, $res, $routeInfo[2]);
+            }
+
+            // handle 405 Method Not Allowed errors
+            if ($routeInfo[0] === Dispatcher::METHOD_NOT_ALLOWED) {
+                return $this['method_not_allowed_handler']($req, $res, $routeInfo[1]);
+            }
+
+            // handle 404 Not Found errors
+            return $this['not_found_handler']($req, $res);
+        } catch (\Exception $e) {
+            return $this['exception_handler']($e, $req, $res);
+        }
     }
+
+    ////////////////////////
+    // MIDDLEWARE
+    ////////////////////////
 
     /**
      * Starts a session.
@@ -372,20 +385,20 @@ class Application extends Container
      * @param Request  $req
      * @param Response $res
      *
-     * @return self
+     * @return Response $res
      */
     public function executeMiddleware(Request $req, Response $res)
     {
         foreach ($this->getMiddleware() as $module) {
             $class = 'App\\'.$module.'\Controller';
             $controller = new $class();
-            if (method_exists($controller, 'injectApp')) {
-                $controller->injectApp($this);
+            if (method_exists($controller, 'setApp')) {
+                $controller->setApp($this);
             }
             $controller->middleware($req, $res);
         }
 
-        return $this;
+        return $res;
     }
 
     ////////////////////////

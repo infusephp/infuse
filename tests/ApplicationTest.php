@@ -10,6 +10,7 @@
  */
 use Infuse\Application;
 use Infuse\Request;
+use Infuse\Response;
 
 class ApplicationTest extends PHPUnit_Framework_TestCase
 {
@@ -43,7 +44,10 @@ class ApplicationTest extends PHPUnit_Framework_TestCase
                 'exception_handler' => 'Infuse\Services\ExceptionHandler',
                 'locale' => 'Infuse\Services\Locale',
                 'logger' => 'Infuse\Services\Logger',
+                'method_not_allowed_handler' => 'Infuse\Services\MethodNotAllowedHandler',
+                'not_found_handler' => 'Infuse\Services\NotFoundHandler',
                 'router' => 'Infuse\Services\Router',
+                'route_resolver' => 'Infuse\Services\RouteResolver',
                 'view_engine' => 'Infuse\Services\ViewEngine',
             ],
             'sessions' => [
@@ -83,9 +87,13 @@ class ApplicationTest extends PHPUnit_Framework_TestCase
         $this->assertEquals('https://example.com/', $app['base_url']);
         $this->assertEquals('development', $app['environment']);
 
-        $this->assertInstanceOf('Monolog\Logger', $app['logger']);
+        $this->assertInstanceOf('Infuse\ExceptionHandler', $app['exception_handler']);
         $this->assertInstanceOf('Infuse\Locale', $app['locale']);
+        $this->assertInstanceOf('Monolog\Logger', $app['logger']);
+        $this->assertInstanceOf('Infuse\MethodNotAllowedHandler', $app['method_not_allowed_handler']);
+        $this->assertInstanceOf('Infuse\NotFoundHandler', $app['not_found_handler']);
         $this->assertInstanceOf('Infuse\Router', $app['router']);
+        $this->assertInstanceOf('Infuse\RouteResolver', $app['route_resolver']);
         $this->assertInstanceOf('Infuse\ViewEngine\PHP', $app['view_engine']);
 
         // test magic methods
@@ -174,34 +182,90 @@ class ApplicationTest extends PHPUnit_Framework_TestCase
     public function testHandleRequest()
     {
         $app = new Application();
+        $resolverResponse = new Response();
+
+        $called = false;
+        $route = function () use (&$called) {
+            $called = true;
+        };
+
         $router = Mockery::mock();
-        $router->shouldReceive('route');
+        $router->shouldReceive('dispatch')
+               ->andReturn([1, $route, ['test' => true]]);
         $app['router'] = $router;
 
         $req = new Request();
         $res = $app->handleRequest($req);
         $this->assertInstanceOf('Infuse\Response', $res);
 
+        $this->assertTrue($called);
+
         $this->assertEquals(200, $res->getCode());
+        $this->assertEquals($resolverResponse, $res);
+
+        $this->assertEquals(['test' => true], $req->params());
+    }
+
+    public function testHandleRequestNotFound()
+    {
+        $app = new Application();
+
+        $router = Mockery::mock();
+        $router->shouldReceive('dispatch')
+               ->andReturn([0]);
+        $app['router'] = $router;
+
+        $req = new Request();
+        $res = $app->handleRequest($req);
+        $this->assertInstanceOf('Infuse\Response', $res);
+        $this->assertEquals(404, $res->getCode());
+    }
+
+    public function testHandleRequestMethodNotAllowed()
+    {
+        $app = new Application();
+
+        $router = Mockery::mock();
+        $router->shouldReceive('dispatch')
+               ->andReturn([2, ['POST']]);
+        $app['router'] = $router;
+
+        $req = new Request();
+        $res = $app->handleRequest($req);
+        $this->assertInstanceOf('Infuse\Response', $res);
+        $this->assertEquals(405, $res->getCode());
     }
 
     public function testHandleRequestException()
     {
         $app = new Application();
         $router = Mockery::mock();
-        $router->shouldReceive('route')
+        $router->shouldReceive('dispatch')
                ->andThrow(new Exception());
         $app['router'] = $router;
 
         $req = new Request();
         $res = $app->handleRequest($req);
+        $this->assertInstanceOf('Infuse\Response', $res);
 
         $this->assertEquals(500, $res->getCode());
     }
 
     public function testRun()
     {
-        $this->markTestIncomplete();
+        $app = new Application();
+        $app->post('/test/{a1}/{a2}/{a3}', function ($req, $res) {
+            $res->setBody('woo'.$req->params('a1').$req->params('a2').$req->params('a3'));
+        });
+
+        $_SERVER['REQUEST_METHOD'] = 'POST';
+        $_SERVER['REQUEST_URI'] = '/test/1/2/3';
+
+        ob_start();
+        $this->assertEquals($app, $app->run());
+        $output = ob_get_contents();
+        ob_end_clean();
+        $this->assertEquals('woo123', $output);
     }
 
     public function testGetConsole()

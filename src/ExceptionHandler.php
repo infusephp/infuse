@@ -18,10 +18,13 @@ class ExceptionHandler
      * @param \Exception $e
      * @param Request    $req
      * @param Response   $res
+     *
+     * @return Response
      */
     public function __invoke(\Exception $e, $req, $res)
     {
-        $res->setCode(500);
         $this->app['logger']->error('An uncaught exception occurred while handling a request.', ['exception' => $e]);
+
+        return $res->setCode(500);
     }
 }
