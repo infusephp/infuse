@@ -25,6 +25,10 @@ class ExceptionHandler
     {
         $this->app['logger']->error('An uncaught exception occurred while handling a request.', ['exception' => $e]);
 
+        if ($req->isHtml()) {
+            $res->render(new View('exception'));
+        }
+
         return $res->setCode(500);
     }
 }
