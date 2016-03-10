@@ -11,6 +11,7 @@
 namespace Infuse;
 
 use FastRoute\Dispatcher;
+use Infuse\Middleware\SessionMiddleware;
 use Pimple\Container;
 
 class Application extends Container
@@ -273,8 +274,10 @@ class Application extends Container
                 $req->setParams($routeInfo[2]);
             }
 
-            // start a session (TODO move to middleware)
-            $this->startSession($req);
+            // start a session (TODO move to middleware config)
+            $session = new SessionMiddleware();
+            $session->setApp($this);
+            $res = $session($req, $res);
 
             $res = $this->executeMiddleware($req, $res);
 
@@ -298,67 +301,6 @@ class Application extends Container
     ////////////////////////
     // MIDDLEWARE
     ////////////////////////
-
-    /**
-     * Starts a session.
-     *
-     * @param Request $req
-     *
-     * @return self
-     */
-    public function startSession(Request $req)
-    {
-        $config = $this['config'];
-        if (!$config->get('sessions.enabled') || $req->isApi()) {
-            return $this;
-        }
-
-        $lifetime = $config->get('sessions.lifetime');
-        $hostname = $config->get('app.hostname');
-        ini_set('session.use_trans_sid', false);
-        ini_set('session.use_only_cookies', true);
-        ini_set('url_rewriter.tags', '');
-        ini_set('session.gc_maxlifetime', $lifetime);
-
-        // set the session name
-        $sessionTitle = $config->get('app.title').'-'.$hostname;
-        $safeSessionTitle = str_replace(['.', ' ', "'", '"'], ['', '_', '', ''], $sessionTitle);
-        session_name($safeSessionTitle);
-
-        // set the session cookie parameters
-        session_set_cookie_params(
-            $lifetime, // lifetime
-            '/', // path
-            '.'.$hostname, // domain
-            $req->isSecure(), // secure
-            true // http only
-        );
-
-        // install any custom session handlers
-        $class = $config->get('sessions.driver');
-        if ($class) {
-            $handler = new $class($this);
-            $handler::registerHandler($handler);
-        }
-
-        session_start();
-
-        // fix the session cookie
-        Utility::setCookieFixDomain(
-            session_name(),
-            session_id(),
-            time() + $lifetime,
-            '/',
-            $hostname,
-            $req->isSecure(),
-            true
-        );
-
-        // make the newly started session in our request
-        $req->setSession($_SESSION);
-
-        return $this;
-    }
 
     /**
      * Gets the middleware modules.
