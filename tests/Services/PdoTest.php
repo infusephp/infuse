@@ -35,16 +35,13 @@ class PdoTest extends PHPUnit_Framework_TestCase
     public function testInvokeConnString()
     {
         $config = [
-            'app' => [
-                'environment' => Application::ENV_PRODUCTION,
-            ],
             'database' => [
                 'dsn' => 'mysql:host=localhost;dbname=mydb',
                 'user' => 'root',
                 'password' => '',
             ],
         ];
-        $app = new Application($config);
+        $app = new Application($config, Application::ENV_PRODUCTION);
         $service = new PdoService();
 
         $pdo = $service($app);

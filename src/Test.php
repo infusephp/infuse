@@ -30,9 +30,7 @@ class Test implements PHPUnit_Framework_TestListener
             $config = include 'config.php';
         }
 
-        array_set($config, 'app.environment', Application::ENV_TEST);
-
-        self::$app = new Application($config);
+        self::$app = new Application($config, Application::ENV_TEST);
     }
 
     public function addError(PHPUnit_Framework_Test $test, Exception $e, $time)

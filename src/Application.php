@@ -24,7 +24,6 @@ class Application extends Container
      */
     protected static $baseConfig = [
         'app' => [
-            'environment' => self::ENV_DEVELOPMENT,
             'title' => 'Infuse',
             'ssl' => false,
             'port' => 80,
@@ -57,9 +56,10 @@ class Application extends Container
     private static $default;
 
     /**
-     * @param array $settings
+     * @param array  $settings
+     * @param string $environment
      */
-    public function __construct(array $settings = [])
+    public function __construct(array $settings = [], $environment = self::ENV_DEVELOPMENT)
     {
         parent::__construct();
 
@@ -86,10 +86,7 @@ class Application extends Container
 
         $config = new Config($settings);
         $this['config'] = $config;
-
-        /* Environment */
-
-        $this['environment'] = $environment = $config->get('app.environment');
+        $this['environment'] = $environment;
 
         /* Error Reporting */
 

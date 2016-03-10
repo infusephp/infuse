@@ -30,7 +30,7 @@ class ApplicationTest extends PHPUnit_Framework_TestCase
 
     public function testConfig()
     {
-        $app = new Application(['test' => true]);
+        $app = new Application(['test' => true], 'development');
 
         $expected = [
             'test' => true,
@@ -38,7 +38,6 @@ class ApplicationTest extends PHPUnit_Framework_TestCase
                 'title' => 'Infuse',
                 'ssl' => false,
                 'port' => 80,
-                'environment' => 'development',
             ],
             'services' => [
                 'exception_handler' => 'Infuse\Services\ExceptionHandler',

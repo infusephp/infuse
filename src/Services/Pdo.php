@@ -36,7 +36,7 @@ class Pdo
             die('Could not connect to database.');
         }
 
-        if ($app->environment === Application::ENV_PRODUCTION) {
+        if ($app['environment'] === Application::ENV_PRODUCTION) {
             $pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_WARNING);
         } else {
             $pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
