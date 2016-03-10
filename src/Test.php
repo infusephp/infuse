@@ -25,6 +25,11 @@ class Test implements PHPUnit_Framework_TestListener
 
     public function __construct()
     {
+        // display all errors, log none
+        ini_set('display_errors', 1);
+        ini_set('log_errors', 0);
+        error_reporting(E_ALL | E_STRICT);
+
         $config = [];
         if (file_exists('config.php')) {
             $config = include 'config.php';

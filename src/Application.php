@@ -88,12 +88,6 @@ class Application extends Container
         $this['config'] = $config;
         $this['environment'] = $environment;
 
-        /* Error Reporting */
-
-        ini_set('display_errors', $environment !== self::ENV_PRODUCTION);
-        ini_set('log_errors', 1);
-        error_reporting(E_ALL | E_STRICT);
-
         /* Base URL */
 
         $this['base_url'] = function () use ($config) {
