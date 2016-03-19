@@ -70,6 +70,6 @@ class SessionMiddleware
         // make the newly started session in our request
         $req->setSession($_SESSION);
 
-        return $next($res, $req);
+        return $next($req, $res);
     }
 }
