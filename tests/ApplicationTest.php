@@ -49,9 +49,6 @@ class ApplicationTest extends PHPUnit_Framework_TestCase
                 'route_resolver' => 'Infuse\Services\RouteResolver',
                 'view_engine' => 'Infuse\Services\ViewEngine',
             ],
-            'sessions' => [
-                'enabled' => false,
-            ],
             'dirs' => [
                 'app' => INFUSE_BASE_DIR.'/app',
                 'assets' => INFUSE_BASE_DIR.'/assets',
@@ -170,14 +167,6 @@ class ApplicationTest extends PHPUnit_Framework_TestCase
         $this->assertEquals([['GET', '/users/{id}', $handler]], $app['router']->getRoutes());
     }
 
-    public function testGetMiddleware()
-    {
-        $config = ['modules' => ['middleware' => ['test']]];
-        $app = new Application($config);
-
-        $this->assertEquals(['test'], $app->getMiddleware());
-    }
-
     public function testHandleRequest()
     {
         $app = new Application();
@@ -265,6 +254,40 @@ class ApplicationTest extends PHPUnit_Framework_TestCase
         $output = ob_get_contents();
         ob_end_clean();
         $this->assertEquals('woo123', $output);
+    }
+
+    public function testMiddleware()
+    {
+        $a = function ($req, $res, $next) {
+            $res->setBody($res->getBody().'a_before ');
+            $res = $next($req, $res);
+
+            return $res->setBody($res->getBody().'a_after');
+        };
+
+        $b = function ($req, $res, $next) {
+            $res->setBody($res->getBody().'b_before ');
+            $res = $next($req, $res);
+
+            return $res->setBody($res->getBody().'b_after ');
+        };
+
+        $c = function ($req, $res, $next) {
+            $res->setBody($res->getBody().'c_before ');
+            $res = $next($req, $res);
+
+            return $res->setBody($res->getBody().'c_after ');
+        };
+
+        $app = new Application();
+        $app->middleware($a)->middleware($b)->middleware($c);
+
+        $req = new Request();
+        $res = new Response();
+
+        $this->assertEquals($res, $app->runMiddleware($req, $res));
+
+        $this->assertEquals('a_before b_before c_before c_after b_after a_after', $res->getBody());
     }
 
     public function testGetConsole()

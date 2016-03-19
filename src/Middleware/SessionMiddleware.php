@@ -11,7 +11,7 @@ class SessionMiddleware
 {
     use HasApp;
 
-    public function __invoke(Request $req, Response $res)
+    public function __invoke(Request $req, Response $res, callable $next)
     {
         $config = $this->app['config'];
         if (!$config->get('sessions.enabled') || $req->isApi()) {
@@ -62,6 +62,6 @@ class SessionMiddleware
         // make the newly started session in our request
         $req->setSession($_SESSION);
 
-        return $res;
+        return $next($res, $req);
     }
 }
