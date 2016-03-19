@@ -292,7 +292,14 @@ class ApplicationTest extends PHPUnit_Framework_TestCase
 
     public function testGetConsole()
     {
-        $app = new Application();
+        $config = [
+            'console' => [
+                'commands' => [
+                    'Infuse\Console\OptimizeCommand',
+                ],
+            ],
+        ];
+        $app = new Application($config);
 
         $console = $app->getConsole();
         $this->assertInstanceOf('Infuse\Console\Application', $console);
