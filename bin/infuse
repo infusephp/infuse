@@ -20,7 +20,11 @@ require_once 'vendor/autoload.php';
 
 // bootstrap an application instance
 $config = @include 'config.php';
-$app = new Application($config);
+$env = array_value($config, 'app.environment');
+if (!$env) {
+	$env = 'development';
+}
+$app = new Application($config, $env);
 
 // run the console application
 return $app->getConsole()->run();
