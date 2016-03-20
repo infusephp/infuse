@@ -23,7 +23,7 @@ class SessionMiddleware
     {
         $config = $this->app['config'];
         if (!$config->get('sessions.enabled') || $req->isApi()) {
-            return $res;
+            return $next($req, $res);
         }
 
         $lifetime = $config->get('sessions.lifetime');
