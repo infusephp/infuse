@@ -45,6 +45,7 @@ class ApplicationTest extends PHPUnit_Framework_TestCase
                 'logger' => 'Infuse\Services\Logger',
                 'method_not_allowed_handler' => 'Infuse\Services\MethodNotAllowedHandler',
                 'not_found_handler' => 'Infuse\Services\NotFoundHandler',
+                'php_error_handler' => 'Infuse\Services\PhpErrorHandler',
                 'router' => 'Infuse\Services\Router',
                 'route_resolver' => 'Infuse\Services\RouteResolver',
                 'view_engine' => 'Infuse\Services\ViewEngine',
@@ -88,6 +89,7 @@ class ApplicationTest extends PHPUnit_Framework_TestCase
         $this->assertInstanceOf('Monolog\Logger', $app['logger']);
         $this->assertInstanceOf('Infuse\MethodNotAllowedHandler', $app['method_not_allowed_handler']);
         $this->assertInstanceOf('Infuse\NotFoundHandler', $app['not_found_handler']);
+        $this->assertInstanceOf('Infuse\PhpErrorHandler', $app['php_error_handler']);
         $this->assertInstanceOf('Infuse\Router', $app['router']);
         $this->assertInstanceOf('Infuse\RouteResolver', $app['route_resolver']);
         $this->assertInstanceOf('Infuse\ViewEngine\PHP', $app['view_engine']);
@@ -239,6 +241,21 @@ class ApplicationTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(500, $res->getCode());
     }
 
+    public function testHandleRequestPhpError()
+    {
+        $app = new Application();
+        $router = Mockery::mock();
+        $router->shouldReceive('dispatch')
+               ->andThrow(new Error());
+        $app['router'] = $router;
+
+        $req = new Request();
+        $res = $app->handleRequest($req);
+        $this->assertInstanceOf('Infuse\Response', $res);
+
+        $this->assertEquals(500, $res->getCode());
+    }
+
     public function testRun()
     {
         $app = new Application();
@@ -303,5 +320,11 @@ class ApplicationTest extends PHPUnit_Framework_TestCase
 
         $console = $app->getConsole();
         $this->assertInstanceOf('Infuse\Console\Application', $console);
+    }
+}
+
+if (!class_exists('Error')) {
+    class Error extends Exception
+    {
     }
 }

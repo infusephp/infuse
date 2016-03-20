@@ -36,6 +36,7 @@ class Application extends Container
             'logger' => 'Infuse\Services\Logger',
             'method_not_allowed_handler' => 'Infuse\Services\MethodNotAllowedHandler',
             'not_found_handler' => 'Infuse\Services\NotFoundHandler',
+            'php_error_handler' => 'Infuse\Services\PhpErrorHandler',
             'router' => 'Infuse\Services\Router',
             'route_resolver' => 'Infuse\Services\RouteResolver',
             'view_engine' => 'Infuse\Services\ViewEngine',
@@ -287,6 +288,8 @@ class Application extends Container
             return $this->runMiddleware($req, $res);
         } catch (\Exception $e) {
             return $this['exception_handler']($e, $req, $res);
+        } catch (\Error $e) {
+            return $this['php_error_handler']($req, $res, $e);
         }
     }
 
