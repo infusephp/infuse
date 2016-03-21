@@ -15,13 +15,13 @@ class ExceptionHandler
     use HasApp;
 
     /**
-     * @param \Exception $e
      * @param Request    $req
      * @param Response   $res
+     * @param \Exception $e
      *
      * @return Response
      */
-    public function __invoke(\Exception $e, $req, $res)
+    public function __invoke($req, $res, \Exception $e)
     {
         $this->app['logger']->error('An uncaught exception occurred while handling a request.', ['exception' => $e]);
 

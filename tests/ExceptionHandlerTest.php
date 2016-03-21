@@ -23,7 +23,7 @@ class ExceptionHandlerTest extends PHPUnit_Framework_TestCase
         $e = new Exception();
         $req = new Request([], [], [], [], ['HTTP_ACCEPT' => 'text/html']);
         $res = new Response();
-        $this->assertEquals($res, $handler($e, $req, $res));
+        $this->assertEquals($res, $handler($req, $res, $e));
         $this->assertEquals(500, $res->getCode());
         $this->assertEquals('exception', $res->getBody());
     }
