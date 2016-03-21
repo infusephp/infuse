@@ -26,7 +26,7 @@ class PhpErrorHandler
         $this->app['logger']->error('A PHP error occurred while handling a request.', ['exception' => $e]);
 
         if ($req->isHtml()) {
-            $res->render(new View('php_error'));
+            $res->render(new View('php_error', ['title' => 'Internal Server Error']));
         }
 
         return $res->setCode(500);

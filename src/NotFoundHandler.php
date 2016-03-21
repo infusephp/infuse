@@ -21,7 +21,7 @@ class NotFoundHandler
     public function __invoke($req, $res)
     {
         if ($req->isHtml()) {
-            $res->render(new View('not_found', ['title' => '404']));
+            $res->render(new View('not_found', ['title' => 'Not Found']));
         }
 
         return $res->setCode(404);

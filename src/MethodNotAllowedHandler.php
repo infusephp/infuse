@@ -22,7 +22,7 @@ class MethodNotAllowedHandler
     public function __invoke($req, $res, $allowedMethods)
     {
         if ($req->isHtml()) {
-            $res->render(new View('method_not_allowed', ['title' => '405']));
+            $res->render(new View('method_not_allowed', ['title' => 'Method Not Allowed']));
         }
 
         return $res->setCode(405);
