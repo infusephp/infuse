@@ -26,7 +26,7 @@
 		"pimple/pimple": "~3.0",
 		"infuse/libs": "~0.6",
 		"monolog/monolog": "1.*",
-		"symfony/console": "~2.7"
+		"symfony/console": "~2.8|~3.0"
 	},
 	"require-dev": {
 		"smarty/smarty": "~3.1",

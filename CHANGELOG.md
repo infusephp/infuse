@@ -14,6 +14,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
 - Update infuse/libs to v0.6.
+- Support Symfony 3.
 - Application environment is now passed through second argument of `Application` constructor.
 - Refactored request handling.
 - Refactored middleware. Middleware functions now use the signature `($req, $res, $next)` and must return a `Response`. Can be added with `middleware()`.
