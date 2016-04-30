@@ -2,7 +2,7 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
-## [Unreleased]
+## 1.4 - 2016-04-30
 ### Added
 - Added an exception handler service that catches exceptions during request handling.
 - Added PHP 7 error handler service that catches PHP 7 errors during request handling.
