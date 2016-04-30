@@ -1,9 +1,11 @@
 Infuse Framework
 ================
 
+[![Latest Stable Version](https://poser.pugx.org/infuse/infuse/v/stable.svg?style=flat)](https://packagist.org/packages/infuse/infuse)
+[![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat)](LICENSE)
 [![Build Status](https://travis-ci.org/infusephp/infuse.svg?branch=master&style=flat)](https://travis-ci.org/infusephp/infuse)
 [![Coverage Status](https://coveralls.io/repos/infusephp/infuse/badge.svg?style=flat)](https://coveralls.io/r/infusephp/infuse)
-[![Latest Stable Version](https://poser.pugx.org/infuse/infuse/v/stable.svg?style=flat)](https://packagist.org/packages/infuse/infuse)
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/infusephp/infuse/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/infusephp/infuse/?branch=master)
 [![Total Downloads](https://poser.pugx.org/infuse/infuse/downloads.svg?style=flat)](https://packagist.org/packages/infuse/infuse)
 [![HHVM Status](http://hhvm.h4cc.de/badge/infuse/infuse.svg?style=flat)](http://hhvm.h4cc.de/package/infuse/infuse)
 
