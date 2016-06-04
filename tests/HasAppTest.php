@@ -29,8 +29,16 @@ class HasAppTest extends PHPUnit_Framework_TestCase
 
         $class2 = new SomeClass();
         $app2 = Mockery::mock('Infuse\Application');
-        $class2->injectApp($app2);
+        $class2->setApp($app2);
         $this->assertTrue($class->getApp() !== $class2->getApp());
+    }
+
+    public function testInjectAppDeprecated()
+    {
+        $app = Mockery::mock('Infuse\Application');
+        $class = new SomeClass();
+        $this->assertEquals($class, $class->injectApp($app));
+        $this->assertEquals($app, $class->getApp());
     }
 }
 

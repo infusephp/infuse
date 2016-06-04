@@ -28,8 +28,8 @@ class Application extends \Symfony\Component\Console\Application
     private function addCommand($class, $app)
     {
         $command = new $class();
-        if (method_exists($class, 'injectApp')) {
-            $command->injectApp($app);
+        if (method_exists($class, 'setApp')) {
+            $command->setApp($app);
         }
 
         $this->add($command);
