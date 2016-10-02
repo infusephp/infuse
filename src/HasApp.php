@@ -8,6 +8,7 @@
  * @copyright 2015 Jared King
  * @license MIT
  */
+
 namespace Infuse;
 
 trait HasApp
@@ -29,14 +30,6 @@ trait HasApp
         $this->app = $app;
 
         return $this;
-    }
-
-    /**
-     * @deprecated
-     */
-    public function injectApp(Application $app)
-    {
-        return $this->setApp($app);
     }
 
     /**

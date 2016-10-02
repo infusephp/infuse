@@ -2,6 +2,10 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## [Unreleased]
+### Removed
+- Removed deprecated `injectApp()` method in `HasApp` trait.
+
 ## 1.4 - 2016-04-30
 ### Added
 - Added an exception handler service that catches exceptions during request handling.
