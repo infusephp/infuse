@@ -3,6 +3,9 @@ All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
+### Changed
+- Register session_write_close as a shutdown function when using sessions.
+
 ### Removed
 - Removed deprecated `injectApp()` method in `HasApp` trait.
 

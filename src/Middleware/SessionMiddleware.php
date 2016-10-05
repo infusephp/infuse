@@ -8,6 +8,7 @@
  * @copyright 2015 Jared King
  * @license MIT
  */
+
 namespace Infuse\Middleware;
 
 use Infuse\HasApp;
@@ -46,6 +47,9 @@ class SessionMiddleware
             $req->isSecure(), // secure
             true // http only
         );
+
+        // register session_write_close as a shutdown function
+        session_register_shutdown();
 
         // install any custom session handlers
         $class = $config->get('sessions.driver');
