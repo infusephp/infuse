@@ -2,6 +2,10 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## Unreleased
+### Added
+- Added an optional `sessions.name` setting for changing the name of in-app sessions.
+
 ## 1.4.1 - 2016-10-04
 ### Changed
 - Register session_write_close as a shutdown function when using sessions.

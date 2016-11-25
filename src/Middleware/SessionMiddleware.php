@@ -35,7 +35,8 @@ class SessionMiddleware
         ini_set('session.gc_maxlifetime', $lifetime);
 
         // set the session name
-        $sessionTitle = $config->get('app.title').'-'.$hostname;
+        $defaultSessionTitle = $config->get('app.title').'-'.$hostname;
+        $sessionTitle = $config->get('sessions.name', $defaultSessionTitle);
         $safeSessionTitle = str_replace(['.', ' ', "'", '"'], ['', '_', '', ''], $sessionTitle);
         session_name($safeSessionTitle);
 
