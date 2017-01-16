@@ -8,10 +8,10 @@
  * @copyright 2015 Jared King
  * @license MIT
  */
+
 namespace Infuse\Services;
 
 use Infuse\Application;
-use PDOException;
 
 class Pdo
 {
@@ -29,12 +29,7 @@ class Pdo
         $user = array_value($dbSettings, 'user');
         $password = array_value($dbSettings, 'password');
 
-        try {
-            $pdo = new \PDO($dsn, $user, $password);
-        } catch (PDOException $e) {
-            $app['logger']->emergency($e);
-            die('Could not connect to database.');
-        }
+        $pdo = new \PDO($dsn, $user, $password);
 
         if ($app['environment'] === Application::ENV_PRODUCTION) {
             $pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_WARNING);

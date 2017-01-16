@@ -6,6 +6,9 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 - Added an optional `sessions.name` setting for changing the name of in-app sessions.
 
+### Changed
+- PDO service no longer causes application to die on connection errors.
+
 ## 1.4.1 - 2016-10-04
 ### Changed
 - Register session_write_close as a shutdown function when using sessions.
