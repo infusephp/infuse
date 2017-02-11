@@ -30,7 +30,7 @@ You will find a minimum amount of opinion in this framework. It's targeted at se
 
 ## Requirements
 
-- PHP 5.4+, PHP 7, or HHVM 3.3+
+- PHP 5.6+, PHP 7+, or HHVM 3.3+
 
 ## Installation
 
