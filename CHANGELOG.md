@@ -2,7 +2,7 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
-## 1.4.3 - 2017-02-10
+## Unreleased
 ### Changed
 - Use new PHPUnit namespacing.
 - Drop support for PHP versions less than 5.6.
