@@ -22,7 +22,7 @@
     },
     "bin": ["bin/infuse"],
 	"require": {
-		"php": ">=5.4.0",
+		"php": ">=5.6.0",
 		"pimple/pimple": "~3.0",
 		"infuse/libs": "~0.6",
 		"monolog/monolog": "1.*",
