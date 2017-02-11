@@ -10,8 +10,9 @@
  */
 use Infuse\Application;
 use Infuse\Services\ViewEngine;
+use PHPUnit\Framework\TestCase;
 
-class ViewEngineTest extends PHPUnit_Framework_TestCase
+class ViewEngineTest extends TestCase
 {
     public function testInvoke()
     {

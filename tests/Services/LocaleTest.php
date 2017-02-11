@@ -10,8 +10,9 @@
  */
 use Infuse\Application;
 use Infuse\Services\Locale;
+use PHPUnit\Framework\TestCase;
 
-class LocaleTest extends PHPUnit_Framework_TestCase
+class LocaleTest extends TestCase
 {
     public function testInvoke()
     {

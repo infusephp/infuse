@@ -11,8 +11,9 @@
 use Infuse\Application;
 use Infuse\Request;
 use Infuse\Response;
+use PHPUnit\Framework\TestCase;
 
-class ApplicationTest extends PHPUnit_Framework_TestCase
+class ApplicationTest extends TestCase
 {
     public static function setUpBeforeClass()
     {
@@ -102,7 +103,8 @@ class ApplicationTest extends PHPUnit_Framework_TestCase
     public function testGet()
     {
         $app = new Application();
-        $handler = function () {};
+        $handler = function () {
+        };
 
         $this->assertEquals($app, $app->get('/users/{id}', $handler));
 
@@ -112,7 +114,8 @@ class ApplicationTest extends PHPUnit_Framework_TestCase
     public function testPost()
     {
         $app = new Application();
-        $handler = function () {};
+        $handler = function () {
+        };
 
         $this->assertEquals($app, $app->post('/users', $handler));
 
@@ -122,7 +125,8 @@ class ApplicationTest extends PHPUnit_Framework_TestCase
     public function testPut()
     {
         $app = new Application();
-        $handler = function () {};
+        $handler = function () {
+        };
 
         $this->assertEquals($app, $app->put('/users/{id}', $handler));
 
@@ -132,7 +136,8 @@ class ApplicationTest extends PHPUnit_Framework_TestCase
     public function testDelete()
     {
         $app = new Application();
-        $handler = function () {};
+        $handler = function () {
+        };
 
         $this->assertEquals($app, $app->delete('/users/{id}', $handler));
 
@@ -142,7 +147,8 @@ class ApplicationTest extends PHPUnit_Framework_TestCase
     public function testPatch()
     {
         $app = new Application();
-        $handler = function () {};
+        $handler = function () {
+        };
 
         $this->assertEquals($app, $app->patch('/users/{id}', $handler));
 
@@ -152,7 +158,8 @@ class ApplicationTest extends PHPUnit_Framework_TestCase
     public function testOptions()
     {
         $app = new Application();
-        $handler = function () {};
+        $handler = function () {
+        };
 
         $this->assertEquals($app, $app->options('/users/{id}', $handler));
 
@@ -162,7 +169,8 @@ class ApplicationTest extends PHPUnit_Framework_TestCase
     public function testMap()
     {
         $app = new Application();
-        $handler = function () {};
+        $handler = function () {
+        };
 
         $this->assertEquals($app, $app->map('GET', '/users/{id}', $handler));
 

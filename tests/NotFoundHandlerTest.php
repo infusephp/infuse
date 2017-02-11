@@ -12,8 +12,9 @@ use Infuse\Application;
 use Infuse\NotFoundHandler;
 use Infuse\Request;
 use Infuse\Response;
+use PHPUnit\Framework\TestCase;
 
-class NotFoundHandlerTest extends PHPUnit_Framework_TestCase
+class NotFoundHandlerTest extends TestCase
 {
     public function testInvoke()
     {

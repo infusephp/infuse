@@ -11,8 +11,9 @@
 use Infuse\Application;
 use Infuse\Queue;
 use Infuse\Services\QueueDriver;
+use PHPUnit\Framework\TestCase;
 
-class QueueDriverTest extends PHPUnit_Framework_TestCase
+class QueueDriverTest extends TestCase
 {
     public function testInvoke()
     {

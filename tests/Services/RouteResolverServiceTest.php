@@ -10,8 +10,9 @@
  */
 use Infuse\Application;
 use Infuse\Services\RouteResolver;
+use PHPUnit\Framework\TestCase;
 
-class RouteResolverServiceTest extends PHPUnit_Framework_TestCase
+class RouteResolverServiceTest extends TestCase
 {
     public function testInvoke()
     {

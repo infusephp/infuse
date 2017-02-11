@@ -10,8 +10,9 @@
  */
 use Infuse\Application;
 use Infuse\Services\Memcache;
+use PHPUnit\Framework\TestCase;
 
-class MemcacheTest extends PHPUnit_Framework_TestCase
+class MemcacheTest extends TestCase
 {
     protected function setUp()
     {

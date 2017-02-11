@@ -12,8 +12,9 @@ use Infuse\Application;
 use Infuse\ExceptionHandler;
 use Infuse\Request;
 use Infuse\Response;
+use PHPUnit\Framework\TestCase;
 
-class ExceptionHandlerTest extends PHPUnit_Framework_TestCase
+class ExceptionHandlerTest extends TestCase
 {
     public function testInvoke()
     {

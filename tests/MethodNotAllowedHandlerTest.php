@@ -12,8 +12,9 @@ use Infuse\Application;
 use Infuse\MethodNotAllowedHandler;
 use Infuse\Request;
 use Infuse\Response;
+use PHPUnit\Framework\TestCase;
 
-class MethodNotAllowedHandlerTest extends PHPUnit_Framework_TestCase
+class MethodNotAllowedHandlerTest extends TestCase
 {
     public function testInvoke()
     {

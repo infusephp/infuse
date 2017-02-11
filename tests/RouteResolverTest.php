@@ -12,11 +12,12 @@ use Infuse\Request;
 use Infuse\Response;
 use Infuse\RouteResolver;
 use Infuse\View;
+use PHPUnit\Framework\TestCase;
 use Test\TestController;
 
 include 'TestController.php';
 
-class RouteResolverTest extends PHPUnit_Framework_TestCase
+class RouteResolverTest extends TestCase
 {
     public function setUp()
     {

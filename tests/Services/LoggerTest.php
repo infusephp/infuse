@@ -10,8 +10,9 @@
  */
 use Infuse\Application;
 use Infuse\Services\Logger;
+use PHPUnit\Framework\TestCase;
 
-class LoggerTest extends PHPUnit_Framework_TestCase
+class LoggerTest extends TestCase
 {
     public function testInvoke()
     {

@@ -10,8 +10,9 @@
  */
 use Infuse\Application;
 use Infuse\Services\Pdo as PdoService;
+use PHPUnit\Framework\TestCase;
 
-class PdoTest extends PHPUnit_Framework_TestCase
+class PdoTest extends TestCase
 {
     public function testInvoke()
     {

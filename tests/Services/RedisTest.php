@@ -10,8 +10,9 @@
  */
 use Infuse\Application;
 use Infuse\Services\Redis;
+use PHPUnit\Framework\TestCase;
 
-class RedisTest extends PHPUnit_Framework_TestCase
+class RedisTest extends TestCase
 {
     protected function setUp()
     {

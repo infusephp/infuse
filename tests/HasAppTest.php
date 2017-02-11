@@ -10,8 +10,9 @@
  */
 use Infuse\Application;
 use Infuse\HasApp;
+use PHPUnit\Framework\TestCase;
 
-class HasAppTest extends PHPUnit_Framework_TestCase
+class HasAppTest extends TestCase
 {
     public function testGetDefault()
     {
