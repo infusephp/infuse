@@ -3,9 +3,13 @@ All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Unreleased
+### Added
+- Can pass optional configuration to Twig. 
+
 ### Changed
 - Use new PHPUnit namespacing.
 - Drop support for PHP versions less than 5.6.
+- Twig view engine has caching enabled by default.
 
 ## 1.4.2 - 2017-01-17
 ### Added
