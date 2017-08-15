@@ -25,6 +25,10 @@ class ExceptionHandler
     {
         $this->app['logger']->error('An uncaught exception occurred while handling a request.', ['exception' => $e]);
 
+        if (ob_get_length() > 0) {
+            ob_end_clean();
+        }
+
         if ($req->isHtml()) {
             $res->render(new View('exception', [
                 'title' => 'Internal Server Error',
