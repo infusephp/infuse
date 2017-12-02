@@ -15,7 +15,7 @@ use Infuse\Queue;
 class QueueDriver
 {
     /**
-     * @var Infuse\Queue\Driver\DriverInterface
+     * @var \Infuse\Queue\Driver\DriverInterface
      */
     private $driver;
 
