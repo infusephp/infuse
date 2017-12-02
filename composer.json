@@ -24,7 +24,7 @@
 	"require": {
 		"php": ">=5.6.0",
 		"pimple/pimple": "~3.0",
-		"infuse/libs": "~0.6",
+		"infuse/libs": "~1.0",
 		"monolog/monolog": "1.*",
 		"symfony/console": "~2.8|~3.0|~4.0"
 	},

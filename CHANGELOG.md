@@ -5,6 +5,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ## Unreleased
 ### Changed
 - Support Symfony 4.
+- Update infuse/libs to v1.
 
 ### Fixed
 - Exception and error handlers clear the output buffer before rendering the view.
