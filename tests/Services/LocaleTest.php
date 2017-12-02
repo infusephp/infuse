@@ -10,9 +10,9 @@
  */
 use Infuse\Application;
 use Infuse\Services\Locale;
-use PHPUnit\Framework\TestCase;
+use Mockery\Adapter\Phpunit\MockeryTestCase;
 
-class LocaleTest extends TestCase
+class LocaleTest extends MockeryTestCase
 {
     public function testInvoke()
     {

@@ -12,12 +12,12 @@ use Infuse\Request;
 use Infuse\Response;
 use Infuse\RouteResolver;
 use Infuse\View;
-use PHPUnit\Framework\TestCase;
+use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Test\TestController;
 
 include 'TestController.php';
 
-class RouteResolverTest extends TestCase
+class RouteResolverTest extends MockeryTestCase
 {
     public function setUp()
     {
@@ -81,7 +81,7 @@ class RouteResolverTest extends TestCase
 
     public function testResolveNonExistentController()
     {
-        $this->setExpectedException('Exception');
+        $this->expectException(Exception::class);
 
         $resolver = new RouteResolver();
 

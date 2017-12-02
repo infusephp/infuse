@@ -11,9 +11,9 @@
 use Infuse\Application;
 use Infuse\Request;
 use Infuse\Response;
-use PHPUnit\Framework\TestCase;
+use Mockery\Adapter\Phpunit\MockeryTestCase;
 
-class ApplicationTest extends TestCase
+class ApplicationTest extends MockeryTestCase
 {
     public static function setUpBeforeClass()
     {

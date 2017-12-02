@@ -10,9 +10,9 @@
  */
 use Infuse\Application;
 use Infuse\Services\Logger;
-use PHPUnit\Framework\TestCase;
+use Mockery\Adapter\Phpunit\MockeryTestCase;
 
-class LoggerTest extends TestCase
+class LoggerTest extends MockeryTestCase
 {
     public function testInvoke()
     {

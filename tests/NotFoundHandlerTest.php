@@ -12,9 +12,9 @@ use Infuse\Application;
 use Infuse\NotFoundHandler;
 use Infuse\Request;
 use Infuse\Response;
-use PHPUnit\Framework\TestCase;
+use Mockery\Adapter\Phpunit\MockeryTestCase;
 
-class NotFoundHandlerTest extends TestCase
+class NotFoundHandlerTest extends MockeryTestCase
 {
     public function testInvoke()
     {

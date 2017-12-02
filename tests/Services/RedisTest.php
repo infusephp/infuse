@@ -10,9 +10,9 @@
  */
 use Infuse\Application;
 use Infuse\Services\Redis;
-use PHPUnit\Framework\TestCase;
+use Mockery\Adapter\Phpunit\MockeryTestCase;
 
-class RedisTest extends TestCase
+class RedisTest extends MockeryTestCase
 {
     protected function setUp()
     {

@@ -10,9 +10,9 @@
  */
 use Infuse\Application;
 use Infuse\Services\Router;
-use PHPUnit\Framework\TestCase;
+use Mockery\Adapter\Phpunit\MockeryTestCase;
 
-class RouterTest extends TestCase
+class RouterTest extends MockeryTestCase
 {
     public function testInvoke()
     {

@@ -10,9 +10,9 @@
  */
 use Infuse\Application;
 use Infuse\Services\RouteResolver;
-use PHPUnit\Framework\TestCase;
+use Mockery\Adapter\Phpunit\MockeryTestCase;
 
-class RouteResolverServiceTest extends TestCase
+class RouteResolverServiceTest extends MockeryTestCase
 {
     public function testInvoke()
     {

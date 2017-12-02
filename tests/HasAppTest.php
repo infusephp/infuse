@@ -10,9 +10,9 @@
  */
 use Infuse\Application;
 use Infuse\HasApp;
-use PHPUnit\Framework\TestCase;
+use Mockery\Adapter\Phpunit\MockeryTestCase;
 
-class HasAppTest extends TestCase
+class HasAppTest extends MockeryTestCase
 {
     public function testGetDefault()
     {

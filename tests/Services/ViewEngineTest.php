@@ -10,9 +10,9 @@
  */
 use Infuse\Application;
 use Infuse\Services\ViewEngine;
-use PHPUnit\Framework\TestCase;
+use Mockery\Adapter\Phpunit\MockeryTestCase;
 
-class ViewEngineTest extends TestCase
+class ViewEngineTest extends MockeryTestCase
 {
     public function testInvoke()
     {

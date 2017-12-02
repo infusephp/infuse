@@ -7,7 +7,6 @@ Infuse Framework
 [![Coverage Status](https://coveralls.io/repos/infusephp/infuse/badge.svg?style=flat)](https://coveralls.io/r/infusephp/infuse)
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/infusephp/infuse/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/infusephp/infuse/?branch=master)
 [![Total Downloads](https://poser.pugx.org/infuse/infuse/downloads.svg?style=flat)](https://packagist.org/packages/infuse/infuse)
-[![HHVM Status](http://hhvm.h4cc.de/badge/infuse/infuse.svg?style=flat)](http://hhvm.h4cc.de/package/infuse/infuse)
 
 Modular framework for building modern applications in PHP
 
@@ -30,7 +29,7 @@ You will find a minimum amount of opinion in this framework. It's targeted at se
 
 ## Requirements
 
-- PHP 5.6+, PHP 7+, or HHVM 3.3+
+- PHP 7+
 
 ## Installation
 

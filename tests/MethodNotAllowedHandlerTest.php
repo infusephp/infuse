@@ -12,9 +12,9 @@ use Infuse\Application;
 use Infuse\MethodNotAllowedHandler;
 use Infuse\Request;
 use Infuse\Response;
-use PHPUnit\Framework\TestCase;
+use Mockery\Adapter\Phpunit\MockeryTestCase;
 
-class MethodNotAllowedHandlerTest extends TestCase
+class MethodNotAllowedHandlerTest extends MockeryTestCase
 {
     public function testInvoke()
     {

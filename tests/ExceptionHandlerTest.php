@@ -12,9 +12,9 @@ use Infuse\Application;
 use Infuse\ExceptionHandler;
 use Infuse\Request;
 use Infuse\Response;
-use PHPUnit\Framework\TestCase;
+use Mockery\Adapter\Phpunit\MockeryTestCase;
 
-class ExceptionHandlerTest extends TestCase
+class ExceptionHandlerTest extends MockeryTestCase
 {
     public function testInvoke()
     {

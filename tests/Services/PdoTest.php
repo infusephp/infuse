@@ -10,9 +10,9 @@
  */
 use Infuse\Application;
 use Infuse\Services\Pdo as PdoService;
-use PHPUnit\Framework\TestCase;
+use Mockery\Adapter\Phpunit\MockeryTestCase;
 
-class PdoTest extends TestCase
+class PdoTest extends MockeryTestCase
 {
     public function testInvoke()
     {

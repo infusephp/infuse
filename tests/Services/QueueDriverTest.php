@@ -11,9 +11,9 @@
 use Infuse\Application;
 use Infuse\Queue;
 use Infuse\Services\QueueDriver;
-use PHPUnit\Framework\TestCase;
+use Mockery\Adapter\Phpunit\MockeryTestCase;
 
-class QueueDriverTest extends TestCase
+class QueueDriverTest extends MockeryTestCase
 {
     public function testInvoke()
     {

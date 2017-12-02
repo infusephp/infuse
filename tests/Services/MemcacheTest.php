@@ -10,9 +10,9 @@
  */
 use Infuse\Application;
 use Infuse\Services\Memcache;
-use PHPUnit\Framework\TestCase;
+use Mockery\Adapter\Phpunit\MockeryTestCase;
 
-class MemcacheTest extends TestCase
+class MemcacheTest extends MockeryTestCase
 {
     protected function setUp()
     {
