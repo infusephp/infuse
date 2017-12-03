@@ -12,7 +12,7 @@ dist: trusty
 sudo: required
 
 before_script:
-  - echo -e "extension = redis.so\nextension = memcache.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
+  - echo -e "extension = redis.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
   - composer install
   - mysql -e 'create database mydb;'
 
