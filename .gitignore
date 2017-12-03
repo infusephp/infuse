@@ -8,3 +8,4 @@ Desktop.ini
 /build
 composer.lock
 /config.php
+/phpunit.xml

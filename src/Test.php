@@ -12,12 +12,13 @@
 namespace Infuse;
 
 use Exception;
-use PHPUnit_Framework_AssertionFailedError;
-use PHPUnit_Framework_Test;
-use PHPUnit_Framework_TestListener;
-use PHPUnit_Framework_TestSuite;
+use PHPUnit\Framework\AssertionFailedError;
+use PHPUnit\Framework\Test as PHPUnitTest;
+use PHPUnit\Framework\TestListener;
+use PHPUnit\Framework\TestSuite;
+use PHPUnit\Framework\Warning;
 
-class Test implements PHPUnit_Framework_TestListener
+class Test implements TestListener
 {
     /**
      * @var Application
@@ -39,40 +40,44 @@ class Test implements PHPUnit_Framework_TestListener
         self::$app = new Application($config, Application::ENV_TEST);
     }
 
-    public function addError(PHPUnit_Framework_Test $test, Exception $e, $time)
+    public function addError(PHPUnitTest $test, Exception $e, $time)
     {
     }
 
-    public function addFailure(PHPUnit_Framework_Test $test, PHPUnit_Framework_AssertionFailedError $e, $time)
+    public function addFailure(PHPUnitTest $test, AssertionFailedError $e, $time)
     {
     }
 
-    public function addIncompleteTest(PHPUnit_Framework_Test $test, Exception $e, $time)
+    public function addIncompleteTest(PHPUnitTest $test, Exception $e, $time)
     {
     }
 
-    public function addRiskyTest(PHPUnit_Framework_Test $test, Exception $e, $time)
+    public function addRiskyTest(PHPUnitTest $test, Exception $e, $time)
     {
     }
 
-    public function addSkippedTest(PHPUnit_Framework_Test $test, Exception $e, $time)
+    public function addSkippedTest(PHPUnitTest $test, Exception $e, $time)
     {
     }
 
-    public function startTest(PHPUnit_Framework_Test $test)
+    public function addWarning(PHPUnitTest $test, Warning $e, $time)
     {
     }
 
-    public function endTest(PHPUnit_Framework_Test $test, $time)
+    public function startTest(PHPUnitTest $test)
     {
     }
 
-    public function startTestSuite(PHPUnit_Framework_TestSuite $suite)
+    public function endTest(PHPUnitTest $test, $time)
+    {
+    }
+
+    public function startTestSuite(TestSuite $suite)
     {
         printf("\n\n%s:\n", $suite->getName());
     }
 
-    public function endTestSuite(PHPUnit_Framework_TestSuite $suite)
+    public function endTestSuite(TestSuite $suite)
     {
     }
 }
