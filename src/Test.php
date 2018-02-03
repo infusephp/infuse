@@ -74,7 +74,6 @@ class Test implements TestListener
 
     public function startTestSuite(TestSuite $suite)
     {
-        printf("\n\n%s:\n", $suite->getName());
     }
 
     public function endTestSuite(TestSuite $suite)
