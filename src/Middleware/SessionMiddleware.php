@@ -27,6 +27,13 @@ class SessionMiddleware
             return $next($req, $res);
         }
 
+        // Check if sessions are disabled for the route
+        $route = (array) array_value($this->app['routeInfo'], 1);
+        $params = (array) array_value($route, 2);
+        if (array_value($params, 'no_session')) {
+            return $next($req, $res);
+        }
+
         $lifetime = $config->get('sessions.lifetime');
         $hostname = $config->get('app.hostname');
         ini_set('session.use_trans_sid', false);
