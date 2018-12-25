@@ -9,3 +9,4 @@ Desktop.ini
 composer.lock
 /config.php
 /phpunit.xml
+.php_cs.cache
