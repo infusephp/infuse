@@ -28,7 +28,10 @@ class SymfonyHttpBridge
             $session = [];
         }
 
-        return new Request($request->query->all(), $request->request->all(), $request->cookies->all(), $request->files->all(), $request->server->all(), $session);
+        $req = new Request($request->query->all(), $request->request->all(), $request->cookies->all(), $request->files->all(), $request->server->all(), $session);
+        $req->setParams($request->attributes->all());
+
+        return $req;
     }
 
     /**

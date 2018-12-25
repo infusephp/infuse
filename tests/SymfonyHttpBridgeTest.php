@@ -16,6 +16,7 @@ class SymfonyHttpBridgeTest extends MockeryTestCase
         $bridge = new SymfonyHttpBridge();
         $server = ['REQUEST_METHOD' => 'GET'];
         $request = SymfonyRequest::create('/', 'GET', ['test' => true], ['test2' => true], ['test3' => []], $server);
+        $request->attributes->set('test4', true);
 
         $infuseRequest = $bridge->convertSymfonyRequest($request);
 
@@ -24,6 +25,7 @@ class SymfonyHttpBridgeTest extends MockeryTestCase
         $this->assertEquals(['test' => true], $infuseRequest->query());
         $this->assertEquals(['test2' => true], $infuseRequest->cookies());
         $this->assertEquals(['test3' => []], $infuseRequest->files());
+        $this->assertEquals(['test4' => true], $infuseRequest->params());
     }
 
     public function testConvertInfuseResponse()
