@@ -5,6 +5,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ## Unreleased
 ### Added
 - Can disable sessions per route.
+- The application now implements `HttpKernelInterface` to enhance compatibility with other libraries. 
 
 ## 1.6 - 2017-12-02
 ### Changed

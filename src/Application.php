@@ -3,18 +3,21 @@
 /**
  * @author Jared King <j@jaredtking.com>
  *
- * @link http://jaredtking.com
+ * @see http://jaredtking.com
  *
  * @copyright 2015 Jared King
  * @license MIT
  */
+
 namespace Infuse;
 
 use Infuse\Middleware\DispatchMiddleware;
 use Pimple\Container;
 use SplStack;
+use Symfony\Component\HttpFoundation\Request as SymfonyRequest;
+use Symfony\Component\HttpKernel\HttpKernelInterface;
 
-class Application extends Container
+class Application extends Container implements HttpKernelInterface
 {
     const ENV_PRODUCTION = 'production';
     const ENV_DEVELOPMENT = 'development';
@@ -352,7 +355,7 @@ class Application extends Container
     }
 
     /**
-     * Calls the next middleware in the chain. 
+     * Calls the next middleware in the chain.
      * DO NOT call directly.
      *
      * @param Request  $req
@@ -376,7 +379,7 @@ class Application extends Container
     }
 
     ////////////////////////
-    // CONSOLE
+    // Console
     ////////////////////////
 
     /**
@@ -401,5 +404,17 @@ class Application extends Container
     public function __isset($k)
     {
         return isset($this[$k]);
+    }
+
+    ////////////////////////
+    // HttpKernelInterface
+    ////////////////////////
+
+    public function handle(SymfonyRequest $request, $type = self::MASTER_REQUEST, $catch = true)
+    {
+        $bridge = new SymfonyHttpBridge();
+        $req = $bridge->convertSymfonyRequest($request);
+
+        return $bridge->convertInfuseResponse($this->handleRequest($req));
     }
 }

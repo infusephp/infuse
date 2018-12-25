@@ -3,11 +3,14 @@
 /**
  * @author Jared King <j@jaredtking.com>
  *
- * @link http://jaredtking.com
+ * @see http://jaredtking.com
  *
  * @copyright 2015 Jared King
  * @license MIT
  */
+
+namespace Infuse\Test\Services;
+
 use Infuse\Application;
 use Infuse\Services\Redis;
 use Mockery\Adapter\Phpunit\MockeryTestCase;

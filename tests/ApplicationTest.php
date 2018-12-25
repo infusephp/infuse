@@ -3,15 +3,23 @@
 /**
  * @author Jared King <j@jaredtking.com>
  *
- * @link http://jaredtking.com
+ * @see http://jaredtking.com
  *
  * @copyright 2015 Jared King
  * @license MIT
  */
+
+namespace Infuse\Test;
+
+use Error;
+use Exception;
 use Infuse\Application;
 use Infuse\Request;
 use Infuse\Response;
+use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
+use Symfony\Component\HttpFoundation\Request as SymfonyRequest;
+use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
 
 class ApplicationTest extends MockeryTestCase
 {
@@ -264,6 +272,29 @@ class ApplicationTest extends MockeryTestCase
         $this->assertEquals(500, $res->getCode());
     }
 
+    public function testHandle()
+    {
+        $app = new Application();
+
+        $called = false;
+        $route = function () use (&$called) {
+            $called = true;
+        };
+
+        $router = Mockery::mock();
+        $router->shouldReceive('dispatch')
+            ->andReturn([1, $route, ['test' => true]]);
+        $app['router'] = $router;
+
+        $request = new SymfonyRequest();
+        $response = $app->handle($request);
+        $this->assertInstanceOf(SymfonyResponse::class, $response);
+
+        $this->assertTrue($called);
+
+        $this->assertEquals(200, $response->getStatusCode());
+    }
+
     public function testRun()
     {
         $app = new Application();
@@ -328,11 +359,5 @@ class ApplicationTest extends MockeryTestCase
 
         $console = $app->getConsole();
         $this->assertInstanceOf('Infuse\Console\Application', $console);
-    }
-}
-
-if (!class_exists('Error')) {
-    class Error extends Exception
-    {
     }
 }

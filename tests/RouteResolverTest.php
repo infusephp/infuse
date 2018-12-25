@@ -3,15 +3,20 @@
 /**
  * @author Jared King <j@jaredtking.com>
  *
- * @link http://jaredtking.com
+ * @see http://jaredtking.com
  *
  * @copyright 2015 Jared King
  * @license MIT
  */
+
+namespace Infuse\Test;
+
+use Exception;
 use Infuse\Request;
 use Infuse\Response;
 use Infuse\RouteResolver;
 use Infuse\View;
+use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Test\TestController;
 
@@ -54,7 +59,7 @@ class RouteResolverTest extends MockeryTestCase
     public function testResolve()
     {
         $resolver = new RouteResolver();
-        $resolver->setDefaultController('MockController');
+        $resolver->setDefaultController('Infuse\Test\MockController');
 
         $req = new Request();
         $res = new Response();
@@ -73,7 +78,7 @@ class RouteResolverTest extends MockeryTestCase
         $req = new Request();
         $res = new Response();
 
-        $this->assertEquals($res, $resolver->resolve(['MockController'], $req, $res, []));
+        $this->assertEquals($res, $resolver->resolve(['Infuse\Test\MockController'], $req, $res, []));
 
         $this->assertTrue(MockController::$indexRouteCalled);
         $this->assertTrue(MockController::$appInjected);
@@ -96,7 +101,7 @@ class RouteResolverTest extends MockeryTestCase
         $resolver->setDefaultController('BogusController');
 
         $req = new Request();
-        $req->setParams(['controller' => 'MockController']);
+        $req->setParams(['controller' => 'Infuse\Test\MockController']);
         $res = new Response();
 
         $this->assertEquals($res, $resolver->resolve('staticRoute', $req, $res, []));
@@ -117,7 +122,7 @@ class RouteResolverTest extends MockeryTestCase
         $req = new Request();
         $res = new Response();
 
-        $this->assertEquals($res, $resolver->resolve(['MockController', 'staticRoute', $extraParams], $req, $res, []));
+        $this->assertEquals($res, $resolver->resolve(['Infuse\Test\MockController', 'staticRoute', $extraParams], $req, $res, []));
 
         $this->assertTrue(MockController::$staticRouteCalled);
         $this->assertTrue(MockController::$appInjected);
@@ -153,7 +158,7 @@ class RouteResolverTest extends MockeryTestCase
             ->withArgs([$view])
             ->once();
 
-        $this->assertEquals($res, $resolver->resolve(['MockController', 'view'], $req, $res, []));
+        $this->assertEquals($res, $resolver->resolve(['Infuse\Test\MockController', 'view'], $req, $res, []));
     }
 
     public function testResolveClosure()

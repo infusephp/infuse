@@ -3,11 +3,15 @@
 /**
  * @author Jared King <j@jaredtking.com>
  *
- * @link http://jaredtking.com
+ * @see http://jaredtking.com
  *
  * @copyright 2015 Jared King
  * @license MIT
  */
+
+namespace Infuse\Test;
+
+use Error;
 use Infuse\Application;
 use Infuse\PhpErrorHandler;
 use Infuse\Request;
@@ -27,11 +31,5 @@ class PhpErrorHandlerTest extends MockeryTestCase
         $this->assertEquals($res, $handler($req, $res, $e));
         $this->assertEquals(500, $res->getCode());
         $this->assertEquals('php error', $res->getBody());
-    }
-}
-
-if (!class_exists('Error')) {
-    class Error extends Exception
-    {
     }
 }
