@@ -28,7 +28,13 @@ class SymfonyHttpBridge
             $session = [];
         }
 
-        $req = new Request($request->query->all(), $request->request->all(), $request->cookies->all(), $request->files->all(), $request->server->all(), $session);
+        // decode request parameters
+        $parameters = $request->request->all();
+        if (in_array($request->getMethod(), ['POST', 'PUT', 'PATCH']) && 'json' == $request->getContentType()) {
+            $parameters = json_decode($request->getContent(), true);
+        }
+
+        $req = new Request($request->query->all(), $parameters, $request->cookies->all(), $request->files->all(), $request->server->all(), $session);
         $req->setParams($request->attributes->all());
 
         return $req;
