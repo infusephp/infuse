@@ -15,7 +15,7 @@ class SymfonyHttpBridgeTest extends MockeryTestCase
     {
         $bridge = new SymfonyHttpBridge();
         $server = ['REQUEST_METHOD' => 'GET'];
-        $request = SymfonyRequest::create('/', 'GET', ['test' => true], ['test2' => true], ['test3' => []], $server);
+        $request = SymfonyRequest::create('/', 'GET', ['test' => true], ['test2' => true], [], $server);
         $request->attributes->set('test4', true);
 
         $infuseRequest = $bridge->convertSymfonyRequest($request);
@@ -25,7 +25,7 @@ class SymfonyHttpBridgeTest extends MockeryTestCase
         $this->assertEquals(['test' => true], $infuseRequest->query());
         $this->assertEquals([], $infuseRequest->request());
         $this->assertEquals(['test2' => true], $infuseRequest->cookies());
-        $this->assertEquals(['test3' => []], $infuseRequest->files());
+        $this->assertEquals([], $infuseRequest->files());
         $this->assertEquals(['test4' => true], $infuseRequest->params());
     }
 
@@ -33,7 +33,7 @@ class SymfonyHttpBridgeTest extends MockeryTestCase
     {
         $bridge = new SymfonyHttpBridge();
         $server = ['REQUEST_METHOD' => 'POST'];
-        $request = SymfonyRequest::create('/?query=1', 'POST', ['test' => true], ['test2' => true], ['test3' => []], $server);
+        $request = SymfonyRequest::create('/?query=1', 'POST', ['test' => true], ['test2' => true], [], $server);
         $request->attributes->set('test4', true);
 
         $infuseRequest = $bridge->convertSymfonyRequest($request);
@@ -43,7 +43,7 @@ class SymfonyHttpBridgeTest extends MockeryTestCase
         $this->assertEquals(['test' => true], $infuseRequest->request());
         $this->assertEquals(['query' => 1], $infuseRequest->query());
         $this->assertEquals(['test2' => true], $infuseRequest->cookies());
-        $this->assertEquals(['test3' => []], $infuseRequest->files());
+        $this->assertEquals([], $infuseRequest->files());
         $this->assertEquals(['test4' => true], $infuseRequest->params());
     }
 
@@ -51,7 +51,7 @@ class SymfonyHttpBridgeTest extends MockeryTestCase
     {
         $bridge = new SymfonyHttpBridge();
         $server = ['REQUEST_METHOD' => 'GET', 'CONTENT_TYPE' => 'application/json'];
-        $request = SymfonyRequest::create('/?query=1', 'POST', [], ['test2' => true], ['test3' => []], $server, '{"test":true}');
+        $request = SymfonyRequest::create('/?query=1', 'POST', [], ['test2' => true], [], $server, '{"test":true}');
         $request->attributes->set('test4', true);
 
         $infuseRequest = $bridge->convertSymfonyRequest($request);
@@ -61,7 +61,36 @@ class SymfonyHttpBridgeTest extends MockeryTestCase
         $this->assertEquals(['test' => true], $infuseRequest->request());
         $this->assertEquals(['query' => 1], $infuseRequest->query());
         $this->assertEquals(['test2' => true], $infuseRequest->cookies());
-        $this->assertEquals(['test3' => []], $infuseRequest->files());
+        $this->assertEquals([], $infuseRequest->files());
+        $this->assertEquals(['test4' => true], $infuseRequest->params());
+    }
+
+    public function testConvertSymfonyRequestFiles()
+    {
+        global $_FILES;
+        $_FILES = [
+            'test' => [
+                'error' => 0,
+                'name' => 'Test.pdf',
+                'type' => 'application/pdf',
+                'tmp_name' => __DIR__.'/test.pdf',
+                'size' => 1024,
+            ],
+        ];
+
+        $bridge = new SymfonyHttpBridge();
+        $server = ['REQUEST_METHOD' => 'POST'];
+        $request = SymfonyRequest::create('/?query=1', 'POST', ['test' => true], ['test2' => true], $_FILES, $server);
+        $request->attributes->set('test4', true);
+
+        $infuseRequest = $bridge->convertSymfonyRequest($request);
+
+        $this->assertInstanceOf(Request::class, $infuseRequest);
+        $this->assertEquals('POST', $infuseRequest->method());
+        $this->assertEquals(['test' => true], $infuseRequest->request());
+        $this->assertEquals(['query' => 1], $infuseRequest->query());
+        $this->assertEquals(['test2' => true], $infuseRequest->cookies());
+        $this->assertEquals($_FILES, $infuseRequest->files());
         $this->assertEquals(['test4' => true], $infuseRequest->params());
     }
 

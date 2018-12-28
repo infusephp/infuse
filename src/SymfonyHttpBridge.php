@@ -34,7 +34,10 @@ class SymfonyHttpBridge
             $parameters = json_decode($request->getContent(), true);
         }
 
-        $req = new Request($request->query->all(), $parameters, $request->cookies->all(), $request->files->all(), $request->server->all(), $session);
+        // NOTE: This is not entirely accurate to use $_FILES, however,
+        // because Symfony converts $_FILES into an UploadedFile object
+        // and Infuse expects the raw array, it makes compatibility difficult.
+        $req = new Request($request->query->all(), $parameters, $request->cookies->all(), $_FILES, $request->server->all(), $session);
         $req->setParams($request->attributes->all());
 
         return $req;
