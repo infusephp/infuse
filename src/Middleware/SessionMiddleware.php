@@ -3,7 +3,7 @@
 /**
  * @author Jared King <j@jaredtking.com>
  *
- * @link http://jaredtking.com
+ * @see http://jaredtking.com
  *
  * @copyright 2015 Jared King
  * @license MIT
@@ -14,7 +14,6 @@ namespace Infuse\Middleware;
 use Infuse\HasApp;
 use Infuse\Request;
 use Infuse\Response;
-use Infuse\Utility;
 
 class SessionMiddleware
 {
@@ -67,17 +66,6 @@ class SessionMiddleware
         }
 
         session_start();
-
-        // fix the session cookie
-        Utility::setCookieFixDomain(
-            session_name(),
-            session_id(),
-            time() + $lifetime,
-            '/',
-            $hostname,
-            $req->isSecure(),
-            true
-        );
 
         // make the newly started session in our request
         $req->setSession($_SESSION);

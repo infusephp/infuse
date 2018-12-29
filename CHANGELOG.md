@@ -7,6 +7,9 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Can disable sessions per route.
 - The application now implements `HttpKernelInterface` to enhance compatibility with other libraries. 
 
+### Removed
+- Removed session cookie fix for older versions of Internet Explorer.
+
 ## 1.6 - 2017-12-02
 ### Changed
 - Support Symfony 4.
